@@ -38,5 +38,15 @@
             n.b. deleted file with rm doesn't go in the trash!!
             -v <filename> -> add verbose to the output
 
+## Installation and extraction
+
+    * install a .deb file
+        > sudo dpkg -i <filename>.deb
+
+    * extract .tar archive
+        > tar -xf <archivename>
+        > tar -xvf <archivename>            -> increase verbosity
+        > tar -xf <archivename> -c <path>   -> specify extraction path 
+
 
 
