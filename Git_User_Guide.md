@@ -7,14 +7,14 @@
         > git config --global user.name “Giovanni Frison”
         > git config --global user.email “ing.giovanni.frison@gmail.com”
 
+     * chenge editor for committing
+        > git config --global core.editor emacs (emacs is the name of the editor)
+
     * retrieve global user info
         > git config –l
 
     * expose hidden files on linux
         > ctrl + h → to delete .git folder
-
-    * chenge editor for committing
-        > git config --global core.editor emacs (emacs is the name of the editor)
 
 ## SSH KEY
 
@@ -29,7 +29,7 @@
     * copy ssh key to agent
         > ssh-add ~/.ssh/pyfry_key  (dir_of_the_key/name_of_the_key)
 
-# INITIALIZE FROM LOCAL
+## INITIALIZE FROM LOCAL
 
     * connect to github with ssh key and first commit from desktop
         > git init
@@ -42,13 +42,13 @@
     * push an existing repository
         > git remote add origin git@github.com:fdifrison/PyFry-v1.git
         > git branch -M main
-        > git push -u origin main
+        > git push -u origin main -> -u stands for --set-upstream
 
-# CLONE A REPO
+## CLONE A REPO
 
     git clone https://github.com/libgit2/libgit2 foldername
 
-# GTI IGNORE
+## GIT IGNORE
 
     * ignore all .a files
         >.a
@@ -62,3 +62,45 @@
         > doc/*.txt
     * ignore all .pdf files in the doc/ directory and any of its subdirectories
         > doc/**/*.pdf
+
+## GIT COMMAND
+
+    * remove a file
+        > git rm filename
+
+    * add and commit a modified file that already exist in repo
+        > git commit -am "comment"
+
+    * undo the last commit made
+        > git reset HEAD~1 -> 1 stands for the commit I want to revert to
+
+        alternative:
+        > git log -> find and copy the commit-hash you want
+        > git reset --hard commit-hash
+        
+    * check diff in all the branch
+        > git diff
+    * check diff in a specific file
+        > git diff file-name
+
+    * add files to branch
+        git add file1 file2 file 3 ..
+    * add only specifich changes of the file to have separate commits
+        git add -p file1
+
+## GIT BRANCHES
+
+    * check in which branch I am
+        > git branch
+    
+    * change branch and create a new one
+        > git checkout -b name-of-new-branch
+        > git checkout main -> return to main branch
+
+    * check difference between branches
+        > git diff name-of-new-branch
+
+    * delete a branch
+        > git branch -d name-of-new-branch
+
+    
