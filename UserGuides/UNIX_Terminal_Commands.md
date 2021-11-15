@@ -37,6 +37,17 @@
         > rm <filname>
             n.b. deleted file with rm doesn't go in the trash!!
             -v <filename> -> add verbose to the output
+    * open file
+        > xdg-open <filename>
+        > xdg-open . -> open current folder
+    * move or rename file/folder
+        > mv <filename> <newname>       -> rename <filename> in <newname>
+        > mv <filename> <folderpath>    -> move <filename> fo <folderpath>
+    *copy a file/folder
+        >
+
+
+    
 
 ## Installation and extraction
 
