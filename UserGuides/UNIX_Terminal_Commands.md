@@ -64,5 +64,8 @@
         > tar -xvf <archivename>            -> increase verbosity
         > tar -xf <archivename> -c <path>   -> specify extraction path 
 
+    * install .sh
+        > sudo bash <filename> 
+
 
 
