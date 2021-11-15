@@ -42,9 +42,14 @@
         > xdg-open . -> open current folder
     * move or rename file/folder
         > mv <filename> <newname>       -> rename <filename> in <newname>
-        > mv <filename> <folderpath>    -> move <filename> fo <folderpath>
+        > mv <filename> <path>          -> move <filename> to <path>
     *copy a file/folder
-        >
+        > cp <filename> <path>
+        > cp -r <folder> <path> -> copy a folder and its content
+
+    * redirect output to file
+        pwd > <filename>  -> write print-work-directory fo <filename>, overwrite/create <filename> 
+        pwd >> <filename>  -> append print-work-directory fo <filename>
 
 
     
