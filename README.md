@@ -4,10 +4,10 @@ Collection of relevant projects and reusable code.
 
 ## Project list
 
-### `py_api_dev` : 
+### `py_api_dev`
 
-* api creation/testing and interaction with databases 
+* api creation/testing and interaction with databases
 
-### `py_django`: 
+### `py_django`
 
 * web server creation
