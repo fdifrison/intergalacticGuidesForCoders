@@ -6,3 +6,4 @@ Topic:
 
 - fastapi
 - postman
+- pydantic
