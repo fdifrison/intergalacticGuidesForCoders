@@ -1,4 +1,4 @@
-# UNIX Terminal Commands
+# Shell User Guide
 
     * moving in folders:
         > cd
