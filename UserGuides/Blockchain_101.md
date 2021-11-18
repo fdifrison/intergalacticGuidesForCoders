@@ -22,6 +22,4 @@ are services that provide fake crypto to be used on testnets
 
 transaction fee to be paid in mining base blockchain (proof of stake)
 
-* Gas -> measure of the computation required
-* Gas Price -> price per unit of gas. Usually expressed in fraction of the coin; for eth is wei and gwei (giga-wei)
-* Gas Limit -> max amount of gas used in a transaction; depending on the traffic, if we lower the gas limit, our transaction will be performed slower
+https://legacy.ethgasstation.info/blog/eip-1559/ new gase fee protocot: fees for transactions are dividen in basefees (that will be burnd) and tipfees
