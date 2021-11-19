@@ -21,6 +21,18 @@ Are layer 2 blockchain (similar to shards) that rely on the layer 1 for security
 ### `Side-chains`
 Are layer 2 blockchain that don't rely on the main chain for security but implement their own rules
 
+### `Gas fees`
+
+transaction fee to be paid in mining base blockchain (proof of stake)
+
+https://legacy.ethgasstation.info/blog/eip-1559/ new gas fee protocol: fees for transactions are divided into base fees (that will be burned) and tip fees
+
+https://ethgasstation.info/ gives updated values on gas fees
+
+
+
+
+# Utilities
 
 ### `Metamask`
 
@@ -40,11 +52,10 @@ are services that provide fake crypto to be used on testnets
 
 * <https://faucet.rinkeby.io/> -> works only with Twitter
 
-### `Gas fees`
 
-transaction fee to be paid in mining base blockchain (proof of stake)
 
-https://legacy.ethgasstation.info/blog/eip-1559/ new gas fee protocol: fees for transactions are divided into base fees (that will be burned) and tip fees
+# Developer stuff
 
-https://ethgasstation.info/ gives updated values on gas fees
+## `Remix`
+Is the starting point for solidity developer; an IDE useful to learn how to write and deploy smart contract with the aid of metamask. You can deploy locally (Js VM) or on a real blockchain.
 
