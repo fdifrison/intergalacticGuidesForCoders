@@ -88,6 +88,22 @@ Functions are defined as follow:
 
 where `type` is the variable type (es. uint256) and `public` is the `visibility attribute`
 
+## `Struct`
+
+Is a method that allows to create new type objects (sounds like a class in python)
+
+    struct People {
+        uint256 age;
+        string name;
+    }
+We are creating a type named `People` that has two attributes, `age` and `name`. We can call the new type as follow:
+
+    People public person = People({age: 2, name: "Giovanni"})
+where `person` is the name of the People instance.
+
+## `Array`
+
+
 ## `Visibility`
 
 Depending on the use of a function/variable we can set its visibility constraint. If nothing is specified that the `default visibility` is set to `internal`.
@@ -104,7 +120,6 @@ function and variable can be:
 Are function that does not require a transaction on the blockchain (i.e. no gas fees are required).
 View function are used to display something to the contract interface while pure function are used to do simple arithmetics operations.
 
-
     function retrieve() public view returns(var_type)  {
             var;
             }
@@ -113,9 +128,10 @@ View function are used to display something to the contract interface while pure
             var + var;
             }
 
-
 N.b a public variable (es. `uint256 public`) are a type of view function, meaning that their value can be inspected from the contract interface without requiring a blockchain transaction.
 
 ## `Global and Function scope`
 
 Global scope is the space inside the contract parenthesis {}. If a variable is defined in the global scope it is callable by the functions inside the global scope. Instead, if a variable is defined in the function scope (i.e. the body of the function), then it won't be accessible from outside the function.
+
+## `Storing order`
