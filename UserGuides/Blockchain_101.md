@@ -1,36 +1,39 @@
 # Blockchain 101
+
 A blockchain is essentially a decentralized database
 
 ### `Consensus, Sibyl resistances`
+
 It refers to the defensive mechanism the blockchains have to avoid a hacker's attack that aims to take control over the chain consensus. It takes different forms depending on the blockchain consensus type:
+
 * `Nakamoto consensus`: is composed of two-part:
-    * `Proof-of-Work`: the difficulty of mining (the computational resources needed) is the first Sibyl resistant mechanism. Who mine a block became the author of it. There is no use in creating fake accounts to attack the chain since the mining complexity remains the same.
+  * `Proof-of-Work`: the difficulty of mining (the computational resources needed) is the first Sibyl resistant mechanism. Who mine a block became the author of it. There is no use in creating fake accounts to attack the chain since the mining complexity remains the same.
     The miners are the ones that compete for the gas fees paid by the user of the blockchain to perform actions (In addition to the block reward (token), obtained to "solve the block challenge")
-        * Pro & Con : it is very energy demanding to mine a node, bt very decentralized
-    * Longest chain (`chain selection`): the number of blocks is used to recognize the true blockchain. The longest is the legit chain. For a hacker attack, the same author has to own the majority of the blocks in the chain.
+    * Pro & Con : it is very energy demanding to mine a node, bt very decentralized
+  * Longest chain (`chain selection`): the number of blocks is used to recognize the true blockchain. The longest is the legit chain. For a hacker attack, the same author has to own the majority of the blocks in the chain.
 
 * `Proof-of-Stake`: there are no more miners but validators that guarantee the safety of the network staking a certain amount of token (32 eth at the moment). If the validators behave improperly, they risk to loose part of their stake (i.e. a lot of money), and due to the decentralized infrastructure of the chain is fairly easy to verify if a validator is following the rules.
-    * Pro & Con : the energy demand problem is resolved since only one nodes (randomly chosen) operates to solve the new block, while the validators only need to validate. As a Con, PoS are considered to be less decentralized due to the staking cost not accessible to everyone (atm 32 eth are nearly 130k $).
+  * Pro & Con : the energy demand problem is resolved since only one nodes (randomly chosen) operates to solve the new block, while the validators only need to validate. As a Con, PoS are considered to be less decentralized due to the staking cost not accessible to everyone (atm 32 eth are nearly 130k $).
 
 ### `Sharding`
-One of the main problem of today blockchain is scalability, since gas fees increase as the number of user increase (so the execution time). Sharding is a new paradigm that eth2 will introduce: basically there will be a main blockchain and a series of secondary bc that hook in to the main one. this will increase exponentially the `block space`, i.e. the number of transaction that can be performed 
+
+One of the main problem of today blockchain is scalability, since gas fees increase as the number of user increase (so the execution time). Sharding is a new paradigm that eth2 will introduce: basically there will be a main blockchain and a series of secondary bc that hook in to the main one. this will increase exponentially the `block space`, i.e. the number of transaction that can be performed
 
 ### `Rollup`
-Are layer 2 blockchain (similar to shards) that rely on the layer 1 for security and transactions. Solve some of the scalability issues. 
+
+Are layer 2 blockchain (similar to shards) that rely on the layer 1 for security and transactions. Solve some of the scalability issues.
 
 ### `Side-chains`
+
 Are layer 2 blockchain that don't rely on the main chain for security but implement their own rules
 
 ### `Gas fees`
 
 transaction fee to be paid in mining base blockchain (proof of stake)
 
-https://legacy.ethgasstation.info/blog/eip-1559/ new gas fee protocol: fees for transactions are divided into base fees (that will be burned) and tip fees
+<https://legacy.ethgasstation.info/blog/eip-1559/> new gas fee protocol: fees for transactions are divided into base fees (that will be burned) and tip fees
 
-https://ethgasstation.info/ gives updated values on gas fees
-
-
-
+<https://ethgasstation.info/> gives updated values on gas fees
 
 # Utilities
 
@@ -52,10 +55,67 @@ are services that provide fake crypto to be used on testnets
 
 * <https://faucet.rinkeby.io/> -> works only with Twitter
 
-
-
 # Developer stuff
 
 ## `Remix`
+
 Is the starting point for solidity developer; an IDE useful to learn how to write and deploy smart contract with the aid of metamask. You can deploy locally (Js VM) or on a real blockchain.
 
+# Solidity
+
+Is the programming language that interacts with the ethereum blockchain.
+
+## `Initialization`
+
+Every smart contract have to start with the following statement:
+
+    pragma solidity >= 0.6.0 < 0.9.0;
+where the version of solidity is stated (from 0.6.0 to 0.9.0 in this case). when using `^0.6.0` it means that the accepted solidity version are from 0.6.0 above.
+
+## `Contracts`
+
+The smart contract body is contained inside the class definition:
+
+    contract Name { }
+
+## `Functions`
+
+Functions are defined as follow:
+
+    function func_name(type var_name) public {
+        my_var = var_name;
+    }
+
+where `type` is the variable type (es. uint256) and `public` is the `visibility attribute`
+
+## `Visibility`
+
+Depending on the use of a function/variable we can set its visibility constraint. If nothing is specified that the `default visibility` is set to `internal`.
+
+function and variable can be:
+
+* `internal`: can be used only in the current contract or in the ones deriving from it;
+* `external`: can be called from other contracts and transactions but cannot be called internally;
+* `private`: are only visible in the current contract;
+* `public`: are part of the contract interface so can be called both internally and externally.
+
+## `View and Pure Function`
+
+Are function that does not require a transaction on the blockchain (i.e. no gas fees are required).
+View function are used to display something to the contract interface while pure function are used to do simple arithmetics operations.
+
+
+    function retrieve() public view returns(var_type)  {
+            var;
+            }
+
+    function retrieve() public pure { 
+            var + var;
+            }
+
+
+N.b a public variable (es. `uint256 public`) are a type of view function, meaning that their value can be inspected from the contract interface without requiring a blockchain transaction.
+
+## `Global and Function scope`
+
+Global scope is the space inside the contract parenthesis {}. If a variable is defined in the global scope it is callable by the functions inside the global scope. Instead, if a variable is defined in the function scope (i.e. the body of the function), then it won't be accessible from outside the function.
