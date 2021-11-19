@@ -6,7 +6,7 @@ Collection of relevant projects and reusable code.
 
 ### `py_api_dev`
 
-* api creation/testing and interaction with databases
+* API creation/testing and interaction with databases
 
 ### `py_django`
 
