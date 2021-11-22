@@ -1,71 +1,133 @@
 # Shell User Guide
 
-    * moving in folders:
-        > cd
-            ..          -> go to parent directory
-            ../../..    -> go to parent parent parent directory
-            ~           -> go to user directory /home/user
-            /           -> go to root
-            ~/folder    -> go directly to folder wherever you are
+### Piping
 
+> `|`
 
-    * help funtion
-        > man <function>
-            es. man cd  -> return instruction about "cd" command
+    with the symbol '|' we can create a pipeline of commands
+    es. cat <filename> | sort > <newfile>
 
+### moving in folders
 
-    * print current location path
-        > pwd
+> `cd`
 
+    cd..          -> go to parent directory
+    cd../../..    -> go to parent parent parent directory
+    cd~           -> go to user directory /home/user
+    cd/           -> go to root
+    cd~/folder    -> go directly to folder wherever you are
 
-    * making folders
-        > mkdir <foldername>
-            fold1 fold2             -> create 2 folders at the same time
-            fold1/fold2             -> create 2 nested folder
-            - p fold1/fold2/fold3   -> create the parent dir that is missing
-    * delete folders
-        > rmdir <foldername>
-            n.b works only if the dir is empty
-        > rm -r <foldername> -> remove everything in the folder recursively
-        > rm -ri <foldername> -> interactively decide what to delete
+### help funtion
 
+> `man`
 
-    * create file
-        > touch <filname>
-            n.b. the extension of filename doesn't impose the filetype
-    * delete file
-        > rm <filname>
-            n.b. deleted file with rm doesn't go in the trash!!
-            -v <filename> -> add verbose to the output
-    * open file
-        > xdg-open <filename>
-        > xdg-open . -> open current folder
-    * move or rename file/folder
-        > mv <filename> <newname>       -> rename <filename> in <newname>
-        > mv <filename> <path>          -> move <filename> to <path>
-    *copy a file/folder
-        > cp <filename> <path>
-        > cp -r <folder> <path> -> copy a folder and its content
+    man cd  -> return instruction about "cd" command
 
-    * redirect output to file
-        pwd > <filename>  -> write print-work-directory fo <filename>, overwrite/create <filename> 
-        pwd >> <filename>  -> append print-work-directory fo <filename>
+### print current location path
 
+> `pwd`
 
-    
+### making folders
 
-## Installation and extraction
+> `mkdir`
 
-    * install a .deb file
-        > sudo dpkg -i <filename>.deb
+    mkdir fold1 fold2             -> create 2 folders at the same time
+    mkdir fold1/fold2             -> create 2 nested folder
+    mkdir - p fold1/fold2/fold3   -> create the parent dir that is missing
 
-    * extract .tar archive
-        > tar -xf <archivename>
-        > tar -xvf <archivename>            -> increase verbosity
-        > tar -xf <archivename> -c <path>   -> specify extraction path 
+### delete folders
 
-    * install .sh
-        > sudo bash <filename> 
+> `rm`
 
+    rmdir <foldername>  -> n.b works only if the dir is empty
+    rm -r <foldername>  -> remove everything in the folder recursively
+    rm -ri <foldername> -> interactively decide what to delete
 
+### create file
 
+> `touch`
+
+    n.b. the extension of filename doesn't impose the filetype
+
+> `echo`
+
+    echo "sometext" -> print "sometext" to terminal
+    echo "sometext" > <filename> -> create a <filename> with "sometext" inside
+    echo "sometext" >> <filename> -> append "sometext" to <filename>
+
+### delete file
+
+> `rm`
+
+    n.b. deleted file with rm doesn't go in the trash!!
+    rm -v <filename> -> add verbose to the output
+
+### open file
+
+> `xdg-open`
+
+    xdg-open . -> open current folder
+
+### move or rename file/folder
+
+> `mv`
+
+    mv <filename> <newname>       -> rename <filename> in <newname>
+    mv <filename> <path>          -> move <filename> to <path>
+
+### copy a file/folder
+
+> `cp`
+
+    cp <filename> <path>
+    cp -r <folder> <path> -> copy a folder and its content
+
+### redirect output to file
+
+> `'>'` or  `>>'`  
+
+    pwd > <filename>  -> write print-work-directory fo <filename>, overwrite/create <filename>
+    pwd >> <filename>  -> append print-work-directory fo <filename>
+
+### read/inspect a file from terminal
+
+> `cat`
+
+    cat <filename>
+    cat <filename1> <filename2> -> concatenate two or more files
+    cat <filename1> <filename2> > <tofile> -> concatenate and redirect output
+    cat -n <filename> -> print file with line numbers
+
+> `less`
+
+    open file in a new window 
+    q       -> exit
+    /<name> -> search for <name> in file
+
+> `wc`
+
+    word count -> shows lines words bytes of a file
+    can be used as an option to other command (it is called piping)
+    ls -l | wc -> word count on the files in folder
+
+> `sort`
+
+    sort <filename> -> sort <filename> content alphabetically (without modifying the file)
+    sort -n     -> sort numerically
+    sort -nr    -> sort numerically backwards 
+
+# Installation and extraction
+
+> .deb file
+
+    sudo dpkg -i <filename>.deb
+
+> .tar archive
+
+    tar -xf <archivename>
+    tar -xvf <archivename>            -> increase verbosity
+    tar -xf <archivename> -c <path>   -> specify extraction path
+
+> .sh
+
+    sudo bash <filename>
