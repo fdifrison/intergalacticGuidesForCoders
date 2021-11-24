@@ -7,3 +7,4 @@ Topic:
 - fastapi
 - postman
 - pydantic
+- postgress

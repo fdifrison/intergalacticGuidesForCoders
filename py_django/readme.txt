@@ -25,4 +25,7 @@ inventory_manager_system
 
     Topic:
 
-    -
+    - django
+    - dummy blog
+    - send receive store retrieve messages from webserver
+    - html
