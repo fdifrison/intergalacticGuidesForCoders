@@ -1,2 +1,15 @@
+{%extends "base.html" %}
+
+
+{% block content %}
+
 <h1>{{article_title}}</h1>
 <p>{{article_content}}</p>
+
+<ul>
+    {% for x in obj_list %}
+    <li><a href='/articles/{{ x.id }}/'>{{ x.title }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}
