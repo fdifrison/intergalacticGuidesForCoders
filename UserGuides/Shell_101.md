@@ -7,6 +7,10 @@
     with the symbol '|' we can create a pipeline of commands
     es. cat <filename> | sort > <newfile>
 
+### know your OS
+
+> lsb_release -a
+
 ### moving in folders
 
 > `cd`

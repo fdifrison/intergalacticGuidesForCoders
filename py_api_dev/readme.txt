@@ -7,4 +7,4 @@ Topic:
 - fastapi
 - postman
 - pydantic
-- postgress
+- sql - postgreSQL (dbms) - pgadmin4
