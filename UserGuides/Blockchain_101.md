@@ -2,6 +2,17 @@
 
 A blockchain is essentially a decentralized database
 
+TOC
+
+- [`Consensus, Sibyl resistances`](#`Consensus,Sibylresistances`)
+- [`Struct`](#`struct`)
+- [`Sharding`](#`Sharding`)
+- [`Rollup`](#`Rollup`)
+- [`Side-chains`](#`Side-chains`)
+- [`Gas fees`](#`Gasfees`)
+- [`Solidity`](#`#Solidity`)
+
+
 ### `Consensus, Sibyl resistances`
 
 It refers to the defensive mechanism the blockchains have to avoid a hacker's attack that aims to take control over the chain consensus. It takes different forms depending on the blockchain consensus type:
@@ -113,7 +124,7 @@ we can populate the array as follow:
 
     People public person = People({age:2, name:"Yuri"});
 
-where in the rhs `People` is a [`Struct`](#`struct`) object previously defined
+where in the rhs `People` is a `struct` object previously defined
 
 ## `Visibility`
 
