@@ -4,20 +4,36 @@ A blockchain is essentially a decentralized database
 
 TOC
 
-- [`Consensus, Sibyl resistances`](#`Consensus,Sibylresistances`)
-- [`Struct`](#`struct`)
-- [`Sharding`](#`Sharding`)
-- [`Rollup`](#`Rollup`)
-- [`Side-chains`](#`Side-chains`)
-- [`Gas fees`](#`Gasfees`)
-- [`Solidity`](#`#Solidity`)
+- [Blockchain 101](#blockchain-101)
+    - [`Consensus-Sibyl-resistances`](#consensus-sibyl-resistances)
+    - [`Sharding`](#sharding)
+    - [`Rollup`](#rollup)
+    - [`Side-chains`](#side-chains)
+    - [`Gas-fees`](#gas-fees)
+- [Utilities](#utilities)
+    - [`Metamask`](#metamask)
+    - [`Etherscan` -> `https://etherscan.io/`](#etherscan---httpsetherscanio)
+    - [`Testnet`](#testnet)
+    - [`Faucet`](#faucet)
+- [Developer stuff](#developer-stuff)
+  - [`Remix`](#remix)
+- [Solidity](#solidity)
+  - [`Initialization`](#initialization)
+  - [`Contracts`](#contracts)
+  - [`Functions`](#functions)
+  - [`Struct`](#struct)
+  - [`Array`](#array)
+  - [`Visibility`](#visibility)
+  - [`View and Pure Function`](#view-and-pure-function)
+  - [`Global and Function scope`](#global-and-function-scope)
+  - [`Storing order`](#storing-order)
 
 
-### `Consensus, Sibyl resistances`
+### `Consensus-Sibyl-resistances`
 
 It refers to the defensive mechanism the blockchains have to avoid a hacker's attack that aims to take control over the chain consensus. It takes different forms depending on the blockchain consensus type:
 
-* `Nakamoto consensus`: is composed of two-part:
+* `Nakamoto-consensus`: is composed of two-part:
   * `Proof-of-Work`: the difficulty of mining (the computational resources needed) is the first Sibyl resistant mechanism. Who mine a block became the author of it. There is no use in creating fake accounts to attack the chain since the mining complexity remains the same.
     The miners are the ones that compete for the gas fees paid by the user of the blockchain to perform actions (In addition to the block reward (token), obtained to "solve the block challenge")
     * Pro & Con: it is very energy demanding to mine a node, but very decentralized
@@ -38,7 +54,7 @@ Are layer 2 blockchain (similar to shards) that rely on layer 1 for security and
 
 Are layer 2 blockchain that don't rely on the main chain for security but implement their own rules
 
-### `Gas fees`
+### `Gas-fees`
 
 transaction fee to be paid in mining base blockchain (proof of stake)
 
