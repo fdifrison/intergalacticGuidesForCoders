@@ -113,7 +113,7 @@ we can populate the array as follow:
 
     People public person = People({age:2, name:"Yuri"});
 
-where in the rhs `People` is a `struct` object previously defined
+where in the rhs `People` is a [`Struct`](#`struct`) object previously defined
 
 ## `Visibility`
 
