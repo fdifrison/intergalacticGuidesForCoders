@@ -17,7 +17,7 @@ It refers to the defensive mechanism the blockchains have to avoid a hacker's at
 
 ### `Sharding`
 
-One of the main problems of today's blockchain is scalability since gas fees increase as the number of user increase (so the execution time). Sharding is a new paradigm that eth2 will introduce: basically there will be the main blockchain and a series of secondary bc that hook into the main one. this will increase exponentially the `block space`, i.e. the number of transactions that can be performed
+One of the main problems of today's blockchain is scalability since gas fees increase as the number of user increase (so the execution time). Sharding is a new paradigm that eth2 will introduce: there will be the main blockchain and a series of secondary bc that hook into the main one. this will increase exponentially the `block space`, i.e. the number of transactions that can be performed
 
 ### `Rollup`
 
@@ -103,6 +103,17 @@ where `person` is the name of the People instance.
 
 ## `Array`
 
+We can have dynamic or fixed size arrays:
+
+```
+People[] public people; // dynamic array
+People[1] public people; // one element fix-size array
+```
+we can populate the array as follow:
+
+    People public person = People({age:2, name:"Yuri"});
+
+where in the rhs `People` is a `struct` object previously defined
 
 ## `Visibility`
 
