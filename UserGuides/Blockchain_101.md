@@ -1,20 +1,20 @@
-# Blockchain 101
+<h1>Blockchain 101</h1>
 
 A blockchain is essentially a decentralized database
 
 TOC
 
-- [Blockchain 101](#blockchain-101)
-    - [`Consensus-Sibyl-resistances`](#consensus-sibyl-resistances)
-    - [`Sharding`](#sharding)
-    - [`Rollup`](#rollup)
-    - [`Side-chains`](#side-chains)
-    - [`Gas-fees`](#gas-fees)
+- [`Definitions`](#definitions)
+  - [`Consensus: Sibyl resistances`](#consensus-sibyl-resistances)
+  - [`Sharding`](#sharding)
+  - [`Rollup`](#rollup)
+  - [`Side-chains`](#side-chains)
+  - [`Gas-fees`](#gas-fees)
 - [Utilities](#utilities)
-    - [`Metamask`](#metamask)
-    - [`Etherscan` -> `https://etherscan.io/`](#etherscan---httpsetherscanio)
-    - [`Testnet`](#testnet)
-    - [`Faucet`](#faucet)
+  - [`Metamask`](#metamask)
+  - [`Etherscan` -> `https://etherscan.io/`](#etherscan---httpsetherscanio)
+  - [`Testnet`](#testnet)
+  - [`Faucet`](#faucet)
 - [Developer stuff](#developer-stuff)
   - [`Remix`](#remix)
 - [Solidity](#solidity)
@@ -29,7 +29,9 @@ TOC
   - [`Storing order`](#storing-order)
 
 
-### `Consensus-Sibyl-resistances`
+# `Definitions`
+
+## `Consensus: Sibyl resistances`
 
 It refers to the defensive mechanism the blockchains have to avoid a hacker's attack that aims to take control over the chain consensus. It takes different forms depending on the blockchain consensus type:
 
@@ -42,19 +44,19 @@ It refers to the defensive mechanism the blockchains have to avoid a hacker's at
 * `Proof-of-Stake`: there are no more miners but validators that guarantee the safety of the network staking a certain amount of token (32 eth at the moment). If the validators behave improperly, they risk to lose part of their stake (i.e. a lot of money), and due to the decentralized infrastructure of the chain is fairly easy to verify if a validator is following the rules.
   * Pro & Con: the energy demand problem is resolved since only one node (randomly chosen) operates to solve the new block, while the validators only need to validate. As a Con, PoS is considered to be less decentralized due to the staking cost not being accessible to everyone (atm 32 eth are nearly 130k $).
 
-### `Sharding`
+## `Sharding`
 
 One of the main problems of today's blockchain is scalability since gas fees increase as the number of user increase (so the execution time). Sharding is a new paradigm that eth2 will introduce: there will be the main blockchain and a series of secondary bc that hook into the main one. this will increase exponentially the `block space`, i.e. the number of transactions that can be performed
 
-### `Rollup`
+## `Rollup`
 
 Are layer 2 blockchain (similar to shards) that rely on layer 1 for security and transactions. Solve some of the scalability issues.
 
-### `Side-chains`
+## `Side-chains`
 
 Are layer 2 blockchain that don't rely on the main chain for security but implement their own rules
 
-### `Gas-fees`
+## `Gas-fees`
 
 transaction fee to be paid in mining base blockchain (proof of stake)
 
@@ -64,19 +66,19 @@ transaction fee to be paid in mining base blockchain (proof of stake)
 
 # Utilities
 
-### `Metamask`
+## `Metamask`
 
 is a wallet based on ethereum, useful to make fake transactions and test smart contracts in the development phase
 
-### `Etherscan` -> `https://etherscan.io/`
+## `Etherscan` -> `https://etherscan.io/`
 
 is a platform (Block Explorer) to search for transactions and wallets information
 
-### `Testnet`
+## `Testnet`
 
 is a blockchain made for testing purposes
 
-### `Faucet`
+## `Faucet`
 
 are services that provide fake crypto to be used on testnets
 

@@ -1,29 +1,41 @@
-# Django User Guide
+<h1>Django User Guide</h1>
 
-## Project Structure
+TOC
+
+- [Project Structure](#project-structure)
+- [Basic Commands at the beginning of a project](#basic-commands-at-the-beginning-of-a-project)
+  - [`admin.py`](#adminpy)
+  - [`manage.py`](#managepy)
+  - [`views.py`](#viewspy)
+  - [`urls.py`](#urlspy)
+  - [`settings.py`](#settingspy)
+- [Templates](#templates)
+  - [`HTML template`](#html-template)
+
+# Project Structure
 
 projectname_folder
 
-* `manage.py`
+- `manage.py`
 
-* app_folder
+- app_folder
 
-  * migration_folder
-  * `admin.py`
-  * `apps.py`
-  * `models.py`
-  * `tests.py`
-  * `views.py`
+  - migration_folder
+  - `admin.py`
+  - `apps.py`
+  - `models.py`
+  - `tests.py`
+  - `views.py`
 
-* projectname_folder
+- projectname_folder
 
-  * `asgi.py`
-  * `settings.py`
-  * `urls.py`
-  * `views.py`
-  * `wgsi.py`
+  - `asgi.py`
+  - `settings.py`
+  - `urls.py`
+  - `views.py`
+  - `wgsi.py`
 
-## Basic Commands at the beginning of a project
+# Basic Commands at the beginning of a project
 
 Start a new project. The below command will create automatically the projectname_folder structure
 
@@ -33,7 +45,7 @@ Create an administrator account (superuser)
 
     python manage.py createsuperuser
 
-### `admin.py`
+## `admin.py`
 
 Once the admin is created we can add models to it in the `admin.py` file:
 
@@ -49,7 +61,7 @@ admin.site.register(Article, ArticleAdmin)
 
 ```
 
-### `manage.py`
+## `manage.py`
 
 Launch server
 
@@ -93,7 +105,7 @@ article_title = article_obj.title
 article_content = article_obj.content
 ```
 
-### `views.py`
+## `views.py`
 
 Contains the function that renders the HTML of each page in the project directory. Functions take a Django request and return an HTML response. The project apps can be imported into the view to retrieve and display data.
 
@@ -128,9 +140,10 @@ def home_view(request):
     return HttpResponse(HTML_STRING)
 ```
 
-### `urls.py`
+## `urls.py`
 
-Contains the URLs reference to the webpages. Connects a path (URL) with one of the views contained in `views.py`. 
+Contains the URLs reference to the webpages. Connects a path (URL) with one of the views contained in `views.py`.
+
 ```py
 from .views import home_view
 
@@ -145,20 +158,22 @@ urlpatterns = [
     path('articles/<int:id>/', views.article_detail_view), #
 ]
 ```
+
 in this case, the `id` parameters needs to be passed in the pertinent function contained in `views.py`.
-### `settings.py`
+
+## `settings.py`
 
 Django project settings
 
-* INSTALLED_APPS -> list of applications connected to the project; some are built-in (i.e. admin, auth, etc..), but also custom apps created with `manage.py startapp` have to be appended to be displayed.
+- INSTALLED_APPS -> list of applications connected to the project; some are built-in (i.e. admin, auth, etc..), but also custom apps created with `manage.py startapp` have to be appended to be displayed.
 
-* TEMPLATES -> the paths to specific templates used in `view.py` to render the webpage are appended into the DIRS list
+- TEMPLATES -> the paths to specific templates used in `view.py` to render the webpage are appended into the DIRS list
 
 # Templates
 
 It is common use to create a folder called `templates` in the main dir of our project. This should contain the `*.html` files that we are going to use to render the webpage. N.B. even if the language is html, to be rendered as a django view, fields must be encapsulated in double parenthesis (e.g. `< >{{title}}< />` and not just `< >{title}< />` as expected in html code)
 
-### `HTML template`
+## `HTML template`
 
 HTML templates can be constructed ad hoc to receive inputs from python objects trough django. The templates is called in the `views.py` with a context parameter that populates the variables in {{}}. Also python operations can be inserted like the for loop below.
 
@@ -176,8 +191,8 @@ Usually is good practice to have a base html file that hold hte mask of the webp
     </body>
 </html>
 ```
-the block content can be later called by the other views:
 
+the block content can be later called by the other views:
 
 ```html
 {%extends "base.html" %}
