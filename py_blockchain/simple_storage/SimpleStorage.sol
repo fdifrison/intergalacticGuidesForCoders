@@ -7,16 +7,32 @@ contract SimpleStorage {        // class definition
 
     // if a variable is not inizitalize it starts with null value -> for a uint is 0
     // if the visibility is not specified it is automatically set to internal
-    uint256 isNumber;               // unsigned int -> initialized to 0
+    uint256 age;               // unsigned int -> initialized to 0
 
     // public function can be called by both internal and external variable
+
+    struct People {
+        uint256 age; //index 0
+        string name; //index 1
+    }
+
+    People[] public people; // dynamic array of name people
+    // People[1] public people; // fix-size array
+    // People public person = People({age:2, name:"Yuri"}); statically populate the array
+
+    mapping(string => uint256) public nameToAge;
     
-    function store(uint256 _isNumber) public {
-        isNumber = _isNumber;
+    function store(uint256 _age) public {
+        age = _age;
     }
     
     function retrieve() public view returns(uint256)  {
-        return isNumber;
+        return age;
+    }
+
+    function addPerson(uint256 _age, string memory _name) public {
+        people.push(People(_age, _name)); // store people object in array -> the order has to be the same of the struct People obj
+        nameToAge[_name] = _age; // map name to age
     }
 
 }
