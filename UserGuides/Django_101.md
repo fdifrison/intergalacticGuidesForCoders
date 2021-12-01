@@ -45,6 +45,8 @@ Create an administrator account (superuser)
 
     python manage.py createsuperuser
 
+n.b if you forget the password you can create another superuser
+
 ## `admin.py`
 
 Once the admin is created we can add models to it in the `admin.py` file:
@@ -168,6 +170,8 @@ Django project settings
 - INSTALLED_APPS -> list of applications connected to the project; some are built-in (i.e. admin, auth, etc..), but also custom apps created with `manage.py startapp` have to be appended to be displayed.
 
 - TEMPLATES -> the paths to specific templates used in `view.py` to render the webpage are appended into the DIRS list
+
+- OPTIONS -> the `context_processor` key contains a list of predefined options; these are needed for the templates to recognize certain django/python construct without being explicitly imported in the templates (e.g. request, auth etc..).
 
 # Templates
 
