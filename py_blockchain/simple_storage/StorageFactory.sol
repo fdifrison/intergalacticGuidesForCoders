@@ -17,4 +17,13 @@ contract StorageFactory {
         SimpleStorage simpleStorage = new SimpleStorage(); 
         contractStorageArray.push(simpleStorage); // insert in the 
     }
+
+    // store data in the newly created simplestorage instance given its index
+    // e. sfStore 0 , 55 -> store 55 in the simplestorage of index 0 in the StorageFactory array (SimpleStorage)
+    function sfStore(uint256 _contractStorageIndex, uint256 _contractStorageNumber) public {
+        // Address
+        // ABI Application Binary Interface
+        SimpleStorage simpleStorage = SimpleStorage(address(contractStorageArray[_contractStorageIndex]));
+        simpleStorage.store(_contractStorageNumber);
+    }
 }
