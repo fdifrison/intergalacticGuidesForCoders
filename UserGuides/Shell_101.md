@@ -37,6 +37,9 @@ TOC
   - [.deb file](#deb-file)
   - [.tar archive](#tar-archive)
   - [.sh](#sh)
+- [NVIDIA / MINING related commands](#nvidia--mining-related-commands)
+  - [check gpu performance and process](#check-gpu-performance-and-process)
+  - [kill t-rex pids](#kill-t-rex-pids)
 
 
 # Piping
@@ -174,3 +177,14 @@ TOC
 ## .sh
 
     sudo bash <filename>
+
+
+# NVIDIA / MINING related commands
+
+## check gpu performance and process
+  
+    sudo nvidia-smi
+
+## kill t-rex pids
+
+    sudo pkill t-rex
