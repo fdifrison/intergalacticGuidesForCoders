@@ -17,7 +17,7 @@ TOC
 - [Loops](#loops)
   - [While loop](#while-loop)
   - [Try statement](#try-statement)
-    - [COMMON EXCEPTION](#common-exception)
+    - [Common exceptions](#common-exceptions)
 - [Strings](#strings)
   - [Common methods](#common-methods)
 - [Classes](#classes)
@@ -41,10 +41,19 @@ TOC
   - [The `operator` module](#the-operator-module)
 - [Scopes and Namespaces](#scopes-and-namespaces)
   - [Masking](#masking)
-  - [NonLocal scope](#nonlocal-scope)
+  - [Nonlocal scope](#nonlocal-scope)
 - [Closure](#closure)
   - [Shared extend scope](#shared-extend-scope)
   - [Nested Closure](#nested-closure)
+  - [Application](#application)
+- [Decorators](#decorators)
+  - [Multiple decorators](#multiple-decorators)
+  - [Memoization](#memoization)
+  - [Parametrized decorators](#parametrized-decorators)
+  - [Decorator class](#decorator-class)
+  - [Monkey Patching and Decorating classes](#monkey-patching-and-decorating-classes)
+  - [Single Dispatch Generic Functions](#single-dispatch-generic-functions)
+    - [Application - `Htmlizer`](#application---htmlizer)
 - [Python optimizations](#python-optimizations)
   - [Interning](#interning)
   - [Peephole](#peephole)
@@ -59,7 +68,8 @@ TOC
     - [Booleans operators](#booleans-operators)
     - [Short-Circuiting](#short-circuiting)
 - [Common Modules](#common-modules)
-  - [string](#string)
+  - [`string`](#string)
+  - [`functools`](#functools)
 
 # PEP8 - Naming conventions
 
@@ -244,7 +254,7 @@ test a code block.
 
 `finally` is a code block that is always executed, whether an exception or a break are invoked
 
-### COMMON EXCEPTION
+### Common exceptions
 
 - ZeroDivisionError
 
@@ -749,7 +759,7 @@ my_func() # a = 100, since `global a` has been declared, the variable `a` in the
 print(a) # a = 100
 ```
 
-## NonLocal scope
+## Nonlocal scope
 
 When we define a function inside another function, a new scope is created which is not the global (module level) scope, nor the local (function level) scope. It is a middle scope called `non-local scope`. Variables belonging to the nonlocal scope are called `free variables`.
 
@@ -897,7 +907,17 @@ adders[2](10) # should return 12 = 10 + 2
 # instead all the three functions will add 3, i.e. the last value at which n was pointing to
 ```
 
-`n` is pointing to the cell object created by python during compilation, and it doesn't get evaluated until the function is called at which point the cell is pointing to the last value n was pointing to, therefore 3.
+`n` is a global variable, and it doesn't get evaluated until the function is called, and at that time, after the for loop is executed is equal to 3. As a matter of fact we don't have a closure since `n` is a global variable. The correct way to achieve this would be:
+
+```py
+def create_adders():
+  adders = []
+  for n in range(1, 4):
+    adders.append(lambda x, y=n: x + y) # in this way we are saving the value of n at each iteration 
+  return adders
+
+# since we have specified a default value for `y`, this will be evaluated at creation time, not at runtime (i.e. when the function is called). `y` won't point to the object `n` itself but to its value at each iteration. Therefore, `y=n` belong to the local scope of the `create_adders` function, therefore, the functions appended to adders are actually closures
+```
 
 ## Nested Closure
 
@@ -931,6 +951,354 @@ inc_2() # -> 104
 .
 .
 ```
+
+## Application
+
+*hold*
+
+# Decorators
+
+A decorator is a function that takes a function as argument and returns a closure (that in general accept any number of arguments *args and **kwargs) that contain that same function passed with the addition of extra functionality. Let's see an example:
+
+```py
+def counter(fn): # counter takes a function as argument
+  count = 0
+  def inner(*args, **kwargs): 
+    nonlocal count
+    count +=1
+    print(f'Function {fn.__name} was called {count} times')
+    return fn(*args, **kwargs)
+  return inner
+
+def add(a, b):
+  return a + b
+
+add = counter(add) # closure function is returned by counter()
+# now add is no more referencing to the 'def add' function but to it's decorated version, returned by counter()  
+
+result = add(1, 2) # -> 3
+```
+
+In the example above, `counter()` is essentially a `decorator`; it takes an arbitrary function with any arbitrary arguments, and return the same function with the new "ability" of taking track of how many times it has been called. We reassigned the name add to the decorated function, to pointing out that the function is still the same but now points to the closure returned by `counter()`. Returning a closure is something pretty common in python, therefore and handy way has been defined to decorate a function using the `@` symbol.
+
+```py
+# once the function counter has been defined from previous example
+
+@counter
+def add(a, b):
+  return a + b
+```
+
+All good so far, but now if we look for the metadata of the function `add` we'll see that these now refers to the closure function `inner` and not to the original definition (`__name__`, `__doc__` etc. point to the closure function). The pythonic solution to this problem is to use the module `functools.wraps`:
+
+```py
+from functools import wraps
+
+def counter(fn):
+  count = 0
+  @wraps(fn) # we are decorating the inner function
+  def inner(*args, **kwargs): 
+    nonlocal count
+    count +=1
+    print(f'Function {fn.__name} was called {count} times')
+    return fn(*args, **kwargs)
+  return inner
+```
+
+## Multiple decorators
+
+Multiple decorators can be passed to a function; care must be taken to ensure that the order of execution of the two or more decorators respect what wanted by the coder. For example:
+
+```py
+def dec_1(fn):
+  def inner(*args, **kwargs):
+    print('dec_1 called')
+    result = fn() # calling the decorated function
+    return result
+  return inner # return the closure
+
+def dec_2(fn):
+  def inner(*args, **kwargs):
+    print('dec_2 called')
+    result = fn() # calling the decorated function
+    return result
+  return inner # return the closure
+
+
+@dec_1
+@dec_2
+def my_func():
+  print('my_func called')
+
+'''
+Calling my_func, decorated in this order, is equal to do:
+
+my_func = dec_1(dec_2(my_func))
+
+Therefore, first the closure dec_2(my_func) is evaluated and passed to dec_1(). Since inside the decorators the print() is executed before the function call (result = fn()), the printing output will be:
+
+dec_1 called
+dec_2 called
+my_func called
+
+because first the dec_1 function is called, it prints its output, then call fn passed as argument, which is dec_2(my_func); therefore dec_2 is called, it prints its output, then call the fn passed as argument, i.e. my_func, that prints its output.
+N.B. if the print() had been placed after the fn() call, the print-out order would had been reversed! This is to say that depending on the functionality we want to implement with our decorators, the order of application matters!
+'''
+```
+
+## Memoization
+
+Another very powerful application of decorators is called `memoization`, i.e. the process of storing data into cache to avoid excessive recursive calculation (like in the fibonacci or factorial function). Let's take as an example a function to compute the fibonacci value at the n position:
+
+```py
+# with recursion
+def fib(n):
+  return 1 if n < 3 else fib(n-1) + fib(n-2)
+```
+
+In this way, the function works and it is elegant, but it is not performant since it has to compute each time all the previous numbers in the fibonacci series. A way to solve this problem is to cache the results each time they are computed, and this can be easily implemented creating a class:
+
+```py
+class Fib:
+  def __init__(self):
+    self.cache = dict()
+
+    def fib(n):
+      if n not in self.cache:
+        cache[n] = self.fib(n-1) + self.fib(n-2)
+      return self.cache[n]
+```
+
+In this way, after creating an instance of Fib(), fibonacci sequence will be stored while computed (n.b. cache won't be shared between instances, each new instance will have its cache empty at the beginning). The same can be accomplished with a closure (i.e. with a decorator):
+
+```py
+def fib():
+  cache = dict()
+
+  def calc_fib(n):
+    if n not in cache:
+      # cache is a nonlocal parameter
+      cache[n] = calc_fib(n-1) + calc_fib(n-2)
+    return cache[n] 
+
+  return calc_fib # return the closure
+```
+
+From the function `fib()` to a decorator the path is short; we just need to generalize its structure:
+
+```py
+def memoize_fib(fib):
+  cache = dict()
+
+  def inner(n):
+    if n not in cache:
+      # the decorator is not carrying out the recursion
+      # it is only caching values
+      cache[n] = fib(n)
+    return cache[n] 
+
+  return inner # return the closure
+
+@memoize_fib
+def fib(n):
+  return 1 if n < 3 else fib(n-1) + fib(n-2)
+```
+
+It is worth to note that `memoize_fib` is not a general purpose decorator since it does not accept any number of arguments or keyword arguments (*args, **kwargs) as it usually does, but it is precisely built to work with the function `fib`. Another important aspect to handle is to limit the cache size to safeguard the tradeoff between performance and memory usage. Of course python as already a builtin decorator specifically design for memoization. It comes shipped with the `functools` module.
+
+```py
+from functools import lru_cache # least recently used cache
+
+@lru_cache() # lru_cache decorators accept arguments.. see below
+def fib(n):
+  return 1 if n < 3 else fib(n-1) + fib(n-2)
+```
+
+## Parametrized decorators
+
+Parametrized decorators are the ones that can handle arguments (such as `wrap` and `lru_cache`). Imagine we have a decorator that run a function a number of time `n` set by the user:
+
+```py
+def run_n_times(fn):
+  n = 10
+
+  def inner(*args, **kwargs):
+    for _ in range(n):
+      fn(*args, **kwargs))
+    return print('{fn.__name__} was called {n} times)
+
+  return inner
+
+@run_n_times
+def my_func():
+  pass
+```
+
+Now, the number of times the function is called has been hardcoded in the decorator, but we want to be able to change that parameter. We can think at something like:
+
+```py
+def run_n_times(fn, n: int):
+  def inner(*args, **kwargs):
+    for _ in range(n):
+      fn(*args, **kwargs))
+    return print('{fn.__name__} was called {n} times')
+
+  return inner
+
+# now we would expect to call the decorator as:
+@run_n_times(10)
+def my_func():
+  pass
+
+# however, the argument `10` in the decorator call is in the position of `fn`, therefore it won't work.
+# we could instead apply the decorator indirectly as:
+my_func = run_n_times(my_func, 10)
+# and this will work but how to implement the same behavior with the @ method?
+```
+
+In order to be able to use the `@` symbol with a decorator that accept arguments, we need that decorator to return a decorator itself when called. The result of `run_n_times(10)` has to be another decorator that actually perform the decoration we want. The solution is straightforward: we need to enclose our decorator in a `decorator factory` that will olds the extra parameters needed.
+
+```py
+def run_n_times(n: int): # decorator factory
+
+  def inner1(fn): # decorator
+
+    def inner2(*args, **kwargs):
+      for _ in range(n):
+        fn(*args, **kwargs)
+      return print('{fn.__name__} was called {n} times')
+
+    return inner2
+  
+  return inner1
+```
+
+Now the call `@run_n_times(10)` actually returns the decorator `inner1` which implement the functionality we originally looked for:
+
+```py
+@run_n_times(10) # returns the decorator `inner1`
+def my_func():
+  pass
+
+# this is equivalent to say:
+my_func = run_n_times(10)(my_func)
+```
+
+## Decorator class
+
+Not only functions can be used to create decorators factory, but also classes. As a matter of fact, thanks to the `__call__` method, we can replicate the same exact behavior seen in the previous example:
+
+```py
+class MyClass:
+  def __init__(self, n): # the instance of the class become the decorator factory
+    self.n = n
+
+    def __call__(self, fn): # this is the actual decorator
+      def inner(*args, **kwargs):
+        return fn(*args, **kwargs)
+      return inner # closure
+
+@MyClass(10)
+def my_func():
+  pass
+```
+
+## Monkey Patching and Decorating classes
+
+Functions are not the only object that can be decorated; Classes too can thanks to the dynamic behavior of python that allows the so called `Monkey Patching`, i.e. the modification/addition of attributes/methods to classes at runtime. Essentially, we are able to mutate the behavior of a class at runtime. Imagine we are using the class `Fraction` and we want to add to it some functionality; we can do the following:
+
+```py
+from fractions import Fraction
+
+f = Fraction(2,3) # create an instance of the Fraction class
+# we want the class `Fraction` to be able to speak ...
+# if we write:
+f.speak = 100
+# we are Monkey Patching the class Fraction at runtime, so if following we say:
+f.speak # -> it will return 100
+```
+
+We can make the `Monkey Patched` methods also callable, for example using a lambda function (we can directly patch the class instead of an instance of it):
+
+```py
+Fraction.speck = lambda self, message: f'Fraction says {message}'
+# we need `self` as argument because we will pass to the method an instance of the class Fraction
+# Now we can call:
+f.speak('You cannot pass!') # -> 'Fraction says You cannot pass!'
+```
+
+We can see how the process of monkey-patching is essentially a decoration of a class adn, as a matter of fact it can be done with a decorator function:
+
+```py
+def decorator_speak(cls): # we are passing a class to the function
+  cls.speak = lambda self, message: f'{self.__class__.__name__} says {message}'
+  return cls # return is only needed if we want to decorate with the `@` symbol
+
+# Now we can simply write on any class:
+class Person:
+  pass
+
+Person = decorator_speak(Person) # indirect decoration
+p = Person() # instance of the class
+p.speak # method inherited from the decorator
+```
+
+Let's do something more useful; Imagine we want to debug an existing class creating a decorator.
+
+```py
+def info(obj): # think of this as of the method we would write inside the class, i.e. 'obj' would be 'self'
+  from datetime import datetime, timezone
+  results = {
+    'time' : f'{datetime.now(timezone.utc)}',
+    'name' : obj.__class__.__name__,
+    'id' : hex(id(obj)),
+    'vars' : [(k,v) for k, v, in vars(obj).items()]
+  }
+  return results
+
+
+def debug_class(cls): # This is the decorator
+  cls.debug = info
+  return cls 
+
+
+# if we want to pass the decorator in function-style:
+debug_class(Person)
+# we don't need the function to 'return cls' since we are modifying an object inplace.
+# However, if we want to use the `@` we need the return, because otherwise, the default return is 'None'.
+Person = debug_class(Person) 
+# the rhs is returning None and it is assign it to 'Person' that therefore doesn't point anymore to the class Person nor to its decorated version.
+
+@debug_class
+class Person:
+  def __init__(self, name, age, employed=True):
+    self.name = name
+    self.age = age
+    self.employed = employed
+
+p = Person('Giovanni', 32)
+p.debug()
+'''
+{'id': '0x7ff925ec2150',
+ 'name': 'Person',
+ 'time': '2022-01-26 10:11:05.647618+00:00',
+ 'vars': [('name', 'Giovanni'), ('age', 32), ('employed', True)]}
+'''
+```
+
+## Single Dispatch Generic Functions
+
+First lets define what overloading is:
+
+`Overloading` in object oriented programming is the ability to create more then a function with the same name al long as its signature is different (essentially if the two functions are distinguishable, i.e. different number/type of arguments etc..). When the program is compiled, the interpreter will understand, based on the signature at which function with the same name we are referring to. 
+
+In python, since there is no static typing, we can't declare a function signature, therefore, overloading, in its strict sense, is not possible. A workaround to this problem is called  `single dispatch generic function`, which allows us to overload functions based on the type of the first argument (if we want to consider the type of more arguments we need `multi dispatch`).
+
+
+### Application - `Htmlizer`
+
+
+
 
 
 # Python optimizations
@@ -1146,9 +1514,9 @@ or
 Looking at a truth table there are two case in which the program can simply is job evaluating only part of a boolean statement. Thi is called `short-circuiting`:
 
 ```py
-True or Y -> True 
+True or Y # -> True 
 # with an or statement, id the first argument is True it doesn't matter whether the second argument is True or False, the operation will always evaluate to True
-False and Y -> False
+False and Y # -> False
 # with an and statement, id the first argument is False it doesn't matter whether the second argument is True or False, the operation will always evaluate to False
 ```
 
@@ -1166,6 +1534,16 @@ if my_string and 'a' == my_string[0]:
 
 # Common Modules
 
-## string
+## `string`
 
 Module with some useful string constants and representation.
+
+## `functools`
+
+Module with useful functions:
+
+* `total_ordering` : decorator for classes that automatically implement comparison functionality (le, ge, lt, gt), if only one of these is already implemented
+* `reduce`: iterate over a sequence applying a function
+* `partial`: lets us set some arguments of a function as default parameters
+* `wraps`: decorator that allow to wrap a function/class metadata and keep it after the decoration
+* `lru_cache`: decorator that allows caching data in recursive structures
