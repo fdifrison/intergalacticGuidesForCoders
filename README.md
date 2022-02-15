@@ -12,7 +12,7 @@ Collection of relevant projects and reusable code.
 
 * web server creation
 
-## `py_deep_dive
+## `py_deep_dive`
 
 * Fred Batipste Amazing Python Courses. Working on my personal Python Bible
 
