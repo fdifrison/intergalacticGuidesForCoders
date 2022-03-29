@@ -37,6 +37,8 @@ TOC
   - [.deb file](#deb-file)
   - [.tar archive](#tar-archive)
   - [.sh](#sh)
+  - [Find own network ip](#find-own-network-ip)
+  - [Find ip of connected device to the network](#find-ip-of-connected-device-to-the-network)
 - [NVIDIA / MINING related commands](#nvidia--mining-related-commands)
   - [check gpu performance and process](#check-gpu-performance-and-process)
   - [kill t-rex pids](#kill-t-rex-pids)
@@ -177,6 +179,15 @@ TOC
 ## .sh
 
     sudo bash <filename>
+
+
+## Find own network ip
+
+  ip a
+
+## Find ip of connected device to the network
+
+  nmap -sP `own_ip`
 
 
 # NVIDIA / MINING related commands
