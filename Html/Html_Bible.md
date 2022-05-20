@@ -35,7 +35,10 @@ The DOCTYPE declaration helps the browser to better display the page, it has to 
 
 ### Heading
 
-Headings tag goes from `<h1>` to `<h6>` in decreasing order of importance/size
+Headings tag goes from `<h1>` to `<h6>` in decreasing order of importance/size. Search engines use headings to structure the website content and as a consequence users can be more or less attracted by the weblink. Heading shouldn't be used to make a text bigger or smaller since they have a specific purpose in the page structure. Headers have a predefined font size but this can be override with the `style="font-size:60px";` attribute (font-size is a CSS attribute).
+
+### Paragraph
+Paragraph are tagged with `<p>`; they start always on a new line and have a predefined margin above and below. The browser is in control of the spacing, since it has to handle different window size and resolutions, therefore, adding extra spaces between words is useless, they will be stripped away. `<hr>`indicates a line break between two paragraph and it is rendered with an horizontal ruler, while `<br>` is a simple line break and can be placed also inside a single paragraph. If we want to preserv spaces and line breaks as they are written we can use the `<pre>` tag which usually comes with a default Courier font.
 
 ### Links
 
