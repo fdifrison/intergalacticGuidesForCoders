@@ -1,4 +1,4 @@
-<h1>My Personal Html Bible</h1>
+<h1>Html Manual</h1>
 
 by Ing. Giovanni Frison
 
