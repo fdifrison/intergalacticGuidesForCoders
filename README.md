@@ -1,12 +1,17 @@
-# PyFry Python Projects Repository
+# PyFry Repository
 
-Collection of relevant projects and reusable code.
+Collection of manuals, relevant projects and reusable code.
 
-## Project list
+## Python
+Udemy course from Fred Batipste. 
 
-## `py_deep_dive`
+## Javascript
+Udemy Course from Schmedtmann
 
-* Fred Batipste Amazing Python Courses. Working on my personal Python Bible
+## Html and Css
+Udemy Course from Schmedtmann
 
+## Frameworks
 
-
+### Docker and Kubernetes
+Udemy Course from Bret Fisher
