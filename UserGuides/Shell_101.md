@@ -145,6 +145,15 @@
 
 ### nmap -sP `own_ip`
 
+## Transfer data from server
+
+### curl
+    
+    curl [options] [URL...]
+    curl -o [file_name] [URL...] # save content to file_name
+    curl -u {username}:{password} [FTP_URL] # download from a private FTP server
+    curl -x [proxy_name]:[port] [URL...] # connection using a proxy
+
 
 ## NVIDIA / MINING related commands
 
