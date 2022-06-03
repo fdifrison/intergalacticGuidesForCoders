@@ -69,10 +69,12 @@ Links are defined by the tag `<a>`, the url of the link is indicated by the `hre
 
 ### Images
 
-To render images the tag is `<img>` and it has three arguments, `src` the source of the image, `alt` an optional alternative text, `width` and `<height>`
+To render images the tag is `<img>` and it has three arguments, `src` the source of the image, `alt` an optional alternative text, `width` and `<height>`- Img elements don't require any content (there is no closing tag), instead an attribute, i.e. a piece of data, can be inserted inside the tag; src (source) is the attribute that specify the path and the filename of the image to show.
+
+Another important attribute is `alt` (alternative text) i.e. a description of the image. This is important for two reasons, the first is related to the ability of web search engine to associate the image to a specific search, the second is to allow blind people to let the web reader tell them what the image is about. The alt description won't be printed to the screen unless the image itself cannot be found, in which case the alt text will substitute the image.
 
 ```html
-<img src="myImage.jpg" alt="Some text" width="104" height="142">
+<img src="myImage.jpg" alt="Some text describing the image" width="104" height="142">
 ```
 
 ### Attributes
@@ -94,4 +96,27 @@ Text appearance can be altered with specific tags:
 * `<em>` for italic text (former `<i>`)
 
 
+### Lists
 
+Lists can be defined as `Ordered` or `Unordered`.
+Ordered lists are enclosed in the `<ol>` tag and each element is numbered progressively with the `<li>` tag.
+Unordered lists are enclosed in the `<ul>` tag each element is essentially a bullet point with the same `<li>` tag.
+
+### Hyperlinks
+
+Links can be divided into two major categories: the ones pointing inside the website domain (i.e. to another page of the same website) or the ones that point another external website. The structure of the tags is the same for the two typologies. We start with a `<a>` tag (anchor) and inside the tags we specify the text that wil be displayed on the webpage that will have the hyperlink attached. The actual url of the page will be an attribute inside the opening tag called `href`. Another attribute we may want to specify is the `target=_blank` meaning that the link will be opened in a new tab. For an internal link, instead of the complete url path we can simply place in the href attribute the name of the .html file at which we are pointing at. Finally, if we want to create a dummy link that doesn't point anywhere, we can specify `href="#"`, in this way, we can click the link but the only behavior we will observe is to go back to the top of the current page we are already on.
+
+
+### Structuring the webpage
+
+If we place elements in the body of the webpage without any particular structure, they will be simply placed one below the other. Instead, there are specific html5 elements that should be used to structure specific parts of the page. 
+
+For example, if we have a series of hyperlinks at the top of the page we want them to be grouped in a `<nav>` (navigation bar) element. The appearance of the page won't change, we have simply grouped a series of link inside an invisible box, but when we will be adding a layout to the page it will be fundamental to have such structure.
+
+Again, the top part of the page, i.e. the title and the nav-bar can be placed inside another html element called `<header>` indicating the top part of the page.
+
+If it is a blog page, another common element for the actual content part is the `<article>` element. The article element itself can and should have an header element inside to better structure the content.
+
+At the end of the body element usually there is a `<footer>`.
+
+All of these elements serves for two purpose mainly: the first, as already stated, to later attach the elements to a layout and the second to give a semantic structure to the page.
