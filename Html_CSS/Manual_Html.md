@@ -37,7 +37,14 @@ Following a basic html example:
 An html element is everything from the opening to the closing tag (es. `<p>...<\p>`). Some elements have no content like `<br>` (line break) and none of them is rendered by the browser, only their content.
 
 
-## BASICS
+## Semantic Html
+With **Semantic** Html we basically mean the use of html elements not only to give a proper render in the browser but to create a more clear and informative structure/meaning to the html code. **We use semantic html to give a clear meaning to elements**. This concept came along with the introduction of Html5. For example we could use the `<div>` element as container in any situation, but it would be more semantically meaningful, e.g. for a navigation bar, to use a less generic and more specific `<nav>` element. 
+
+Another reason to use semantic html is that search engine are able to "read the html structure" and better index the search.
+
+Probably the most important reason is to give full `accessibility` to the webpage content for blind people or anyone using a screen reader.
+
+## Basics of Html
 
 Following the anatomy of an html element:
 
@@ -86,6 +93,9 @@ Everything inside the tag is referred as an attribute (es. src, width, height et
 * `<p title="I'm a tooltip">` title creates a tooltip that appear when the mouse is positioned on the element
 
 Here can be found a complete set of the attributes https://www.w3schools.com/tags/ref_attributes.asp
+
+### Html entities
+Html entities are printable special characters defined by a special html code. A complete list can be found here https://www.freeformatter.com/html-entities.html.
 
 
 ### Text Style
