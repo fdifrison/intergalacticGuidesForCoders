@@ -1,11 +1,9 @@
-const markWeight = 78;
-const markHeight = 1.69;
-const johnWeight = 92;
-const johnHeight = 1.95;
+import { markBMI, johnBMI } from "./01_operators.js";
 
-const johnBMI = johnWeight / johnHeight ** 2;
-const markBMI = markWeight / markHeight ** 2;
+if (markBMI > johnBMI) {
+  console.log(`Mark has the higher BMI with a value of ${markBMI}`);
+} else {
+  console.log(`John has the higher BMI with a value of ${johnBMI}`);
+}
 
-const markHigherBMI = markBMI > johnBMI;
-
-console.log(markHigherBMI);
+console.log(Boolean("a"));

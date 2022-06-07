@@ -9,3 +9,5 @@ const markBMI = markWeight / markHeight ** 2;
 const markHigherBMI = markBMI > johnBMI;
 
 console.log(markHigherBMI);
+
+export { markBMI, johnBMI };
