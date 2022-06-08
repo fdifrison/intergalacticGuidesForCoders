@@ -2,6 +2,8 @@
 
 **Based on Apache Kafka 3**
 
+---
+
 Created as an open-source project by LinkedIn written in Java and Scala, Apache Kafka is a tool to decouple data streams & systems, meaning that it is a layer between the source system generating/streaming data (eg. financial transaction, user interactions with websites) to a target system (eg. database, analytics, emails..). It is a distributed system highly scalable, with high performance (very low latency which give it the name of `real-time system`).
 
 Among its many use cases, the most relevant are:
@@ -110,27 +112,119 @@ Zookeeper works with an odd number or servers (usually max is 7); it has one lea
 From version 3.x we can still work with zookeeper but is not mandatory anymore, instead we have an alternative called `Kafka Raft`. From version > 4.x we won't have zookeeper no more. With KRaft we will have a huge scale up in number of partition per cluster and an improvement in stability, maintenance, monitoring, security, recovery and shutdown. However in version 3.x is still not production ready.
 
 
+[back to Top](#apache-kafka-manual)
+
+---
+
+# Starting Kafka
+
+Starting kafka may not be trivial depending on the OS we are on. For a no-brainer solution we can usi Ui platforms such as https://www.conduktor.io/kafka/starting-kafka
+
+## On Linux
+
+Depending on the binaries downloaded from the apache kafka website.
+
+First run `zookeeper`:
+
+* zookeeper-server-start.sh -daemon  ~/kafka_2.12-3.2.0/config/zookeeper.properties 
+
+Then `kafka`:
+
+* kafka-server-start.sh ~/kafka_2.12-3.2.0/config/server.properties
+
+---
+
+# Kafka CLI
+
+## kafka-topic.sh
+
+The following command will allow us to create our first topic, specifying its name, the number of partitions and the replication factor (if we have a cluster with more than one broker.. not the case).
+
+* `kafka-topics.sh --bootstrap-server localhost:9092 --create --topic [topic_name] --partitions [num_of_partitions] --replication-factor 1`
+
+We can check the available topics with the command `--list`:
+
+* `kafka-topics.sh --bootstrap-server localhost:9092 --list`
+
+And to have a more precise description of a particular topic we use the `--describe` option. From the description we can see the partitions listed and their broker leader.
+
+* `kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic [topic_name]`
+
+Without specifying the `[topic_name]`, we are going to describe all the available topics.
+
+To delete an existing topic use the `--delete` option (not working on windows):
+
+* `kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic [topic_name]`
 
 
+## kafka-console-producer.sh
+
+Opening a producer we are able to send data to the partitions of our topics. The most basic way to produce data is the following:
+
+* `kafka-console-producer.sh --bootstrap-server localhost:9092 --topic [topic_name]`
+
+this will open a prompt where we can type messages that are sent to the topic. If we try to produce data to a non existing topic, kafka will create one for us, by default with one partition and a replication factor of 1 (at first it will sent a warning while trying to decide at which leader attach the newly created topic).
 
 
+If nothing is specified, like above, the default `key` of the producer will be `none`; instead, if we want to produce with a key we need to specify two properties: the `--property parse.key=true` to tell the producers that we are going to insert data with a specific key, and `--property key.separator=[separator]` to specify which is the character that separate the key from the message.
 
 
+* `kafka-console-producer.sh --bootstrap-server localhost:9092 --topic [topic_name] --property parse.key=true --property key.separator=:`
+
+In this case we are specifying that the separator is a colon `:` therefore what comes before the colon is the key and what is after is the message.
+
+```sh
+> key1:a message
+> key2:another message
+```
+
+Once we have specified `parse.key=true`, if we try to sent a message without key (i.e. without separator)
 
 
+## kafka-console-consumer.sh
+
+Opening a consumer we are able to read what the producers are sending to the topics. N.B. by default, the consumers will star to read from the end of the topic, therefore if messages have been sent before, we want see them.
+To call a consumer with default properties, the syntax is the following:
+
+* `kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic [topic_name]`
+
+to read the entire topic (also what has been written before we open the consumer) we need to explicitly set the option `--from-beginning`. We need to be careful thou, because we may see the messages read in an apparently random order (anyway different from our insertion order); this is because, if we have more than one partitions, messages are spread evenly across them and they can be retrieved in order only inside the same partition.
+
+If we want the consumer's messages to be more informative, there are a bunch of property that we can specify; for example, the following will print all the messages from the beginning, with their timestamp and their key:
+
+* `kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic [topic_name] --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.timestamp=true --property print.key=true --property print.value=true`
 
 
+### consumers-group
 
+To leverage the scalability of kafka we knw that we can group consumers into consumers-group, and each consumer in a group is able to read from one partition (only one consumer per partition). We can have a consumer group with more consumers than the number of partitions in the topic we are reading but those in excess will be inactive. To create a consumer belonging to a consumer group:
 
+* `kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic [topic_name] --group [group_name]`
 
+now the consumers is part of the `[group_name]` consumer-group, and each new consumer we will create with the same group name will belong to the group. The messages send by the producer will be spread evenly among the active (one per partition) consumer of the group.
 
+When working with a consumer-group we can,t specify the option `--from-beginning` to read everything inside the topic because once the group is created an `offset` is set and the group will read from there on.
 
+Of course, we can have more than one consumer-group (an this is the real-case scenario, e.g. more end-application using the same data for different purposes) and each consumer-group will receive all the messages produced.
 
+## kafka-consumer-groups.sh
 
+With the consumer-groups CLI we are able to manage, inspect, delete our consumer-groups. For example, if we want to list our consumer-groups: 
 
+* `kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list`
 
+or if we want specific information about a consumer-group we can:
 
+* `kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group [group_name]`
 
+among the info we will find the topic and the partitions assigned to the group, the `current` the `log-end` and the `lag` offset (current and log-end will coincide if we have read up to the tail of the topic, otherwise the lag will be > 0) and the `consumer-id` which will tell us which consumer of the group is assigned to which partition.
 
+### reset the offset
 
+Sometimes it can be useful to reset the offset created by the consumer-group to re-read the topic from the beginning. To reset the offset we have to specify the `--reset-offsets --to-earliest` and specify the topic to reset or directly reset the offset off all existing topics with the flag `--all-topics`.
 
+* `kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group [group_name] --reset-offsets --to-earliest --execute [topic_name]`
+
+N.B. we cannot reset the offset if a consumer is running.
+
+With the flag `--to-earliest` we want to offset 0, but it can be usefull to rewinde the offset only of few steps; for this we use the flag `-shift-by -[number]` where `[number]` is how many step back we want to take from the current offset. 

@@ -2,6 +2,8 @@
 
 For the official manual -> https://docs.docker.com/
 
+---
+
 Released in 2013, Docker represents a huge shift in the IT ecosystem introducing `containerization`. Basically a containers reduce the complexity software development lifecycle serving in a single platform the tools required for deploying, testing even when the application is developed in different languages, frameworks, or on different clouds and so on. The maintenance of software is another crucial factor that has led docker to be a must. There is no need to rewrite code, it is just a different way of running and packaging an application and moving around an infrastructure.
 
 https://landscape.cncf.io/ is a fun link to appreciate the magnitude of the container based application that are out there.

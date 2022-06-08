@@ -208,12 +208,23 @@ if (dummy === 1) {
 ```
 
 ### The Switch statement
-An alternative to multiple *if - else if* block is to use a `switch statement`. Coming from python, it is essentially a dictionary which contains a series of key-action pairs.
+An alternative to multiple *if - else if* block is to use a `switch statement`. Coming from python, it is essentially a dictionary which contains a series of key-action pairs. The comparison between the keys and the test value is a strict comparison `===`.
+The `break` keyword is needed after each key in order to stop the execution, otherwise js will execute everything up to the first `break`. Two cases that follows up without a break have the same logic of an `OR` statement.
 
 ```js
-const pickANum prompt("Please choose a number")
+const pickANum = prompt("Please choose a number");
 
-switch
+switch (pickANum) {
+  case "1":
+    console.log("you picked 1");
+    break;
+  case "2":
+  case "3":
+    console.log("You picked a number between 2 and 3");
+    break;
+  default:
+    console.log(`You picked ${pickANum}`);
+}
 ```
 
 ### The Conditional operator
@@ -246,21 +257,8 @@ Ternary operator are useful also in string templates since we can insert any exp
 
 
 ### User inputs
-The js function to ask for user input is called `prompt`; it returns a string that can be stored in a variable. The comparison between the keys and the test value is a strict comparison `===`.
-The `break` keyword is needed after each key in order to stop the execution, otherwise js will execute everything up to the first `break`. Two cases that follows up without a break have the same logic of an `OR` statement.
+The js function to ask for user input is called `prompt`; it returns a string that can be stored in a variable. 
 
 ```js
 const pickANum = prompt("Please choose a number");
-
-switch (pickANum) {
-  case "1":
-    console.log("you picked 1");
-    break;
-  case "2":
-  case "3":
-    console.log("You picked a number between 2 and 3");
-    break;
-  default:
-    console.log(`You picked ${pickANum}`);
-}
 ```
