@@ -2,11 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link href="style.css" rel="stylesheet" />
     <title>The Basic Language of the Web: HTML</title>
   </head>
 
   <body>
-    <header>
+    <header class="main-header">
       <h1>📘 The Code Magazine</h1>
 
       <nav>
@@ -27,7 +28,9 @@
           height="50"
         />
 
-        <p>Posted by <strong>Laura Jones</strong> on Monday, June 21st 2027</p>
+        <p id="author">
+          Posted by <strong>Laura Jones</strong> on Monday, June 21st 2027
+        </p>
 
         <img
           src="img/post-img.jpg"
@@ -100,7 +103,7 @@
 
     <aside>
       <h4>Related posts</h4>
-      <ul>
+      <ul class="related">
         <li>
           <img
             src="img/related-1.jpg"
@@ -109,7 +112,7 @@
             height="100"
           />
           <a href="#"> How to Learn Web Development</a>
-          <p>By Jonas Schmedtmann</p>
+          <p class="related-author">By Jonas Schmedtmann</p>
         </li>
         <li>
           <img
@@ -119,7 +122,7 @@
             height="100"
           />
           <a href="#"> How to Learn Web Development</a>
-          <p>by jim Dillon</p>
+          <p class="related-author">by jim Dillon</p>
         </li>
         <li>
           <img
@@ -129,11 +132,11 @@
             height="100"
           />
           <a href="#"> How to Learn Web Development</a>
-          <p>By Matilda</p>
+          <p class="related-author">By Matilda</p>
         </li>
       </ul>
     </aside>
 
-    <footer>Copyright &copy; 2027 The Code Magazine</footer>
+    <footer id="footer">&copy; 2027 The Code Magazine</footer>
   </body>
 </html>
