@@ -27,7 +27,9 @@ Once Docker is installed we can do some quick checks to very that it works prope
 
 ---
 
-# Docker command line
+# Docker CLI
+
+*https://docs.docker.com/engine/reference/run/*
 
 Following a list of the most common docker command that can be used from the terminal:
 
@@ -203,6 +205,8 @@ N.B. if the `[another_tag]` image won't differ from the original we already push
 
 ## Dockerfile
 
+*https://docs.docker.com/develop/develop-images/dockerfile_best-practices/*
+
 The Dockerfile is the setup script that contains the instructions used by docker to build an image. Here a link to a sample Dockerfile to build nginx[link-to-sample-docker-file](sample_Dockerfile).
 
 The main part of the Dockerfile are:
@@ -213,6 +217,7 @@ The main part of the Dockerfile are:
 * `WORKDIR`: is simply a cd to a folder, use this and not `RUN cd /some/path`
 * `COPY`: copy files in to the image
 * `EXPOSE`: expose the listed ports to the docker virtual network; wee still need to use `-p` to open this ports to the host. By default no TCP or UDP connection are exposed
+* `VOLUME`: create a volume path to store persistent data inside the container that will outlive the container itself
 * `CMD`:is required, can be only one, and are the commands that will be launched every time we start an image from a container
 
 
@@ -228,3 +233,97 @@ N.B. remember the order!! once a command line in the dockerfile is changed, all 
 
 ### extending existing images
 
+Instead of building entire new images from scratch what we often might doing is to take an existing build and then add stuff of our particular interest, then recompile the image and push it to our docker hub repository. At the link a dummy example of how we can start from the nginx built and add a file to it
+[link-to-extending-exiting-images](add_file_to_image_Dockerfile). One of the benefit in using an existing file is that we don't need to specify a complete Dockerfile because the instruction we don't need to change will be taken directly from the source Dockerfile (such as the CDM).
+
+---
+
+# Container Lifetime & Persistent Data
+
+Containers can be defined as `immutable infrastructure` meaning that they essentially can be thrown away (mutable) but their images never change, can be upgraded/modified and simply re-deployed in a new container (we don't change it while it is running). But what happens to our unique data processed in the container (like databases, files, key values etc..)? Here comes an important concept that docker ensure: the `separation of concerns`, meaning that our data are not mixed up in the container that holds our application so that the image of the application can be updated while the data are stored safely. These data that should be kept separate from the mutability of the container are called `persistent data`; before containers it wasn't a problem since also the infrastructures were persistent (e.g. servers), but now with the concept of containers and application auto-scaling, how to handle persisted data is a key factor.
+
+Docker use two solution to the problem of persistent data:
+* `Data Volumes`: essentially a file path attached to a container at its creation
+* `Bind Mounts`: essentially a sharing of a local directory into the container (the container sees it as a file path, it doesn't know it is coming from the host)
+
+## Data Volumes
+
+*https://docs.docker.com/storage/volumes/*
+
+The first way in which we can tell the containers about a volume is in the dockerfile with the keyword `VOLUME` and a path associated to it. Essentially we are creating a folder in the container that outlive the container itself; in fact it has to be deleted manually. In the dockerfile we specify the path to the volume, and this path is relative to the container:
+
+```sh
+# from the mysql official dockerfile
+VOLUME /var/lib/mysql
+```
+
+However if we inspect a container built with a volume, we will also find a `Mount` key that will specify that there is a volume, that its destination is the container path above, and that the `source` is actually a path to the host, where data are actually stored in order to outlive the container. We cna inspect the docker volume with:
+
+* `docker volume ls`
+* `docker volume inspect [volumeUniqueID]`
+
+On linux we are actually able to navigate to the host path and see the data store; on Windows and Mac, since docker is running on a thin VM it is not so easy to access them. The problem is that inspecting directly the volumes (we can easily have more than one) we get no information on the volume side, i.e. to which container is it attached.
+
+The solution to this problem is to use `named volume`, i.e. assign a specific and unique name to a particular volume related to a particular container/image. 
+
+*`docker container run -d --name mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=True`**`-v mysql-db:/var/lib/mysql`**`mysql`
+
+With the `-v` flag we are telling docker to create a volume for the container at the same path that we had specified in the dockerfile (it is actually an alternative), but in advance, we also specified a name with a colon in front of the path `mysql-db:` which will be the name of the unique volume. In this way, inspecting the volume we will have a custom name that will easily remind us to what purpose it was created, and in the same way, inspecting the container we will se a more human readable source path to the host.
+
+Another way to create data volumes is using the command:
+
+* `docker volume create`
+
+in this way we are creating a volume that will be later on attached to a container, and the only utility of doing this is to  be able to `specify a custom driver` (default is 'local') and other metadata.
+
+## Bind Mounts
+
+*https://docs.docker.com/storage/bind-mounts/*
+
+*bets choice for local development or local testing*
+
+Bind mounts are nothing more than a mapping between a host and a container file directory. Like the volumes, it skips UFS, therefore data outlive any container tha may be deleted at some point. A bind mount can't be specified in the dockerfile, instead it needs to be an argument of our *container run* command, again under the flag `-v`:
+
+* `... run -v [full_host_path]:[container_path]`
+
+e.g. linking the present directory with the html directory of the nginx container; the container will be able to access everything inside the pwd folder.
+
+* `docker container run -d --name nginx -p 80:80 -v $(pwd):/usr/share/nginx/html nginx`
+
+instead of a name, we need to specify a full local host path to be mapped to the container path.
+
+The strength of external mount to our containers is that we cna actually work inside the container without needing to access it interactively; we could develope our app in the shared folder and simply see the log on the container to check for errors.
+
+---
+
+# Docker Compose
+
+*https://docs.docker.com/compose/*
+
+There will be few occasion where we will find a stand-alone solution to our problem therefore running in a single container; more often we will need to combine different services running on separate containers and here come in rescue `docker compose`. 
+
+Docker compose takes care of the relation between containers, creating a one solution for developer environment that can be run and setup in single file. It is composed by two pieces:
+
+* a `YAML` file that contains the setup of containers, networks and volumes
+* the CLI `docker-compose` that is used for local dev/test with the YAML files
+
+Following a template of a `docker-compose.yml` file to understand how it is structured:
+
+```yml
+# version isn't needed as of 2020 for docker compose CLI. 
+# All 2.x and 3.x features supported
+# Docker Swarm still needs a 3.x version
+version: '3.9'
+
+services:  # containers. same as docker run
+  servicename: # a friendly name. this is also DNS name inside network
+    image: # Optional if you use build:
+    command: # Optional, replace the default CMD specified by the image
+    environment: # Optional, same as -e in docker run
+    volumes: # Optional, same as -v in docker run
+  servicename2:
+
+volumes: # Optional, same as docker volume create
+
+networks: # Optional, same as docker network create
+```
