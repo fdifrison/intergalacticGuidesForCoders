@@ -502,3 +502,28 @@ person.calcAge = function (presentYear) {
 ```
 Now, when the calcAge will be called the first time ti will append to the object `person` the property `age` avoiding us and the machine the burden to compte it over an over when requested.
 
+---
+
+# Debugging
+
+To debug js code the easiest way is to use the `Source` tab in the developer mode of our chrome browser; there we can load the script attached to our html file and place breakpoints.
+
+Other useful commands that we can use to inspect our objects during debugging are:
+
+* `console.table(arg)`: which returns the object in a table format, useful in particular for huge objects
+
+---
+
+# DOM Manipulation
+
+With DOM **D**ocument **O**bject **M**odel we are referring to a tree-structure representation of the html document (carried out by the browser) which allows the js code to manipulate html elements in order to create a dynamic webpage.
+
+The most basic interaction we cna have is to select an element directly in the js code with:
+
+```js
+document.querySelector('[element_name]')
+```
+
+here `document` is **the entry point to the DOM**, meaning that from it we can access any element of the html structure. Next to it we will always have the `<html>` element, which enclose all the html code, and usually the tree structures continue to divide (e.g. `<head>` and `<body>` with all their sub elements). **Whatever is in the html code will also be a node or a leaf of the DOM.**
+
+It is important to understand that the DOM is not a part of js (there is no reference in the ecma) but DOM methods and Properties are essentially **WEB APIs** implemented in the browser (and written in js) and js can easily interact with them without the need of any external import.
