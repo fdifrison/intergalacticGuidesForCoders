@@ -400,10 +400,11 @@ big_arrow(2, 4);
 
 Essentially we don't need the curly braces (becaomes mandatory if we need to perform more than one operation inside the function), the keyword *function* and **the return is implicit** (if we have only one line of function, if the curly braces are needed, i.e. there is more than one line of coe, than the return has to be explicit). 
 
+---
 
-## Built-in functions
+# Built-incommon functions
 
-### prompt()
+## prompt()
 The js function to ask for user input is called `prompt`; it returns a string that can be stored in a variable. 
 
 ```js
@@ -411,8 +412,14 @@ const pickANum = prompt("Please choose a number");
 ```
 
 
-### Number()
+## Number()
 Convert a compatible type to number
+
+## Math
+
+* `Math.random()`: returns a random float
+  * `Math.random()*x`: returns a random float between 0 and x
+* `Math.trunc(float)`: truncate a float into an int
 
 
 ---
@@ -527,3 +534,25 @@ document.querySelector('[element_name]')
 here `document` is **the entry point to the DOM**, meaning that from it we can access any element of the html structure. Next to it we will always have the `<html>` element, which enclose all the html code, and usually the tree structures continue to divide (e.g. `<head>` and `<body>` with all their sub elements). **Whatever is in the html code will also be a node or a leaf of the DOM.**
 
 It is important to understand that the DOM is not a part of js (there is no reference in the ecma) but DOM methods and Properties are essentially **WEB APIs** implemented in the browser (and written in js) and js can easily interact with them without the need of any external import.
+
+
+## Events
+
+The dynamic of a webpage is made of events, i.e. actions that are consequences of other actions, like clicking a button. To handle events we need to *listen* to a specific html object, and the easiest way is to use the `addEventListener()` method. The arguments of the listener are:
+
+* the event to which react (e.g. a click of the mouse)
+* what to do when the event is triggered (a function called `event handler`). N.B. it need the function itself not one call, it will be the browser to call it.
+
+```js
+document.querySelector('[element_name]').addEventListener('[event]', function () {'some function'})
+```
+
+## Styling Css
+
+with the DOM and js we cna also access the css properties of out html file simply selecting the element with querySelector and its `style` property. e.g. to change the body background color:
+
+```js
+document.querySelector('body').style.backgroundColor = '#fff'
+```
+
+Of course we are not changing the .css file directly but only the style in the html rendering of the browser
