@@ -3,3 +3,4 @@ __pycache__/
 __*.txt
 .ipynb_checkpoints
 .vscode
+bin

@@ -50,13 +50,40 @@ The replication factor give a safety redundance to topic and partitions and as a
 
 Producers write data to Topics partitions, and it them to decide a priori to which partition to write. they are able to automatically recover in case of a broken failure. Producers send a `key` along with the stream of data (string, number, binary etc.) and this key serve as a ruler to distribute data among the topic's partitions. If the `key=null` than data are sent `round-robin` so that there is an even distribution among partitions (round-robin means that the receiving partition change each time in a circular fashion); if `key!=null`, i.e. we specify a key to be attached to the data stream, then we are sure that all messages that share the same key will be located in the same partition thanks ato a specific hashing function (it is the `kafka partitioner` that is responsible to determine by the key hash in which partition send a particular message) (e.g the gps data of a particular truck, we want to have them all in the same partition, so that also the temporal ordering will be guaranteed, hence we specify a key based, for example, on the particular truck id).
 
+From kafka > 2.4 the round-robin behavior has been replaced by a more performant message distribution to partitions: the `sticky partitioner`. With this algorithm the producer will stick to a single partition until the batch size is reached or the linger.ms delay is passed, then it will send the batch (bigger then before) and switch partition. The latency is greatly reduced.
+
 ### Producer Acknowledgements (acks)
 
 Producers have a property named `acks` (stands for Acknowledgement) that indicates if the producers will wait to receive a confirmation of receipt from the topics. In particular, if:
 
-* acks=0 producers won't wait for any confirmation (possible data loss)
-* acks=1 producers will wait only the confirmation from the leader (limited data loss)
-* acks=all producers will wait for confirmation from both leaders and replicas (no data loss)
+* `acks=0` producers won't wait for any confirmation (possible data loss), but the network overhead is minimized (faster)
+* `acks=1` producers will wait only the confirmation from the leader broker (limited data loss); there is no guarantee of replication
+* `acks=all` (or -1) producers will wait for confirmation from both leaders and replicas (no data loss)
+  * goes hand-to-hand with the `min.insync.replica=2` option; if = 1 only the nroker leader needs to succesfully ack, if = 2 (suggested, together with a replication factor of 3) at least also one replica needs to ack (and so on)
+
+In summary, when `acks=all` with `repliction.factor=N` and `min.insync.replicas=M` we can tolerate `N-M` broker loss to have the topic still available
+
+### Producer's retries
+
+We can specify a retry behavior of our producers, meaning that if there is a failure in the data transition, the producer will try again the action. from kafka 2.1 the setting for `retries` is set to a very high number (consider infinite) and we can set also a `retry.backoff.ms=100` by default equal to 100ms that is the time between each retry. We cna also specify a `delivery.timeout.ms=120000` default 120000ms (2 min.) that is the maximum time that a records may take to be delivered before running into a timeout error.
+
+### Idempotent Producers
+
+To avoid the possibility of duplicate commits in the topic by the producer (e.g. the producers send the data the first time, the topic receive it but the producer doesn't receive the ack back for a network error, therefore retries a second time and so there is a duplicate message in the topic) has been avoided with the introduction of idempotent producers that are able to identify duplicate messages. These are the standard from kafka 3.0 since guarantee a stable and safe pipeline. To set it manually:
+
+* `producerProps.put("enable.idempotence", true);` # this is JAVA
+
+### Producer's compression
+
+Storage is expensive, and the amount of data received by a stream can become huge pretty fast, therefore it is important to add a compression to the text-based data coming from producers (usually JSON). Compression is enabled at producer level, therefore the broker configuration don't change, with the property `compression.type`, that is default to `none` but can switched to `gzip`, `snappy`, `lz4` or `zstd`. The bigger is the batch of message to compress, the more effective is the compression itself.
+
+Batching can be improved by two settings at producer level:
+
+* `linger.ms`: default is 0, add a small delay to batch sending, helping to increase the batch size
+* `batch.size`: default 16KB, can be increased improving compression and efficiency, a message bigger than the batch size won't be batched, however if we set a number that is too high we are going to waste memory (we can use the kafka producer metrics tp analyze the traffic and chose the best value of batch size).
+
+
+Compression can be tweaked also at broker level, where the default behavior is `compression.type=producer`, meaning that the broker take the compressed messages from the producer and directly write them to the topic without recompression (best choice); we can also set a specific type of compression for the broker but this may cause the need of decompressing and recompressing the data (CPU overhead).
 
 ## Consumers
 
@@ -78,7 +105,7 @@ Kafka can store th offset at which a particular consumer-group has been reading,
 
 By default, the Java Consumer will automatically commit the offset at least once, but there are different strategies possible:
 
-* at least once, the offset is committed after the message is processed in order to be able to read the message again in case something goes wrong. This can produce duplicate message, therefore our code need to check for that.
+* `at least once,` the offset is committed after the message is processed in order to be able to read the message again in case something goes wrong. This can produce duplicate message, therefore our code need to check for that.
 * `at most once` the commit is instant with the message receipt, therefore in case something goes wrong the message i lost.
 * `exactly once`
 

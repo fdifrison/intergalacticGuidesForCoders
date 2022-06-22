@@ -225,7 +225,7 @@ The main part of the Dockerfile are:
 
 Once the Dockerfile is ready, to build an image we can simply:
 
-`docker build -t [tag_name] -f [Dockerfile_name] [location_for build]`
+`docker image build -t [tag_name] -f [Dockerfile_name] [location_for build]`
 
 we will see that each command is executed on a different line and an unique id is associated with them, this is because we are creating layers that, if nothing changes in future build, the won't need to be processed again since they have been cached by docker. 
 
