@@ -195,7 +195,7 @@ If we want the consumer's messages to be more informative, there are a bunch of 
 * `kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic [topic_name] --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.timestamp=true --property print.key=true --property print.value=true`
 
 
-### consumers-group
+## consumers-group
 
 To leverage the scalability of kafka we knw that we can group consumers into consumers-group, and each consumer in a group is able to read from one partition (only one consumer per partition). We can have a consumer group with more consumers than the number of partitions in the topic we are reading but those in excess will be inactive. To create a consumer belonging to a consumer group:
 
