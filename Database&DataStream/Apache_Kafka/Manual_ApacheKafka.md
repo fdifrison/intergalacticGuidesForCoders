@@ -105,9 +105,15 @@ Kafka can store th offset at which a particular consumer-group has been reading,
 
 By default, the Java Consumer will automatically commit the offset at least once, but there are different strategies possible:
 
-* `at least once,` the offset is committed after the message is processed in order to be able to read the message again in case something goes wrong. This can produce duplicate message, therefore our code need to check for that.
-* `at most once` the commit is instant with the message receipt, therefore in case something goes wrong the message i lost.
-* `exactly once`
+* `at least once,` (most common) the offset is committed after the message is processed in order to be able to read the message again in case something goes wrong. This can produce duplicate message, therefore our code need to check for that (not an issue if the process is `idempotent`).
+* `at most once` (unsafe) the commit is instant with the message receipt, therefore in case something goes wrong the message is lost.
+* `exactly once` possible only when we are reading/writing from/to kafka itself using the Transactional API (with kafka Streams API)
+
+The commit strategy of the offset can be specified whe using a Java Consumer API; for example we can specify the parameters `auto.commit=true` and `auto.commit.interval.ms=5000` as the max time that can elapsed from one commit to the other. In this way we are going to process the messages Synchronously (if we were processing messages asynchronously we wil find us in an `at most once` situation -> unsafe).
+
+We can potentially disable the `auto.commit` strategy but we need to encapsulate the poll process in a function that handle the batch and determine the condition for which a commit is to be performed (e.g. an amount of time or the size of a batch).
+
+<img src="kafka_autoOffset.png">
 
 ## Messages anatomy
 

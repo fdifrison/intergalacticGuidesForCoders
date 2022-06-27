@@ -55,3 +55,11 @@ Now we have:
 
 * on port `localhost:9200` the kafka connect
 * on port `5601` the openSearch dashboard that we are going to use to explore our data stream with the `dev tool` console that will allow us to run REST API queries
+
+Following the instruction at https://opensearch.org/docs/latest/, under the *docker quickstart* section we can try some command to see if we can perform basics operation on openSearch, like PUT, GET and creating/deleting an index
+
+Once the both the `WikimediaChangesProducer` and the `OpenSearchConsumer` are set up, we can run them and respectively writing and reading from the same topic, at the same port (`demo_java @ localhost:9092`).
+
+Once we have consumed some data from our topic, we can retrieve it using the `id` directly from openSearch dev tool:
+
+* `GET /wikimedia/_doc/93319ce5-db00-4aac-9c59-63f83d277240`
