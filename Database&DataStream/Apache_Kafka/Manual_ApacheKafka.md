@@ -111,9 +111,19 @@ By default, the Java Consumer will automatically commit the offset at least once
 
 The commit strategy of the offset can be specified whe using a Java Consumer API; for example we can specify the parameters `auto.commit=true` and `auto.commit.interval.ms=5000` as the max time that can elapsed from one commit to the other. In this way we are going to process the messages Synchronously (if we were processing messages asynchronously we wil find us in an `at most once` situation -> unsafe).
 
+<img src="kafka_autoOffset.png">
+
 We can potentially disable the `auto.commit` strategy but we need to encapsulate the poll process in a function that handle the batch and determine the condition for which a commit is to be performed (e.g. an amount of time or the size of a batch).
 
-<img src="kafka_autoOffset.png">
+Offsets can have different behavior and are set through the option `auto.offset.reset=[latest/earliest/none]`; if *latest* the consumer will start to read from the end of the topic, if *earliest* from the start of the topic and if *none* an exception will be thrown if no offset is found.
+
+Fro kafka > 2.0 offsets can be lost if the consumer hasn't read new data in 7 days (controlled by the option `offset.retention.minutes`)
+
+
+### Consumers liveliness
+
+Kafka has two way to understand if a consumer is still up and running, one from the consumer and one from the broker side. From the consumer, each consumer group has a consumer coordinator that receive an `heartbeat thread` (by default each 3 seconds) and can be controlled by the option `heartbeat.interval.ms`; if the `session.timeout.ms` is reached (by default 45 seconds from kafka > 3.0) and no heartbeat has been received, the consumer coordinator consider the consumer group to be dead. From the broker side, the broker receive a `poll thread` which is controlled by the option `max.poll.interval.ms` (default 5 min) which is the maximum amount of time that can pass between two pool before declaring a consumer group to be dead. the latter can be used also to understand if there is a problem in the data processing (e.g. in big data handling with  e.g. spark). Moreover, with the option `max.poll.records` (default 500) we can controll how many records receive per poll request; this has to be tweaked according to the dimension and the speed at which the messages are processed.
+
 
 ## Messages anatomy
 

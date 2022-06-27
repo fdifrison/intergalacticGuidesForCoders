@@ -63,3 +63,5 @@ Once the both the `WikimediaChangesProducer` and the `OpenSearchConsumer` are se
 Once we have consumed some data from our topic, we can retrieve it using the `id` directly from openSearch dev tool:
 
 * `GET /wikimedia/_doc/93319ce5-db00-4aac-9c59-63f83d277240`
+
+N.B. Be aware that when running the consumer, especially after a brute force shutdown, it may take some time to synchronize with the topic and start receiving data (so, be patient). Always check the consumer group current offset to check idf there is data to be read or if we are already at the end of the topic.
