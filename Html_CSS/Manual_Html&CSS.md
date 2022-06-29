@@ -209,6 +209,43 @@ we can specify also keywords like 'odd' for style only the odd li elements */
 li:nth-child(3) { font-weight: bold }
 ```
 
+We can alway concatenate selector in a cascade manner, even chaining multiple pseudo-classes together (this come useful when we have to modify the last/first element of a list inside parent structure). For example, lets say we have a navigation bar with several links and we want to modify the margin of the last one:
+
+```css
+nav a:link:last-child {
+    margin-right: 0;
+}
+```
+
+### Siblings and Adjacent Siblings
+
+Elements in the same container are said to be *siblings* and the element after the other is called *adjacent sibling*. We cna leverage this to select specific part of the html code to be styled. For example, if we want to style the first paragraph after the h1 header we could:
+
+```css
+h1 + p { /* p is the adjacent element to h3*/
+    color: red;
+}
+```
+
+## Pseudo css elements
+
+We can select elements that are not specifically coded in the html file by using pseudo elements. For example we may want to style only the first letter of an heading differently by the others; to do this we simply add two colon after the element:
+
+```css
+h1::first-letter {
+    font-size: 50px;
+    font-style: bold;
+}
+```
+
+In this way we are styling only the first letter of the h1 elements. Other useful pseudo-elements are:
+
+* `::first-line`
+* `::after`: create an element that is by default inline with the element to which it is attached; it requires the `content: ""` option (even if left blank)
+* `::before`: like after but placed in front of the parent element.
+
+
+
 ## Styling text
 
 When styling text we will refer to the selectors that ofc contain text like `h1`, `p` etc.. If we give a style to a particular element, then whenever it appear in the html it will be styled in the specified way together with all the other elements that it contains (imagine a paragraph `p` that has inside a link or a list).
@@ -294,6 +331,18 @@ The css box model is the fundamental structure that determines how an object is 
 
 As show in the image above, the visible part of an element is everything inside the border (included), while the margin is the distance between the object and its surrounding. 
 
+We have essentially two type of boxes:
+
+* `inline`: (a, strong, em, button etc..)those that are essentially related to inline objects; these only occupy the space necessary to their content; height and width properties do not apply and paddings and margin works only horizontally.
+* `block-level element`: such as headings, that occupy 100% of the space horizontally and introduce a line brake, meaning that they cannot be side-by-side with other elements.
+
+With css we can force the behavior of an element with the property `display`; this can be equal to `block` or `inline` depending if we want a block level or an inline element behavior.
+
+* `inline-block` is a third type of element that is half-way between the previous two. Like inline element they occupy only the content space and cause no line-breaks but like block-level element the box model is fully applicable (margin and padding works also vertically). A common use case of inline-block is with ::after and ::before css pseudo-elements.
+
+*N.B. img are natively inline-block*
+
+
 ### Margins and paddings
 
 Something really common to do when structuring our page is to perform a global reset of the margins and padding of all our elements; this because each element has its own default property and can easily become messy to figure out the conflicts. Therefore, we usually add at the beginning of the css file a universal selector:
@@ -346,4 +395,27 @@ A nice trick to center the page is to create a parent element to all the content
 }
 ```
 
+
+## Normal Flow vs. Absolute Positioning
+
+Normal Flow is the default positioning of elements in the webpage (achieved also setting `position: relative`) i.e. the elements are laid out according to their order in the html code. 
+
+On the contrary, Absolute positioning gives us the power to give a fixed location to an element (`position: absolute`). An element in absolute positioning is said to be *out of flow*. Once in this state, the element doesn't have any reference to its surrounding, and often happen that it overlaps with other elements in the normal flow.
+
+We can specify the absolute position using the four properties `top; bottom; left; right` and the value we specify are by default related to the webpage viewport (the part of the webpage that we see on the screen at a given time). However, what we usually want is to have an absolute position that is relative to another element and not the viewport. The element to which we want to position relatively it has to be the first parent element and have to explicitly have the option `position: relative`.
+
+```css
+/*Position the object in an absolute position relative to the body*/
+body {
+    position: relative;
+}
+
+.some-object {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+}
+```
+
+Absolute positioning is often applied to pseudo-elements ::after and ::before.
 

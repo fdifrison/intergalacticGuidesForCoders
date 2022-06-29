@@ -1,3 +1,8 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-size: 16px;
   font-family: sans-serif;
@@ -7,22 +12,37 @@ article {
   border: 4px solid black;
 }
 
+.product {
+  width: 825px;
+  margin: 50px auto;
+}
+
 .product-title {
   background-color: gainsboro;
   text-align: center;
   text-transform: uppercase;
+  font-weight: bold;
   font-size: 22px;
+  height: 40px;
+  padding-top: 15px;
+}
+
+.img-1 {
+  margin-bottom: 10px;
 }
 
 .price {
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 2px;
 }
 
 .shipping {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: bold;
   text-transform: uppercase;
   color: grey;
+  margin-bottom: 20px;
 }
 
 .more-info:link {
@@ -34,11 +54,20 @@ article {
 }
 
 .details-title {
+  font-size: 16px;
+  font-weight: bold;
   text-transform: uppercase;
+  margin-top: 30px;
+  margin-bottom: 15px;
 }
 
 .details-list {
   list-style: square;
+  margin-left: 20px;
+}
+
+.details-list li {
+  margin-bottom: 10px;
 }
 
 .add-cart {
@@ -46,7 +75,10 @@ article {
   text-transform: uppercase;
   color: white;
   background-color: black;
-  border: 0ch;
+  border: none;
+  border-top: 4px solid black;
+  width: 100%;
+  padding: 15px;
 }
 
 .add-cart:hover {
