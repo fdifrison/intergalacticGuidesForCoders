@@ -1,5 +1,10 @@
+body {
+  color: #444;
+  font-family: sans-serif;
+}
+
 /*  combined selector */
-h1,
+/* h1,
 h2,
 h3,
 h4,
@@ -7,7 +12,7 @@ p,
 li {
   font-family: sans-serif;
   color: #444;
-}
+} */
 
 h1,
 h2,
@@ -44,6 +49,12 @@ li {
   font-size: 20px;
 }
 
+aside {
+  background-color: #f7f7f7;
+  border-top: 5px solid #1098ad;
+  border-bottom: 5px solid #1098ad;
+}
+
 /* descendent selector  */
 
 /* 
@@ -75,10 +86,4 @@ footer p {
 
 .main-header {
   background-color: #f7f7f7;
-}
-
-aside {
-  background-color: #f7f7f7;
-  border-top: 5px solid #1098ad;
-  border-bottom: 5px solid #1098ad;
 }

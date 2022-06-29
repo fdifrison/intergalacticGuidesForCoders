@@ -14,6 +14,16 @@ Coming back to the topic, the tree languages responsible for the front-end have 
 * `css` is responsible for the presentation of the content, i.e. its styling
 * `javascript` is the programming language of the front-end responsible for the dynamic and the responsive effects. It can also be used to load data from webserver and create entire webpages called web applications.
 
+## Chrome DevTools
+
+The Developer Tools in Chrome browser is a very powerful way to inspect and test our webpage; by pressing **F-12** we can access it.
+
+### Element Tab
+
+in the element Tab we can inspect the html code that is rendering the page and selecting a specific row we will set the focus on a specific element. From the *style tab* we can inspect which css properties are applied and which are the *user agent stylesheet* (the default option). Here we can test new properties and behavior.
+
+By clicking `:hov` we can toggle different state of the object to see its behavior in action.
+
 ---
 
 # What is HTML
@@ -170,7 +180,7 @@ Many selector may share the same property, like the font-style for example, ther
 h1, h2, h3, p { font-family: sans-serif;}
 ```
 
-Another way in which is useful to combine selector is one there is a parent and a children, called `descendent selector`: let's imagine we have a `footer` with a `p` inside adn that we have specified a style for all the paragraph; however the text inside the footer should be smaller, therefore we can combine the selctor to specify how a paragraph should behave when children of a footer:
+Another way in which is useful to combine selector is one there is a parent and a children, called `descendent selector`: let's imagine we have a `footer` with a `p` inside adn that we have specified a style for all the paragraph; however the text inside the footer should be smaller, therefore we can combine the selector to specify how a paragraph should behave when children of a footer:
 
 ```css
 footer p {font-size: 16px}
@@ -244,3 +254,96 @@ a:active {background-color: #000}  /* change behavior if we click with the mouse
 Now we are specifically targeting those anchor which has a link inside. There are other common property that we can specify:
 
 * `text-decoration: none` to remove the underline
+
+
+## Conflict between Selectors
+
+*N.B. the order of appearance in the css file matters!*
+
+What is going to happen if we have different css selectors applied to the same element? How is determined the priority between conflicting selectors?
+
+Actually, each property assign to an element is applied to it, but the one displayed depend on the following priority list:
+
+<img src="css_conflicts.png">
+
+Aside from `!importat` which is the extreme way to resolve conflicts (an hack not to be used) and `inline style` in the html code (again, not to be used), the cascade priority goes as follow:
+
+* `ID (#)` -> `Class (.) or pseudo-class (:)` -> `element selector (p, diw, li ...)`
+
+Therefore, if the same property, let's say *font-size* is specified in both the element selector and the object id, it will be the latter to be seen on the screen. If we have multiple selector with the same priority level, then the last applied in the css code will be displayed.
+
+### Inheritance and Universal selector
+
+Inheritance its the cascade mechanism by which child element inherit properties from the parent elements (mostly text-based properties); for example, a property set at `body` level will be inherited by any element in the body (but actually displayed only if there is no conflict). Inherited properties are not actually applied to child element, but simply at their disposal whenever not specifically overwritten. This is why it is a good practice to style the text in the body and override it only in those element that should present a different behavior.
+
+Of course, not all the properties are inherited, otherwise it could easily become a mess. As a rule of thumb, the inherited properties are those related to text format.
+
+Universal selector are the lowest priority selectors but can brutally be applied (not inherited) to all the elements of the page and not restricted to text-based properties:
+
+```css
+* {
+    border-top: 10px solid #444;
+}
+```
+
+## CSS BOX MODEL
+
+The css box model is the fundamental structure that determines how an object is displayed and sized on a webpage. it is composed by a set of property, each of one can be specified or implied.
+
+<img src="css_boxModel.png">
+
+As show in the image above, the visible part of an element is everything inside the border (included), while the margin is the distance between the object and its surrounding. 
+
+### Margins and paddings
+
+Something really common to do when structuring our page is to perform a global reset of the margins and padding of all our elements; this because each element has its own default property and can easily become messy to figure out the conflicts. Therefore, we usually add at the beginning of the css file a universal selector:
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+}
+```
+
+Now, we are able to specify exactly the wanted behavior for each element.
+
+Margins are used to create separation between elements; once common approach is to style always only the bottom margin of each element to create the desired vertical spacing, otherwise we may end-up placing both bottom and top margin and lose control on the effective total margin wanted. 
+
+*N.B. we might think that two consecutive margin (the bottom of one element and the top of the element below) should result in a total margin that is the sum of the two; however, what happen is called `collapsing margin`, meaning that only the bigger margin will be considered when two margins share the same space*
+
+Padding is the space between the border and the object and it is most useful when there is a background color associated with the object; it can be specified for each direction, one for all, one at the time, or top-bottom right-left, depending on how we write the css property:
+
+```css
+.example {
+    padding: 20px; // all sides
+    padding-left: 40px; // only left
+    padding: 20px 40px; // 20px top-bottom and 40px left-right
+}
+```
+
+### Height and Width
+
+To control the dimension of an element we can specify its height and width, being aware that it values must be compliant with the sum of the border+padding+content size. We can specify the dimension in pixel `px` but also in percentage `%` and the latter is referred to the dimension of the parent container. The strength of working in percentage is that these are relative to the windows size, and therefore the proportion are correctly maintained even if the windows size change.
+
+Particularly related to images, we can specify only one of the two dimension and set the other to `auto` in order to keep the correct size ratio.
+
+```css
+.example {
+    height: 80%;
+    width: auto;
+}
+```
+*N.B. a child element can never be bigger then its parent!*
+
+#### Centering the page
+
+A nice trick to center the page is to create a parent element to all the content (basically a child element to the body that contain everything inside) and then style this element setting a width and specifying the margin left and right to **auto**, meaning that they always need to be the same.
+
+```css
+.container{
+    width: 90%;
+    margin: 0 auto;
+}
+```
+
+
