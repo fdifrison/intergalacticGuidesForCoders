@@ -2,7 +2,7 @@
 
 ---
 
-Javascript is an high-level, object-oriented, multi-paradigm programming language. In web development, while htm and css are responsible for the content and the styling of the webpage, js is responsible for handling its dynamic and user interaction, to load data, e.g. from databases, to manipulate html and css content and so on. Frameworks like React, Angular and Vue.js are tools that enhance the creation of webpages and are 100% based on js. In the same way we can use js also outside the browser, on webserver, to build back-end services with framework like node.js.
+Javascript is an high-level, object-oriented, multi-paradigm programming language. In web development, while htm and css are responsible for the content and the styling of the webpage, js is responsible for handling its dynamic and user interaction, to load data, e.g. from databases, to manipulate html and css content and so on. Frameworks like React, Angular and Vue.js are tools that enhance the creation of webpages and are 100% based on js. In the same way we can use js also outside the browser, on web server, to build back-end services with framework like node.js.
 
 ## JS release
 Starting from 2015, with the release of ES6 (ECMAScript) we talk about modern javascript, and since then an annual release has been done with some new features.
@@ -32,7 +32,7 @@ JS code needs always to be related to an html file. We can directly code inside 
 * use descriptive variable even if a bit longer
 
 ### Comments
-Simple comments are done with the `//` while multi-line comments are done with `/* ... */`. In vs code multi-line comment are performed with `Ctrl + Shift + A`.
+Simple comments are done with the `//` while multi-line comments are done with `/* ... */`. In vs code multi-line comment are performed with `Ctrl + Shift + A` (`Alt + Shift + A` on windows).
 
 ## Strict mode
 
@@ -177,6 +177,13 @@ const multiLineString = `This is a
                         string`
 ```
 
+## Sum of numbers as string
+To sum two number of type string, instead of convert them with the `Number()` function, we can use `unary operation`; basically, the operator `+` and `-`, placed in front of a string will convert it to a number. hterefore to add two strings we can simply:
+
+```js
+const sum = +numberAsString1 + +numberAsString2;
+```
+
 ---
 
 # if, else control structure
@@ -298,6 +305,13 @@ for (let i = 0; i < integers.length; i++) {
 }
 ```
 
+### Loop on elements
+The classic method of looping is to use indices and then access an array element by position, however, from ES6 it is possible to loop directly on the elements of an array:
+
+```js
+for (item in array) {console.log(item)};
+```
+
 ### Continue and break
 We can elaborate even more the structure of the for loop be inserting `continue` and `brake` conditions; essentially we are going to test with an if/else statement the truthiness of an expression and if we add **continue** to it, if evaluated **true** it will skip the current iteration, while if we add **break** it will exit entirely from the loop:
 
@@ -402,7 +416,7 @@ Essentially we don't need the curly braces (becaomes mandatory if we need to per
 
 ---
 
-# Built-incommon functions
+# Built-in common functions
 
 ## prompt()
 The js function to ask for user input is called `prompt`; it returns a string that can be stored in a variable. 
@@ -535,6 +549,8 @@ here `document` is **the entry point to the DOM**, meaning that from it we can a
 
 It is important to understand that the DOM is not a part of js (there is no reference in the ecma) but DOM methods and Properties are essentially **WEB APIs** implemented in the browser (and written in js) and js can easily interact with them without the need of any external import.
 
+A limitation of `querySelector` is that, if the there are multiple elements with the same reference (e.g. same class name) only the first one that appear will be selected. To select all the objects with the same name we have to use the keyword `querySelectorAll` which return a NodeList (an array like object) with all the objects. 
+
 
 ## Events
 
@@ -549,10 +565,43 @@ document.querySelector('[element_name]').addEventListener('[event]', function ()
 
 ## Styling Css
 
-with the DOM and js we cna also access the css properties of out html file simply selecting the element with querySelector and its `style` property. e.g. to change the body background color:
+With the DOM and js we can also access the css properties of out html file simply selecting the element with querySelector and its `style` property. e.g. to change the body background color:
 
 ```js
 document.querySelector('body').style.backgroundColor = '#fff'
 ```
 
 Of course we are not changing the .css file directly but only the style in the html rendering of the browser
+
+## Modal windows (adding/removing classes to/from elements)
+
+A Modal window is essentially a pop-up window, i.e. something that is shown/hidden as a consequence of an event (usually a button click). To hide an object we have to create a css class with the property `display: none` (the opposite being `display: block`). Then, we can apply this property to the object we need to be hidden. Instead, to show the hidden object, what we need to do is to create an evenHandler that remove the *hiding* class from the object itself (and re-add it when, for example, we click the close button)..
+
+To add o remove a class from an element the syntax is the following
+
+```js
+object.classList.remove("some-class-without-dot")
+object.classList.add("some-class-without-dot")
+```
+
+An example can be found [here](P2_ModalWindow/script.js)
+
+Another option is to use the `toggle` method of classList. This will remove the specified class if present or add it otherwise.
+
+## Keyboard events
+
+Keyboard events are referred as `global events` since they are not related to a specific element. To access a global events we have to directly connect it to the *document*, and the event related to the keyboard are essentially 3:
+
+* `keydown`: fired as soon as we press the key
+* `keyup`: fires as soon as we release the key
+* `keypress`: fired continuously while the button is pressed
+
+To recognize which key has been pressed by the user we need to *listen* to the event, i.e. add an argument to the function associated to the eventListener. In this way the eventObject will be passed as an argument to the function defined in the event itself, so that we can retrieve it during the function execution. Logging the argument to console, we will find that js creates a `KeyboardEvent` object for us that among the properties has a *key* and a *code* which reflects the button name.
+
+```js
+document.addEventListener("keydown", function (e) {
+  e.key === "Enter"
+    ? console.log("Enter has been pressed")
+    : console.log(`${e.key} has been pressed`);
+});
+```
