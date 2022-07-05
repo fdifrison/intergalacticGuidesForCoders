@@ -271,3 +271,48 @@ Sometimes it can be useful to reset the offset created by the consumer-group to 
 N.B. we cannot reset the offset if a consumer is running.
 
 With the flag `--to-earliest` we want to offset 0, but it can be usefull to rewinde the offset only of few steps; for this we use the flag `-shift-by -[number]` where `[number]` is how many step back we want to take from the current offset. 
+
+
+---
+
+# Kafka API
+
+The concept of Consumers and Producers as seen until now is the low-level end of kafka capabilities; it is a system that exist for a long time and now has been partially replaced by same high level API meant to solve specific problems, for example:
+
+* `kafka Connect`: to receive data from an external source and send it into kafka, or from kafka to an external sink
+* `kafka Streams`: to transform data from a topic to another instead of setting up consumers and producers
+* `Schema Registry`; to use schemas in kafka
+
+## Kafka Connect
+
+The idea behind kafka connectors is to be able to easily get and send data to common sources (e.g. getting data from twitter or send it to a database);
+
+The architecture is schematically illustrated below: we have our kafka clusters with brokers, topic and partitions and we have a source of data (e.g. a database or a website); We create a `connect cluster`, with its own workers, that take data from the sources and send it to the cluster; the same connector can be then reused to read data from the cluster, perform actions and send data to a sink (e.g. another database or an application).
+
+<img src="kafka_connect.png">
+
+Essentially we have:
+* `source connectors` to get data from common data sources
+* `sink connector` to publish data in common data sources
+
+the idea is to leverage and reuse code already written by most experiences programmer to perform the same task we need in our project. **Don't try to create your own connector if something similar already exist!**.
+
+At https://www.confluent.io/hub/ we can find some pre-build connectors for the most common data sources.
+
+## Kafka Stream
+
+Kafka streams is used to create application on the data that are on our cluster to perform data manipulation (e.g. do some statistics). We can define it as a **data processing and transformation library** for kafka.
+
+<img src="kafka_streams.png">
+
+## Kafka Schema Registry
+
+As we have seen, kafka sends and receive bites thanks to a serialization/deserialization process that happens at consumers/producers level; but what if the producers is sending bad data or their format change over time? if we dont have an handle the consumer will break!
+
+Here comes to save the day the kafka schema registry; we don't want kafka to verify the structure of the data or it will lose all its potential (kafka has zero cpu usage, don't read data, takes bytes as input, without even loading them in to memory, and distribute bytes again; **kafka know nothing about the type of data it is sending**).
+
+Therefore we need the schema registry to be a separate components that interpret the data format (identify and reject bad data) and somehow talk to producers and consumers
+
+<img src="kafka_schemaRegistry.png">
+
+Apache Avro is the standard format to send data from/to producers/consumers. 
