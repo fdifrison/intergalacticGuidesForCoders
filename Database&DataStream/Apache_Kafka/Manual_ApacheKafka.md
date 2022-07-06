@@ -16,6 +16,9 @@ Among its many use cases, the most relevant are:
 
 For example, Netflix is using Kafka for real-time recommendations to users, Uber to gather users and driver data and forecast surge pricing in real time, LinkedIn for spam detection and better recommendation. In all this use cases, kafka is only the layer of transportation!
 
+## Kafka Clients
+
+Kafka natively speaks JAVA but there are community based implementation for other programming language. A list of these can be found at  https://www.conduktor.io/kafka/kafka-sdk-list
 
 ## Topics
 
@@ -30,6 +33,8 @@ For example, Netflix is using Kafka for real-time recommendations to users, Uber
 
 We can divide a Topic in several partitions, and each partition will store data sequentially with an incremental id called `offset`; this offset won't be reused not even when older data are deleted. The order a data stream into a Topic is preserved only inside a partition. Data are assigned to partition randomly unless a `key` is provided.
 
+Having a consistent naming convention in topics is essential to create a sustainable application. A good start might be to follow this guidelines: https://cnr.sh/essays/how-paint-bike-shed-kafka-topic-naming-conventions  
+
 ### Topic replication factor
 
 The replication factor is a property of the topics and by default is set to 1. Essentially it represents a safety measure in the event of the loss of a broker. In fact, if the replication factor is set to a number > 1 it means that we will have an exact replica of the topic and its partition on more than one broker.
@@ -42,9 +47,47 @@ In the img above, `broker 101` is the leader for `partition 0` while `broker 102
 
 Producers and Consumers can only write and read data from the leader broker of a specific partition; the replicas are de facto back-ups that will become leader partition only in the case of an error in the leader partition (in older version of kafka consumers can read also from replicas).
 
+The Partition Counts and the replication factor are the two most important parameters when creating a topic since they impact its performance and durability. Modify these parameters during the lifecycle of the application can be dangerous since increasing the number of partition will break the keys ordering (if keys are used to send data) while increasing the replication factor will increase the pressure on the cluster and on the network generating unexpected decrease of performance. Therefore **get your number right from the beginning!**. 
+
+To figure how to select the correct number of partitions we need to understand the traffic that each partition will handle (no more than few Mb/s per partition), the number of consumers group (application) we will need to run in parallel and possible future increase of traffic due to the evolution of the task. 
+
+In general, more partition means:
+
+* a better parallelism
+* the ability of run more consumers in a group (remember that the max number of active consumers in a group is equal to the number of partitions)
+* the ability to leverage more brokers if the cluster is large enough
+* more work for zookeeper in case of partition fault
+* more files opened at the same time
+
+Regarding the replication factor, it should be at least 2, better if 3, max 4 since it implies:
+
+* better durability o the system in case of brokers failure (see insync.replicas with acks=all)
+* more replication, hence higher latency in the network
+* more disk space on the system (50% more if RF is 3 instead of 2)
+
 ### Topic durability
 
 The replication factor give a safety redundance to topic and partitions and as a rule we can say that: **with a replication factor of `N` we have a redundancy of `N-1` brokers**, meaning that we can lose up to N-1 broker and still be able to recover our data in sone of the broker in the cluster.
+
+### Segments
+
+Topic are not the smallest elements in kafka, in fact they are composed by segments, unit of storage that contains the data up to a certain offset. By default they are 1 GB (max size), when this dimension is reached a new segment is created. Alternatively, we can set up a time laps (default 1 week) and if the max size is not reached in this period, a new segment is created anyway. The option to control this behavior are:
+
+* `log.segment.bytes`
+* `log.segment.ms`
+
+Segments have two indices, one to help retrieving a specific message and one for a specific timestamp
+
+### Clean-up policy
+
+data stored in kafka expires according to a specific policy, for example:
+
+* `log.cleanup.policy=delete` (default) : data are deleted after a week and no max size for log is set
+* `log.cleanup.policy=compact`: delete is based on the lates occurrence of a key; old duplicates keys will be deleted after a segment is committed, only the most recent appearance of a key is retained; this gives us infinite time and space retention of the data. The offset is not changed, is just skipped if a message is missing.
+
+Here can be found an example of compact log https://www.conduktor.io/kafka/kafka-topic-configuration-log-compaction
+
+The log cleanup is important to control the storage size of our application.
 
 ## Producers
 
@@ -59,7 +102,7 @@ Producers have a property named `acks` (stands for Acknowledgement) that indicat
 * `acks=0` producers won't wait for any confirmation (possible data loss), but the network overhead is minimized (faster)
 * `acks=1` producers will wait only the confirmation from the leader broker (limited data loss); there is no guarantee of replication
 * `acks=all` (or -1) producers will wait for confirmation from both leaders and replicas (no data loss)
-  * goes hand-to-hand with the `min.insync.replica=2` option; if = 1 only the nroker leader needs to succesfully ack, if = 2 (suggested, together with a replication factor of 3) at least also one replica needs to ack (and so on)
+  * goes hand-to-hand with the `min.insync.replica=2` option; if = 1 only the broker leader needs to successfully ack, if = 2 (suggested, together with a replication factor of 3) at least also one replica needs to ack (and so on)
 
 In summary, when `acks=all` with `repliction.factor=N` and `min.insync.replicas=M` we can tolerate `N-M` broker loss to have the topic still available
 
@@ -154,6 +197,9 @@ Zookeeper works with an odd number or servers (usually max is 7); it has one lea
 
 From version 3.x we can still work with zookeeper but is not mandatory anymore, instead we have an alternative called `Kafka Raft`. From version > 4.x we won't have zookeeper no more. With KRaft we will have a huge scale up in number of partition per cluster and an improvement in stability, maintenance, monitoring, security, recovery and shutdown. However in version 3.x is still not production ready.
 
+## Kafka Monitoring
+
+Setting up a kafka cluster is not an easy task if we are not leveraging a provider such as confluent or conductor; however, one things that we should always do, even on small projects is to monitor the state of our application. This is a whole chapter about kafka but some intro information can be found at https://docs.confluent.io/platform/current/kafka/monitoring.html
 
 [back to Top](#apache-kafka-manual)
 
@@ -198,6 +244,14 @@ Without specifying the `[topic_name]`, we are going to describe all the availabl
 To delete an existing topic use the `--delete` option (not working on windows):
 
 * `kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic [topic_name]`
+
+### topics configuration
+
+When *--describe* a topic we can se a **Configs** tag that usually by default is empty; with the command `kafka-configs` we get a list of `--add-config` options that can be specified to improve the features of our topics. A description of all teh configuration can be found at https://docs.confluent.io/platform/current/installation/configuration/topic-configs.html.
+
+The syntax to apply a configuration is the following:
+
+* `kafka-config --bootstrap-server localhost:[port] --entity-type [entity e.g. topics] --entity-name [e.g. topicName] --alter --add-config [configName]`
 
 
 ## kafka-console-producer.sh
