@@ -44,6 +44,19 @@ This line activates the `strict mode` that forbid us to do certain errors and cr
 
 ---
 
+# JS Deep Dive
+
+<img src="js_deepdive.png">
+
+The above image shows a dummy but full definition of what js is together with most of its feature. Let's analyze them:
+
+* `High-level`: an high-level programming language (like python) takes care of the hardware resources (RAM and CPU) that needs to run or simply create a variable thanks to a process called `abstraction`. This makes it much more user friendly and ready-to-use compared to a low-level programming language like C or Java, that need a manual resources allocation, but **never as fast and optimize**.
+* `Garbage-collected`: 
+
+
+
+---
+
 # Values and Variable
 Values are basically the smallest unit of information that we have in js; these can be stored in variable with the assignation symbol `=`. To declare a variable we simply:
 
