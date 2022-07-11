@@ -419,3 +419,39 @@ body {
 
 Absolute positioning is often applied to pseudo-elements ::after and ::before.
 
+## Box-sizing
+
+The standard box model structure can be quite confusing, since to know the real dimension of an element we have to add up border, padding and content width/height; this can create many problems while styling the page to fit for example the width of a parent container with two side-by-side element. for this reason, it is custom to add the `box-sizing: border-box` ccs property to any container; this will allow us to consider the width we set as the final real width of the element, considering border and padding. If we add border or padding to a container that has this property enabled, we are going to shrink the content, instead of increasing the height/width. N.B. `box-sizing: content-box` is the default behavior.
+
+**Since it is so important, we can simply put it in the universal selector at the beginning of out css file.**
+
+<img src="box_sizing.png">
+
+---
+
+# Layouts
+
+In web design, the layout is the arrangement of text, images and other type of content in the webpage; essentially the layout gives the page a **visual structure** into which we place the content.
+The layout styling has at least two levels: **the page layout** meaning the visual structure of the webpage, and the **component layout** meaning the structure of each component of the page.
+
+There are 3 ways of building a layout with css:
+
+* `Float Layouts`: the old, surpassed way, to build a layout using the *float* CSS property
+* `Flexbox`: 1-dimensional row layout, perfect for component layout
+* `CSS Grid`: 2-dimensional grid layout, perfect for complex solutions
+
+
+## Float Layout
+
+<img src="float_layout.png">
+
+Float layout is based on the `float:` css property which basically remove the element from the *normal flow* letting the other elements floating around it (e.g. `float: left` will let the element sit in the most left corner of its parent container). If all the child elements in a component, e.g. the header, are *floating* then the height of the component goes to zero, as if nothing was inside it; in this case, the component is said to be **collapsed**. To restore the height of the parent element it is required to create a fictitious element, without content but the only purpose of occupy space, with the `clear:` css property which defines its relation with the floated object contained in the same parent element. Of course this is not ideal, it gets messy pretty fast; a minor hack that was invented when float layout was the main choice was to add a class to the parent element called *clearfix* and style a css property with a pseudo-class *.clearfix::after{}* in order to add directly a child element as last child (at the end of the container) and add again the *clear: both* property (remember that pseudo-class need a *content* property to be displayed, and by default their display style is *inline* but for this purpose we need to set it to *block*). We will have something like this:
+
+```css
+/*The clearfix hack*/
+.clearfix::after {
+    clear: both;
+    content: '';
+    display: block;
+}
+```

@@ -1,6 +1,6 @@
 <head>
   <title>Challenge 1 CSS</title>
-  <link href="style.css" rel="stylesheet" />
+  <link href="style_float_layout.css" rel="stylesheet" />
 </head>
 
 <article class="product">
@@ -14,32 +14,37 @@
     class="img-1"
   />
 
-  <p class="price"><strong>$65.00</strong></p>
-  <p class="shipping">Free shipping</p>
-  <p class="shipping-text">
-    Ready to dress up or down, these classic canvas Chucks are an everyday
-    wardrobe staple.
-  </p>
+  <div class="column-2">
+    <p class="price"><strong>$65.00</strong></p>
+    <p class="shipping">Free shipping</p>
 
-  <a class="more-info" href="https://www.converse.com"
-    >More information &rarr;</a
-  >
+    <p class="shipping-text">
+      Ready to dress up or down, these classic canvas Chucks are an everyday
+      wardrobe staple.
+    </p>
 
-  <div class="colors">
-    <div class="color color-black"></div>
-    <div class="color color-blue"></div>
-    <div class="color color-red"></div>
-    <div class="color color-yellow"></div>
-    <div class="color color-green"></div>
-    <div class="color color-brown"></div>
+    <a class="more-info" href="https://www.converse.com"
+      >More information &rarr;</a
+    >
+
+    <div class="colors">
+      <div class="color color-black"></div>
+      <div class="color color-blue"></div>
+      <div class="color color-red"></div>
+      <div class="color color-yellow"></div>
+      <div class="color color-green"></div>
+      <div class="color color-brown"></div>
+    </div>
   </div>
 
-  <h3 class="details-title">Product details</h3>
-  <ul class="details-list">
-    <li>Lightweight, durable canvas sneaker</li>
-    <li>Lightly padded footbed for added comfort</li>
-    <li>Iconic Chuck Taylor ankle patch</li>
-  </ul>
+  <div class="column-3">
+    <h3 class="details-title">Product details</h3>
+    <ul class="details-list">
+      <li>Lightweight, durable canvas sneaker</li>
+      <li>Lightly padded footbed for added comfort</li>
+      <li>Iconic Chuck Taylor ankle patch</li>
+    </ul>
+  </div>
 
   <button class="add-cart">Add to cart</button>
 </article>
