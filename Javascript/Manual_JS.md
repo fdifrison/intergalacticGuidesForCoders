@@ -67,11 +67,23 @@ The above image shows a dummy but full definition of what js is together with mo
 
 A js Engine is essentially a program that execute js code; every browser is shipped with a version of it but the best known is `V8 Engine` that powers chrome and node js (the server side version of js).
 
-<img src="js_engine.png">
+The js engine is composed of two part:  the `call stack` where the code is executed and the `heap` where the object are stored in memory. As explained above, js use JIT compilation to be more efficient in the execution of a task; this process start with the js engine parsing the code (reading the code) creating the `AST Abstract Syntax Tree`, i.e. the subdivision of the const or function keyword in a structured way, in this step **syntax error** are also checked. The second step is the compilation of the AST in machine code that finally get executed right away (execution happens in the **call stack**). In reality, the process in not linear, to speed the execution, the compiler create at first a very raw version of machine code from the AST in order to be able to start the execution asap; then, during execution the compilation is optimized even more then once, until the executed machine code is at its best performance. All this happens in non-accessible threads external to the main thread that we can access during the execution of our program.
 
-The js engine is composed of two part:  the `call stack` where the code is executed and the `heap` where the object are stored in memory.
+<img src="js_AST.png">
 
+## The Execution Context
 
+Imagine our program has just been compiled, therefore the execution begins. What happen at first is that a `global execution context` is created and al the top level code (e.g. constant and function name, but not function body) are stored in order to be used later one. There is always only one global execution context for each js program. Once the global EC is filled with the top level code, it gets executed and only after starts the execution of functions body. Each function or method calls creates its own `local execution context` containing the information to run the function itself and this will be stacked in the **call stack**. When all the function are executed the call back will wait for any event callback (e.g. click event), thanks to the **event loop**, to actually perform the actions coded in the function. 
+
+So now it clear what is the utility of an execution context, but what it is made of? First, we have a `Variable Environment`, i.e. the declared variable (const, var, let), the functions names and their *arguments object* (all the arguments passed to the functions). Next we have the `Scope chain`, essentially a set of references to variables that are located outside the current functions scope. Finally, each context contains the `this` keyword (we will see later what is its purpose). The creation of this part of the EC happens at `creation phase` right before the real execution phase. **N.B. [arrow functions](Arrow-functions)**
+
+## The js runtime
+
+The `js engine` alone is not sufficient, in fact we need also the `WEB APIs` to interact with, basically the tools to interact with the engine that are not part of the engine itself. The js engine, together with the web APIs and the `callback queue` (a data structure that contains all the callback function, like the *event handler* that we use to interact with the DOM) composed the so called `Runtime`. What happens essentially is that the command in the callback queue are unstacked and send to the js engine call stack (when it is free from the code being executed); this happen thanks to the `event loop` that does this transfer from callback queue to call stack, taking care of non-blocking the execution therefore handling concurrent event.
+
+<img src="js_runtime.png">
+
+The difference when talking about `node js` is that being on the server side, we are not talking to the browser, therefore we are not interacting with the web APIs but with **c++ bindings & thread pool**
 
 ---
 
