@@ -46,12 +46,30 @@ This line activates the `strict mode` that forbid us to do certain errors and cr
 
 # JS Deep Dive
 
-<img src="js_deepdive.png">
+<img src="js_deepdive.png" >
 
 The above image shows a dummy but full definition of what js is together with most of its feature. Let's analyze them:
 
-* `High-level`: an high-level programming language (like python) takes care of the hardware resources (RAM and CPU) that needs to run or simply create a variable thanks to a process called `abstraction`. This makes it much more user friendly and ready-to-use compared to a low-level programming language like C or Java, that need a manual resources allocation, but **never as fast and optimize**.
-* `Garbage-collected`: 
+* `High-level`: an high-level programming language (like python) takes care of the hardware resources (RAM and CPU) that needs to run or simply create a variable thanks to a process called `abstraction`. This makes it much more user friendly (to learn and to use) and ready-to-use compared to a low-level programming language like C or Java, that need a manual resources allocation, but **never as fast and optimize**.
+* `Garbage-collected`: hand-to-hand with high level definition, the garbage collector is essentially an algorithm that is able to determine when to remove un'used variables in order to free hardware resources.
+* `Interpreted or just-in-time compiled`: The conversion to machine language (series 0 and 1) happen at compilation time inside the **js engine**
+
+<img src="js_JIT.png" >  
+
+* `Multi-paradigm`: can follow different approach of structuring the code (e.g. OOP or FP)
+* `Prototype-based object-oriented`: like python, everything is an object and most of the built-ins (like tha array structure) is based on a blueprint that gives functionality to the new instances (class-instance relation in python).
+* `First-class functions`: functions are treated as variable, can be passed or return into other functions (allows the use of functional programming FP)
+* `Dynamic`: dynamically typed, contrary to statically typed, variables have not datatype definition and can be changed at runtime (**TypeScript** is the statically typed version of js)
+* `Single threaded`: like python, js can't natively compute in parallel
+* `Non-blocking event loop`: long task can be executed in background and putted back in main thread once they are finished, so that the program execution won't be freezed.
+
+## The js Engine
+
+A js Engine is essentially a program that execute js code; every browser is shipped with a version of it but the best known is `V8 Engine` that powers chrome and node js (the server side version of js).
+
+<img src="js_engine.png">
+
+The js engine is composed of two part:  the `call stack` where the code is executed and the `heap` where the object are stored in memory.
 
 
 
