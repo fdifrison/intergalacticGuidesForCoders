@@ -89,6 +89,27 @@ The `js engine` alone is not sufficient, in fact we need also the `WEB APIs` to 
 
 The difference when talking about `node js` is that being on the server side, we are not talking to the browser, therefore we are not interacting with the web APIs but with **c++ bindings & thread pool**
 
+## Scoping and scope in js
+
+We have seen how execution context are created an that contain the *variable environment*, *the **this** keyword* and the `scope chain`. But what it is a Scope and what kind of scope we have in js? The scope is essentially the part of the code in which a variable live and from which it can be referenced. Like in python, we have the concept of `lexical scoping`, i.e. the scope is controlled by the code structure, or in other words by the placement of function and blocks in the code (e.g. a function inside another function can access also the scope of the parent function).
+
+We have three different scope in js:
+
+* `global scope`: is the scope of the top level code, i.e. all the variables that are defined outside a function or a block; what is inside the global scope is accessible from everywhere in the code.
+* `function scope`: also called **local scope**, each function create its own context and its own scope; here lives variable that are accessible only withing the function
+* `block scope`: starting with ES6 we have also the definition of a block scope, i.e. everything inside curly braces (e.g. the logic inside an if statement); like the local scope of functions, whats inside the block scope  lives only in the block scope, but this applies only to **let** and **const** variables (if we use **var** instead, this wil be accessible from the global scope). N.B. in *strict mode* functions are block scoped.
+
+### The Scope Chain
+Since we have all this different scope that can be easily nested one within the other, it is important to understand the concept of `scope chain`. Basically, a local scope can always get variables from its outer scope, but not the opposite. Therefore, a function within a function, will have its own private local scope, but it will be able to access to the scope of the parent function and also to the global scope. This process is called `variable lookup`; before trowing an error, the js engine will look to all the parents scope up to the global scope to check if a certain variable exist. Out of scope variables are not copied but simply referenced. To stress out the concept, two functions that are siblings, i.e. lives in the same scope at the same level, won't share their scope, therefore win't be able to reference the variables defined inside the other.
+
+### Scope chain vs Call stack
+
+The scope chian and the call stack ares  related but have a fundamental difference. While the scope chain is based on the lexical scoping, i.e. the order in which function are written and nested within each other, it has nothing to do with the order in which function are called and stacked inside the call stack
+
+Following, an example of the relation between scope chain and call stack. In particular, looking at the function *third* we can see how it tries to access  **c** and **b** that are outside its scope chain, therefore js will thrown an error.
+
+<img src="js_scope_chain.png">
+
 ---
 
 # Values and Variable
