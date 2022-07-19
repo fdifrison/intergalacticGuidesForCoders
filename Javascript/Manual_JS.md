@@ -97,19 +97,135 @@ We have three different scope in js:
 
 * `global scope`: is the scope of the top level code, i.e. all the variables that are defined outside a function or a block; what is inside the global scope is accessible from everywhere in the code.
 * `function scope`: also called **local scope**, each function create its own context and its own scope; here lives variable that are accessible only withing the function
-* `block scope`: starting with ES6 we have also the definition of a block scope, i.e. everything inside curly braces (e.g. the logic inside an if statement); like the local scope of functions, whats inside the block scope  lives only in the block scope, but this applies only to **let** and **const** variables (if we use **var** instead, this wil be accessible from the global scope). N.B. in *strict mode* functions are block scoped.
+* `block scope`: starting with ES6 we have also the definition of a block scope, i.e. everything inside curly braces  (e.g. the logic inside an if statement) except for **object literal** (the way we define an object with properties in js); like the local scope of functions, whats inside the block scope  lives only in the block scope, but this applies only to **let** and **const** variables (if we use **var** instead, this wil be accessible from the global scope). N.B. in *strict mode* functions are block scoped.
 
 ### The Scope Chain
 Since we have all this different scope that can be easily nested one within the other, it is important to understand the concept of `scope chain`. Basically, a local scope can always get variables from its outer scope, but not the opposite. Therefore, a function within a function, will have its own private local scope, but it will be able to access to the scope of the parent function and also to the global scope. This process is called `variable lookup`; before trowing an error, the js engine will look to all the parents scope up to the global scope to check if a certain variable exist. Out of scope variables are not copied but simply referenced. To stress out the concept, two functions that are siblings, i.e. lives in the same scope at the same level, won't share their scope, therefore win't be able to reference the variables defined inside the other.
 
 ### Scope chain vs Call stack
 
-The scope chian and the call stack ares  related but have a fundamental difference. While the scope chain is based on the lexical scoping, i.e. the order in which function are written and nested within each other, it has nothing to do with the order in which function are called and stacked inside the call stack
+The scope chian and the call stack ares related but have a fundamental difference. While the scope chain is based on the lexical scoping, i.e. the order in which function are written and nested within each other, it has nothing to do with the order in which function are called and stacked inside the call stack
 
 Following, an example of the relation between scope chain and call stack. In particular, looking at the function *third* we can see how it tries to access  **c** and **b** that are outside its scope chain, therefore js will thrown an error.
 
 <img src="js_scope_chain.png">
 
+## Hoisting
+
+Before execution, in the so called `creation phase`, the code is scanned for variables declarations, and for each of these a property is created in the `variable environment`, one of the component of the **execution context** as we have seen. The result of this process is called `Hoisting` and it makes some variables accessible ans usable in the code before they are actually defined. The image below summarize the behavior of variable in js: `var` variables (don't use them!) are source of bugs also because they are hoisted, but their initial value is **undefined** (therefore, if we try to call them before their actual declaration, we do not get the actual value we have assigned but *undefined*); `let` and `const` variable instead are not hoisted and therefore they can't be accessed before their actual declaration (it is said that they leave in the **TDZ** **T**emporal **D**ead, **Z**one). Again, we can use function declaration before they are actually defined in the code, but we can't do it with function expression or arrow functions.
+
+<img src="js_hoisting.png">
+
+The `windows` is the global object in the browser console that holds the some types of variables, like the **vars** or the **arrow functions** because these creates property on the windows object itself.
+
+### The TDZ Temporal Dead Zone
+
+As we have seen, the **TDZ** is a place where variable are stored before they are actually declared in the code, meaning the the js engine knows about their existence but won't be bale to return their value before they are actually reached in the code structure. However, we get different error for an undefined variable (a variable that is referenced that actually is never declared in the code) or a variable in the TDZ. The former returns a:
+
+* `ReferenceError: x is not defined`
+
+The latter instead (the one in the TDZ):
+
+* `ReferenceError: cannot access 'x' before initialization`
+
+## The `this` keyword
+
+*Very close to the `self` in python*
+
+Along with the *variable environment* and the *scope chain*, the **this** keyword is a special variable created for each execution context (i.e. also for every function).
+
+The value of **this** `is not static` but depends on the way of a function is called. For example, in a method (a function defined as property of an object) **this** is referred to the object in which the method is contained:
+
+```js
+const me = {
+  name: 'Giovanni',
+  year: 1989,
+  calcAge: function() {return 2022 - this.year};
+}
+```
+
+In the example above, `calcAge` is a method for the object `me` and in this situation **this** is actually a placeholder for the object name (this === me). 
+
+N.B. the method doesn't need to be coded inside the object, it just need to be called by the object:
+
+```js
+const me = {
+  name: 'Giovanni',
+  year: 1989,
+}
+
+const calcAge: function() {return 2022 - this.year};
+
+me.funcToCalcAge = calcAge;
+
+me.funcToCalcAge() 
+```
+
+As long as the object has the property **year** requested by the function, it will work, and **this** will point to the object name.
+
+* For **simple function** call, **this** will be equal to **undefined** (in strict mode only!); with *simple* we mean a function that has not an owner, i.e. is not attached to any object. This happens also if we perform a function call inside another function, so be aware! A solution could be to declare a variable in the function outer scope (usually called **self**) to store the outer value of **this**:
+
+```js
+const someFunc = function () {
+  variable: 0000;
+  const self = this;
+  const innerFunc = function () {
+    console.log(self.variable)
+  };
+  innerFunc()
+};
+```
+
+Normally, the output of the *console.log* would be **undefined** since **innerFunc()** is a *simple* function call; however, since we have stored into **self** the value that **this** has outside **innerFunc**, we solved the problem.
+
+The second solution is to use an arrow function instead of **innerFunc**, since it natively has not a **this** variable defined and it will fall back to the outer scope, i.e. the **this** of **someFunc**.
+
+* For **arrow function**, since we have seen that they don't have an execution context, the **this** variable is not defined and it will fall back to the surrounding execution context. It is also called `lexical this` since it is picked from the outer (respect to the arrow function) lexical scope. **Never use an arrow function as method!**
+  
+* If the function is called by an **event listener** trough the DOM, then **this** will refer to the DOM element to which the function is attached.
+
+* Finally, if we try to access **this** from the global context, we get the **window** object of the browser. N.B. the same will happen if we call **this** inside an arrow function that lives in the global scope!
+
+## Primitives and Objects
+
+Like in Python memory addresses and variable names pointers, also in js (since it is also a dynamic programming language) there are some caveat to be aware of.
+
+Let's first define the difference between **primitives** and **objects**:
+
+* `primitives` are the set of types that we can use in js (Number, String, Boolean, Undefined, Null, Symbol adn BigInt) and are store in the **call stack** of the js engine, or more precisely in the execution context of the block in which are declared.
+* `objects` are **reference types** (Object literal, Arrays, Functions etc..) and are store in the **heap** of the js engine
+
+When working with `primitives`, what might happen is the follow:
+
+```js
+let age = 30;
+let oldAge = age;
+age = 31;
+console.log(age); // 31
+console.log(oldAge); // 30
+```
+
+When we create the variable age, in the call stack an identifier is created for that name and this point to a memory address that stores its value (30). Then, when we declare `oldAge = age`, we are creating a new identifier in the call stack that points to the same memory address of `age`. Finally we redefine the value of `age` to be 31, but the value associated with the first memory address is immutable, therefore a new address is created with the stored value of 31 and the variable `age` now points to it while `oldAge` still points to the first address with the stored value of 30
+
+When working with `object` it works different because these can be too large to be contained directly in the call stack. As a matter of fact, when an object is created, its memory address, together with its value, is stored in the **heap**; instead, in the call stack the only thing that is store id the object name, its address and as value **the address stored in the heap**, i.e. a reference to the memory address in the heap (this is why objects in this context are also called **reference types**).
+
+Now the big difference with primitives is when we create a new variable and we set it equal to the object. In this case, a new identifier is created in the call stack, which point to the same address of the first object, therefore sharing also the same memory reference to the heap. Now if any of the properties of the two object get changed, also its value stored in the heap address change, and since both the variable points to the same address, both get changed. **N.B. this is valid even if the variables are defined as const!**, this because the values in the call stack doesn't get changed, only the values stored in the heap.
+
+<img src="js_primitives_objects.png">
+
+### Copying an object
+
+*Same concept of shallow and deep copy in python*
+
+So, how do we really create an independent? One way it to use the function `Object.assign()` which takes two arguments, the first is the receiver and the second is the object to be copied. Therefore, if we set as a receiver an empty object, we get as a result a new independent object with the same properties:
+
+```js
+const realCopy = Object.assign({}, objectToBeCopied);
+```
+
+Object assign creates a `shallow copy` of the object, meaning that only the first level of recursion is copied and therefore, the inner data structure share still the same reference to the original object (e.g. the values of an array inside an object). 
+
+To achieve a `deepcopy` in js is not trivial (as is not in python, we use the copy.deepcopy module) and it needs third party library.
 ---
 
 # Values and Variable
@@ -451,6 +567,11 @@ console.log(whatIsIt);
 So, we have the keyword `function`, the name of the function with possible arguments passed inside the parenthesis, and the `function-body` inside the curly brackets.
 
 To call the function we simply need to write the function name: `function_name();`, but if we want to use in the code the variable that is `return` inside the function, we need to store the function call into another variable. We call this way of defining a function `function declaration`.
+
+Functions have also two special variables attached (only applies to regular function):
+
+* `this` which is created inside the execution context (see [here](The-`this`-keyword))
+* `arguments` which returns an iterator containing the argument of the function, all of those we pass in the function call, even if we specify more arguments than the prescribed one in the function definition.
 
 ## Anonymous functions (function expression)
 
