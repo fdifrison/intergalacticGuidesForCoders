@@ -75,7 +75,8 @@ class Whatsapp:
         """Connect to the browser
 
         Args:
-            wait (int, optional): Sets a sticky timeout to implicitly wait for an element to be found. Defaults to 3 seconds.
+            wait (int, optional): Sets a sticky timeout to implicitly wait for an element 
+            to be found. Defaults to 3 seconds.
 
         Returns:
             WebDriver: handler of the browser
