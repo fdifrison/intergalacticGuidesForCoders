@@ -50,10 +50,10 @@ while True:
             '''
 
             n = '+39'+str(n)
-            driver.send_img(n,
-                            r"C:\Users\inggi\Documents\GitHub\Birgo\whatsapp_sender\browser_setup\the_boss.jpg",
-                            message=messaggio
-                            )
+            driver.send(n,
+                        r"C:\Users\inggi\Documents\GitHub\Birgo\whatsapp_sender\browser_setup\the_boss.jpg",
+                        message=messaggio
+                        )
             stop = time.time()
             print(f'\nconnecting to {n}\n\n')
 

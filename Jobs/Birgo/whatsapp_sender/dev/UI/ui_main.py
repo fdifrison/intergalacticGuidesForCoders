@@ -10,20 +10,19 @@ __version__ = "0.0.1"
 from email.mime import image
 import os
 import pathlib
-from re import X
+import time
 import tkinter as tk
-from tkinter import font as tkFont
+from tkinter import StringVar, font as tkFont
 from tkinter import filedialog
 from tkinter.ttk import Progressbar, Separator, Spinbox
 
 
 # pip installed python packages
 from PIL import ImageTk, Image
-from numpy import pad
 
 # project modules
-#from ..browser_setup import Whatsapp
-#from pandas_util import read_number
+from .browser_setup import Whatsapp
+from .pandas_util import read_number
 
 
 def new_button(text: str, parent: tk.Frame, font: tkFont.Font,
@@ -35,22 +34,23 @@ def new_button(text: str, parent: tk.Frame, font: tkFont.Font,
         button.pack(fill=tk.BOTH, pady=10, padx=5)
 
 
-def load_numbers():
-    print('called')
-    file = filedialog.askopenfile(mode='r',
-                                  filetypes=[('Excel File', '*.xlsx')])
-    if file:
-        filepath = os.path.abspath(file.name)
-        phone_book = read_number(filepath)
-        print(phone_book)
-
-
 class MainWindow:
+
+    '''
+    TODO 1. I/O on xlsx phone book to keep track of messages already sent in case
+    of interruption
+    TODO 2. Catch some exceptions!!!
+
+    '''
 
     logo = "img\\logo.jpeg"
     current_dir = pathlib.Path(__file__).parent.resolve()  # current directory
     logo_path = os.path.join(current_dir, logo)
     bgcolor = '#faf0c7'
+
+    # initialize ui variable
+    img_path = None
+    phone_book = None
 
     def __init__(self, root: tk.Tk, title: str, width: int, height: int) -> None:
         self.root = root
@@ -109,11 +109,13 @@ class MainWindow:
 
         self.loadNumbers = new_button("Load Phone Book",
                                       self.upCFrame, self.fontNormal,
-                                      15, True, func=load_numbers)
+                                      15, True, func=self.load_numbers)
+
+        #self.phone_book = StringVar()
 
         self.loadImage = new_button("Load Image",
                                     self.upCFrame, self.fontNormal,
-                                    10, True)
+                                    10, True, func=self.load_img)
 
         self.inputMsgLbl = tk.Label(self.upCFrame, text='Enter Your Message',
                                     bg=self.bgcolor, fg='#186b37')
@@ -127,7 +129,7 @@ class MainWindow:
 
         self.testNumber = new_button("Test single number",
                                      self.upCFrame, self.fontNormal,
-                                     10, True)
+                                     10, True, func=self.test_single_number)
 
         self.testNumberInput = tk.Text(self.upCFrame, height=1.1, width=1)
         self.testNumberInput.pack(fill=tk.X, pady=5, padx=5)
@@ -151,7 +153,7 @@ class MainWindow:
 
         self.sessionPath = new_button("Set Session Path",
                                       self.upRFrame, self.fontNormal,
-                                      8, True)
+                                      8, True, func=self.set_session_path)
 
         # RIGHT TOP 2ND FRAME
         self.upR2ndFrame = tk.Frame(self.upRFrame, background=self.bgcolor)
@@ -163,7 +165,8 @@ class MainWindow:
         self.loadTime['font'] = self.fontNormal
         self.loadTime.grid(row=0, column=0, pady=10, padx=5)
 
-        self.spinLoadTime = Spinbox(self.upR2ndFrame, from_=1, to=10, width=6)
+        self.spinLoadTime = Spinbox(
+            self.upR2ndFrame, from_=1, to=10, increment=.1, width=6)
         self.spinLoadTime.grid(row=0, column=1, sticky='w')
         self.spinLoadTime.set('3')
 
@@ -172,7 +175,8 @@ class MainWindow:
         self.sendTime['font'] = self.fontNormal
         self.sendTime.grid(row=1, column=0)
 
-        self.spinSendTime = Spinbox(self.upR2ndFrame, from_=1, to=10, width=6)
+        self.spinSendTime = Spinbox(
+            self.upR2ndFrame, from_=1, to=10, increment=.1, width=6)
         self.spinSendTime.grid(row=1, column=1, sticky='w')
         self.spinSendTime.set('2.5')
 
@@ -194,6 +198,80 @@ class MainWindow:
         self.root.mainloop()
 
     # FUNCTIONS
+
+    def load_numbers(self):
+        file = filedialog.askopenfile(mode='r',
+                                      filetypes=[('Excel File', '*.xlsx')])
+        if file:
+            filepath = os.path.abspath(file.name)
+            self.phone_book = read_number(filepath)
+
+    def load_img(self):
+        filename = filedialog.askopenfilename(
+            filetypes=[('Picture', ['*.png', '*.jpeg', '*.jpg'])])
+        if filename:
+            self.img_path = filename
+            print(self.img_path)
+
+    def set_session_path(self):
+        file = filedialog.askopenfile(mode='r',
+                                      filetypes=[('Excel File', '*.xlsx')])
+        if file:
+            self.session_path = os.path.abspath(file.name)
+
+    def get_load_send_time(self):
+        self.load_time = self.spinLoadTime.get()
+        self.send_time = self.spinSendTime.get()
+        print(self.load_time, self.send_time)
+
+    def get_message(self):
+        self.message: str = self.inputMsg.get("1.0", tk.END)
+        return self.message
+
+    def validate_number(self, number):
+        def hasNumbers(inputString):
+            return any(char.isdigit() for char in inputString)
+        number = number.strip('+')
+        if hasNumbers(number):
+            return True
+
+    def test_single_number(self):
+        self.single_number: str = self.testNumberInput.get("1.0", tk.END)
+        self.single_number = self.single_number.replace(" ", "").strip()
+        print(self.single_number, type(self.single_number))
+        if self.validate_number(self.single_number):
+            print('valid number')
+            print(self.single_number)
+            self.message = self.get_message()
+            print(self.message)
+            self.send_single_msg(self.single_number, self.message)
+        else:
+            # TODO raise windows to tell the error
+            print('not valid')
+            print(self.single_number)
+
+    def send_single_msg(self, number: str, message: str):
+        self.driver = Whatsapp()
+        self.driver_handler = self.driver.connect()
+        time.sleep(0.5)
+        if message:
+            self.driver.send(number,
+                             self.img_path,
+                             message=message)
+            self.driver_handler.close()
+        # TODO raise exceptions/windows alert if something go wrong
+
+    def start_birgo_sender(self):
+        if self.phone_book:
+            self.driver = Whatsapp()
+            self.driver_handler = self.driver.connect()
+            time.sleep(0.5)
+            for number in self.phone_book:
+                pass
+
+        else:
+            # TODO raise windows -> phone book not loaded
+            pass
 
 
 if __name__ == '__main__':

@@ -117,8 +117,6 @@ class Whatsapp:
         """
         if not isinstance(phone_num, str) and isinstance(message, str):
             return print(f'phone number and message must be strings; got ({type(phone_num), type(message)}) instead')
-        if not os.path.isfile(file_path):  # TODO define legal img format
-            return print(f'"{file_path}" is not a valid file')
 
         url = f"https://web.whatsapp.com/send?phone={phone_num}&text={quote(message)}&app_absent=0"
 
@@ -128,13 +126,14 @@ class Whatsapp:
 
         print('got url...')
 
-        if file_path:
+        if file_path and os.path.isfile(file_path):
 
             attachment = self._get_obj('//div[@title="Allega"]', "error@step1")
             attachment.click()
 
             # '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]'
-            img = self._get_obj('//input[@accept="image/*"]', "error@step2")
+            img = self._get_obj('//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]',
+                                "error@step2")
             img.send_keys(file_path)
 
             send = self._get_obj("//div[@aria-label='Invia']", "error@step3")
