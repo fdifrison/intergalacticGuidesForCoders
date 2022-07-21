@@ -92,39 +92,19 @@ class Whatsapp:
         self.driver.close()
         self.connect()
 
-    def _get_element(self, xpath: str, msg: str):
+    def _get_obj(self, xpath: str, msg: str):
         def element(driver):
             return driver.find_element(by=By.XPATH,
                                        value=xpath)
-        WebDriverWait(self.driver, 100, poll_frequency=0.1, ignored_exceptions=UnexpectedAlertPresentException).until(
-            method=element, message=msg)
+        WebDriverWait(self.driver,
+                      100,
+                      poll_frequency=0.1,
+                      ignored_exceptions=UnexpectedAlertPresentException).until(method=element,
+                                                                                message=msg)
 
         return element(self.driver)
 
-    def send_msg(self,  phone_num: str, message: str):
-        """Send a whatsapp message to a specific number
-
-        Args:
-            phone_num (str): phone number (with country code)
-            message (str): message (styled as if it was written directly in whatsapp)
-
-        Returns:
-            None
-        """
-        if not isinstance(phone_num, str) and isinstance(message, str):
-            return print(f'phone number and message must be strings; got ({type(phone_num), type(message)}) instead')
-
-        url = f"https://web.whatsapp.com/send?phone={phone_num}&text={quote(message)}&app_absent=1"
-        self.driver.get(url)
-        time.sleep(self.sleep)
-        msg = self._get_element("//div//button/span[@data-icon='send']",
-                                "can't find message box",
-                                type_='icon send')
-
-        msg.click()
-        time.sleep(self.sleep)
-
-    def send_img(self, phone_num: str, file_path: str, *, message=''):
+    def send(self, phone_num: str, file_path: str = None, *, message='', load_time=3.5, send_time=2.5):
         """Send a whatsapp message that contains an image and optionally some text
 
         Args:
@@ -144,32 +124,26 @@ class Whatsapp:
 
         self.driver.get(url)
 
-        time.sleep(3.5)  # 3.5 works
+        time.sleep(load_time)  # 3.5 works
 
         print('got url...')
 
-        attachment = self._get_element('//div[@title = "Allega"]',
-                                       "can't find attachment button")
+        if file_path:
 
-        print('got attachment...')
+            attachment = self._get_obj('//div[@title="Allega"]', "error@step1")
+            attachment.click()
 
-        attachment.click()
+            # '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]'
+            img = self._get_obj('//input[@accept="image/*"]', "error@step2")
+            img.send_keys(file_path)
 
-        img = self._get_element('//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]',
-                                "can't fin image button")
+            send = self._get_obj("//div[@aria-label='Invia']", "error@step3")
+            send.click()
 
-        print('got image...')
+        else:
 
-        img.send_keys(file_path)
+            msg = self._get_obj("//div//button/span[@data-icon='send']",
+                                "error@step1")
+            msg.click()
 
-        print('image sent...')
-
-        send = self._get_element("//div[@aria-label='Invia']",
-                                 "Can't find button Invia")
-
-        print('got invia button...')
-
-        send.click()
-        print('sending...')
-
-        time.sleep(2.5)  # 2.5 Works
+        time.sleep(send_time)  # 2.5 Works
