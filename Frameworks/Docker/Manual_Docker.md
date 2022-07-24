@@ -327,3 +327,16 @@ volumes: # Optional, same as docker volume create
 
 networks: # Optional, same as docker network create
 ```
+
+## docker-compose CLI
+
+While for Windows and Mac the docker-compose client comes shipped with the docker installation, on Linux we have a different binary to install. Docker compose is not a *production-grade* tool but it is ideal for local development and test. The two most common commands are:
+
+* `docker-compose -f [name_of_yml_file] up`: to set-up and start all the container in the yml file
+* `docker-compose -f [name_of_yml_file] down`: to stop and clean up all the containers
+
+The `-f [name_of_yml_file] ` is need only if the yml filename is different from `docker-compose.yml`.
+
+We can use compose also to build/rebuild our custom image; by default docker compose first look into the cache for an already build image and if we want to rebuilt it we need to sepcify:
+
+* `docker-compose -f [name_of_yml_file] up --build`
