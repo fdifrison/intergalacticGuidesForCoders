@@ -25,6 +25,9 @@ Once Docker is installed we can do some quick checks to very that it works prope
 * `docker version` : will show the Client and the Server (Engine) version installed, meaning they are communicating correctly
 * `docker info`: returns a lot of information about the status of the containers in the machine and the engine configurations
 
+
+https://get.docker.com/ is an alternative to set up docker very fast on any machine (instruction inside!)
+
 ---
 
 # Docker CLI
@@ -340,3 +343,71 @@ The `-f [name_of_yml_file] ` is need only if the yml filename is different from 
 We can use compose also to build/rebuild our custom image; by default docker compose first look into the cache for an already build image and if we want to rebuilt it we need to sepcify:
 
 * `docker-compose -f [name_of_yml_file] up --build`
+
+
+# Swarm Mode
+
+One of the premises of containers is that we would be able to deploy our app everywhere, despite the hardware, the OS, the provider etc. However, once an application as to scale out or scale up, when the number of containers become relevant, we need to answer some questions:
+
+* how do we manage their lifecycle across many servers or instances?
+* how can we ensure that containers are re-created if they fail?
+* how can we replace a container without downtime for our app (**blue/green deploy**)?
+* how to keep track of all the container status?
+* how to create cross-node communications between containers?
+* where do we store the private information like keys and passwords?
+
+Here comes `Swarm Mode`, essentially a **clustering solution built inside docker**, born in 2016 to gradually answer the questions above. The idea is to have a single entity to manage which will handle all the problems related to cross-nodes/servers deployment, lifecycle, downtime, security etc..
+
+**Swarm mode** is not enabled out of the box, but has to be explicitly started since the idea was not to affect the existing containers in any way.
+
+<img src="swarm_overview.png">
+
+The picture above gives an idea of the swarm ecosystem. We have `Workers` and `Managers` (that are essentially workers with the permission of controlling the swarm). The Managers are attached to a so called `Raft Database` which stores the configurations and the information needed by the managers to know their role inside the swarm (each manager contains a copy of the database). A manager can be a virtual machine or a physical host that is tunning a linux distribution or a windows server, and all these can communicate since they are in the same `control plane`. Managers sends order to workers, and workers can be promoted to manager eventually.
+
+Looking at an example, since now we where used to **docker run** and deploy a single container at the time on the machine where the **docker CLI** was running; with the concept of swarm, we can tell a manager to perform multiple operations, like deploying more than one containers or replicate existing one (these action are called `task`). A single service can have multiple tasks and each task can be responsible of running a container. So, the **docker run** command is replaced by the `docker service`, like in the example below where we told the service to deploy a standard nginx container but with 3 replicas; therefore, the managers decide where to allocate the three nodes in the swarm but not just that, in reality the swarm api does much more than simply accept command from the user, instead it handles the allocation of IP to the tasks, their assignation to nodes, communicates constantly with the workers etc..
+
+<img src="swarm_manager.png">
+
+## Creating a Swarm
+
+As told before, swarm mode must be enabled, and we can check its status by `docker info` and check for `Swarm: active/inactive`.
+
+To initialize the swam we can simply:
+
+* `docker swarm init`
+
+and in a fraction of second we will have an active swarm with one node and all its functionality. Behind the curtain, there is a lot happening: root is signing a certificate to the swarm a this is issued to the first manager (to give him the power of manager), also a token is created that can be given to other nodes to join the swarm; the raft database is created an the config are stored and encrypted and shared between the managers (no config db is needed as backend of the swarm structure).
+
+Once our swarm mode is active we can use the service command (replacing the docker run for single containers) and create a task for our manager to handle:
+
+* `docker service create alpine ping 8.8.8.8` (n.b. the 'ping 8.8.8.8' is just to use a google dns to check if the container is working)
+
+* `docker service ls` will show our active  services, where REPLICAS is the number of active and requested container for that task, and docker will always ensure that these numbers match no matter what
+
+* `docker service ps [service_name]` will finally shows the container created in the node.
+
+Now nothing has changed from the standard **docker run** command for a single container. But hte power of the swarm is that now we can simply scale up our application, e.g increasing the number of replicas, by simply updating the service:
+
+* `docker service update [service_id] --replicas 3`
+
+et voila! with a simple command our manager created 2 new nodes with a copy of our container.
+
+By doing `docker service update --help` we can see that there are a lot of options available, much more than the `docker update` we have used on a single container that basically is limited in the modification of resources allocated to the container. This is because the swarm is meant to be modified on the run without affecting the running containers at all (e.g. we could update one of the 3 replicas at the time thus having no downtime in the service of our app). The real difference it that with **docker service** we are not speaking directly to the containers but to the `orchestration system` of the swarm that will handle the operations in the most consistent manner.
+
+## Creating a Swarm with 3 Nodes
+
+To create a 3 node swarm we can't simply use our local machine but we need a way to create 3 VM or something similar where install 3 instance of docker. The simples way to test a multi-node swarm is using `play-with-docker.com` a platform with a 4 hours session time where to play around. Alternatively, use https://multipass.run/ to create multiple VM.
+
+Once we have 3 working session of docker on 3 different machines or VMs, we can create the swarm. To do so, we have to init the swarm in one machine, which will at first hold the `leader manager` (only one manager can be leader). Actually, to initialize a swarm in an environment that has more than one ip at disposal we need to:
+
+* `docker swarm init --advertise-addr [ip_address]`
+
+Once we performed this action we will get in output the command to join a new node to the swarm together with the token requested (the token isn't something we need to save, it is stored in the swarm config (raft db) and can be retrieved at any time by simply digit `docker swarm join-token manager/worker` (manager or worker to get the appropriate token). We can decide to join a new node as worker or manager (or join it as worker and promote it later). the command is essentially this:
+
+* `docker swarm join --token [token_code] [ip:port]`
+
+And this has to be executed on the other machines, not where the swarm has been initialized. To promote a worker we can simply:
+
+* `docker node update --role manager [node_name]`
+
+If now we create again our service `docker service create --replica 3 alpine ping 8.8.8.8` with a replication factor of 3, the swarm will automatically spread our 3 nodes across the 3 different addresses.
