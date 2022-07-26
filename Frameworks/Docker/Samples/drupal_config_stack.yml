@@ -37,6 +37,10 @@ services:
 
   postgres:
     image: postgres:10
-    environment:
-      POSTGRES_PASSWORD: example
+    environment: POSTGRES_PASSWORD_FILE:/run/secrets/psql-pw
+    secrets: psql-pw
     restart: always
+
+secrets:
+  psql-pw:
+    external: true

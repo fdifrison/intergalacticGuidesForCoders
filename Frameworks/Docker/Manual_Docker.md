@@ -303,6 +303,8 @@ The strength of external mount to our containers is that we cna actually work in
 
 *https://docs.docker.com/compose/*
 
+*Never use docker compose in a production server, use swarm (even with a single node) and stack instead*
+
 There will be few occasion where we will find a stand-alone solution to our problem therefore running in a single container; more often we will need to combine different services running on separate containers and here come in rescue `docker compose`. 
 
 Docker compose takes care of the relation between containers, creating a one solution for developer environment that can be run and setup in single file. It is composed by two pieces:
@@ -347,6 +349,8 @@ We can use compose also to build/rebuild our custom image; by default docker com
 
 # Swarm Mode
 
+*https://docs.docker.com/engine/swarm/*
+
 One of the premises of containers is that we would be able to deploy our app everywhere, despite the hardware, the OS, the provider etc. However, once an application as to scale out or scale up, when the number of containers become relevant, we need to answer some questions:
 
 * how do we manage their lifecycle across many servers or instances?
@@ -382,7 +386,7 @@ Once our swarm mode is active we can use the service command (replacing the dock
 
 * `docker service create alpine ping 8.8.8.8` (n.b. the 'ping 8.8.8.8' is just to use a google dns to check if the container is working)
 
-* `docker service ls` will show our active  services, where REPLICAS is the number of active and requested container for that task, and docker will always ensure that these numbers match no matter what
+* `docker service ls` will show our active services, where REPLICAS is the number of active and requested container for that task, and docker will always ensure that these numbers match no matter what
 
 * `docker service ps [service_name]` will finally shows the container created in the node.
 
@@ -393,6 +397,12 @@ Now nothing has changed from the standard **docker run** command for a single co
 et voila! with a simple command our manager created 2 new nodes with a copy of our container.
 
 By doing `docker service update --help` we can see that there are a lot of options available, much more than the `docker update` we have used on a single container that basically is limited in the modification of resources allocated to the container. This is because the swarm is meant to be modified on the run without affecting the running containers at all (e.g. we could update one of the 3 replicas at the time thus having no downtime in the service of our app). The real difference it that with **docker service** we are not speaking directly to the containers but to the `orchestration system` of the swarm that will handle the operations in the most consistent manner.
+
+## Rebalancing a service
+
+It might happen that, when we have multiple containers and workers in our service, at some point the workload is unbalanced between the workers. We can force a reset by performing a service update as follow:
+
+* `docker service update --force [service name]`
 
 ## Creating a Swarm with 3 Nodes
 
@@ -411,3 +421,97 @@ And this has to be executed on the other machines, not where the swarm has been 
 * `docker node update --role manager [node_name]`
 
 If now we create again our service `docker service create --replica 3 alpine ping 8.8.8.8` with a replication factor of 3, the swarm will automatically spread our 3 nodes across the 3 different addresses.
+
+## The Overlay Network
+
+*https://docs.docker.com/network/network-tutorial-overlay/*
+
+The same concept of `bridge network` that we had to communicate between different container on our local machine can be applied to swarm; In fact we can create a `--drive overlay` that is devoted to manage traffic inside the swarm (not coming to). Swarm can have none or multiple networks, depending on the application (e.g. a typical app will have a back-end network for a database, a front-end one and an API that communicates with the both). To create a swarm network the procedure is the same for a local one:
+
+* `docker network create --drive overlay [network_name]`
+
+Now we can connect to the swarm network our back-end service (e.g. a postgres instance):
+
+* `docker service create --name [service_name] --network [network_name] -e POSTGRES_PASSWORD=[password] postgres`
+
+N.B. Since the service pass through an orchestrator we wont see on the terminal the downloading and setup of the image
+
+### Routing Mesh
+
+*https://docs.docker.com/engine/swarm/ingress/*
+
+The routing mesh is an `incoming network` that helps distributing the traffic across the service of our swarm to the proper task (there can be more then one task). It span across all the nodes in the swarm in order to perform **load balancing** of the traffic across the tasks of the service. The routing service works both **container-to-container**, balancing for example the traffic between different containers attached to the same worker, using a `VIP` (virtual ip) a **private ip that swarm puts in front of every services** (imagine a back-end and a front-end service; they wont talk directly to each other, the traffic would pass through the VIP and redistributed) or to redirect **external traffic** to any node of the swarm since these will all have the same published port open and ready to listen; then the traffic will be rerouted to the appropriate container. 
+
+This is super helpful because we don't need to know the exact location of the container (actually if it fails and it is recreated by the swarm orchestrator, it might be placed in a different node)
+
+<img src="swarm_routing.png">
+
+Looking at the first example in the image above, imagine we have created a swarm with 3 tasks, 3 container and 3 nodes, inside the **overlay network** docker creates a VIP that is mapped to the DNS name of the service (my-web). At this point, all the containers inside the swarm only need to use the same dns of the service and automatically, the VIP will balance the traffic among all the tasks in the service.
+
+In the second example we see hoe the external traffic is handled: we have 2 task distributed on 2 nodes, both with the same DNS; each node is equipped with a `swarm load balancer` which is listening to the same published port and have the task to redistribute the traffic to the proper node/container
+
+## Secret storage
+
+*https://docs.docker.com/engine/swarm/secrets/*
+
+*To be execute in the manager node of the swarm*
+
+Swarm comes with the easiest solution for storing any kind of secrets (username & password, SSH keys, any private data etc..). Docker compose can store a file-based secret inside containers but is not secure. Secret can be assigned to single services or single workers and be accessed by them only; they are store in-memory on the raft db. To store a secret in swarm (and only in swarm!):
+
+* `docker secret create [secret_name] [secrete_name.txt]`
+
+or if we want to echo it directly from shell:
+
+* `echo "myPassword" | docker secret create [secrete_name] -` : note that the final "-" means to read from stdin
+
+Both the approaches have drawbacks, the first is saving a file on the storage where the service is running and the second has the command cached in memory (a root user could retrieve the command, hence find the password used).
+
+Once we have the secrets stored, we can pass it to a service (and these will be available to all the task in the service) assign to the specific environmental variable of the particular image the proper file path; an example with a postgres image:
+
+* `docker service create --name psql --secret psql_user --secret psql_pass -e POSTGRES_PASSWORD_FILE=/run/secrets/psql_pass -e POSTGRES_USER_FILE=/run/secrets/psql_user postgres`
+
+We can also add or remove secrets on running service but these are immutable objects connect to the containers, therefore the containers will need to be recreated.
+
+* `docker service update --secret-rm` . or --secret-add
+
+## Stacks
+
+*Compose file version >= 3.0* 
+
+*https://docs.docker.com/engine/reference/commandline/stack/*
+
+*a stack deploy is a service update -> containers are recreated*
+
+Stacks are `production grade compose file` for swarm and they can include definition for services, networks and volumes. We don't use the **docker service** to deploy, instead:
+
+* `docker stack deploy -c [Compose_file_name] [Service_name]`: it manages everything from replicas, to recovery strategy, to overlay network, naming, labeling; **The only thing that a production grade tool shouldn't do is building images** since it takes to mush resources. The `-c` stands for "use a compose file to create the stack"
+
+**N.B. docker compose ignores the command `deploy` same as swarm ignores the command `build`** therefore we can ideally creating a compose file that works both for development (local container) up to production (swarm distribution).
+
+### Secrets with stacks
+
+*Compose file version >= 3.1*
+
+The best way to specify a secret is directly inside the compose yml file. In there we can specify which secrets is devoted to which services without spreading the secrets across the swarm indistinctly. Depending on how we specify the secrets in the compose stack file we will have different behavior; for example below there is an extract of a compose file where a secret is det to be `external` meaning that is not due to the stack itself to create the secret but we will manually create a file inside the swarm.
+
+```yml
+secrets:
+  psql-pw:
+    external: true
+```
+
+Now we can create our password (e.g. `echo "myPassword" | docker secret create [secrete_name] -`) and then **deploy -c** our compose file.
+
+N.B. this will work also in docker-compose in a local environment (not in a swarm) and docker will allow to do so since we are in a development environment, but it is not secure (we are still in a development environment). The only difference eis that we cant use `external` but we need to point directly to a txt based file in the container (so instead of `external:true` we will have `file: ./psql_password.txt`)
+
+
+# Docker Healthchecks
+
+*https://docs.docker.com/engine/reference/builder/#healthcheck* -> in dockerfile
+*https://docs.docker.com/compose/compose-file/#healthcheck* -> in compose file
+
+Added in version 1.12, `healthcheck` is an out-of-the-box tool that is a must do before going in production. It has a simple output for the execution of a command: `exit 0` is ok and `exit 1` is an error. Therefore, it is not a monitoring tools but only a check of the broad purpose of a container and to not let it run continuously even if something went wrong at some point.
+
+A container can be in 3 different state: `starting`, `healthy`, `unhealthy`
+
+The healthcheck is what determine the state of the container after it started: while the test is passed (we can set an interval to repeat the test), the container will be in a *healthy* state.
