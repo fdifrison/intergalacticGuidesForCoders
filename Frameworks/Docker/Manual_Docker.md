@@ -603,9 +603,17 @@ To list some of the pros & cons of the two we can say that:
 
 *https://kubernetes.io/docs/concepts/overview/components/#master-components*
 
+*https://kubernetes.io/docs/concepts/workloads/pods/*
+
+*https://kubernetes.io/docs/concepts/services-networking/service/*
+
+*https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/*
+
+
+
 Kubernetes is a system composed by different parts where with kubernetes itself we refer to the whole orchestration system. 
 
-Let's break down some of the terminology in the kubernetes ecosystem:
+Let's break down some of the terminology in the kubernetes ecosystem, since some of them are similar to:
 
 `Kubectl` (cube control) is the CLI that talks to the Kubernetes API and it is used to configure Kubernetes and manage the apps; there are a lot of commercial option for the CLI but cube control is the  one shipped with the native code. 
 
@@ -614,6 +622,10 @@ The `Nodes` are the same entities as in swarm, i.e. a single server in a kuberne
 `Kubelet` is an agent that is install in each node and will allow communication in the control plane (something that come out of the box with swarm since it is a  part of docker).
 
 The `Control Plane`, similar to swarm, is a set of container that is there to manage the cluster; each container has a specific role which make it very efficient but harder to setup. Includes API server, scheduler, database (etcd - similar to raft database)
+
+The `Pods` are the structure in which one or more container runs inside a node; essentially they are the basic unit of deployment; in kubernetes a container is always inside a Pod and this is not controlled directly but by a `Controller` that is used to create/update Pods. Actually, there are many types of controllers depending on their job (e.g. deployment, replicasSet, SatefulSet) and they are needed to ensure that what's happening inside the Pods is actually what we wanted.
+
+A `Service` in kubernetes is a different entity fro docker swarm; here it is only a network endpoint to which we connect the Pods
 
 
 ## Installing Kubernetes
@@ -626,3 +638,71 @@ The `Control Plane`, similar to swarm, is a set of container that is there to ma
 
 There are many ways to obtain kubernetes, the easiest is enabling it from docker desktop.
 
+## Basic Commands
+
+*https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/*
+
+*https://kubernetes.io/docs/reference/kubectl/cheatsheet/*
+
+*https://kubernetes.io/docs/reference/kubectl/conventions/*
+
+
+Kubernetes is evolving very fast, so many changes happens in short periods; One of its characteristics is that the same end can be reached in different ways using different commands. For example, **to create a pods from kubectl CLI** we can:
+
+* `kubectl run` similar to a **docker run** (solely for Pod creation)
+* `kubectl create` someway similar to **docker create**
+* `kubectl apply` someway similar to a **stack deploy** in a swarm (create/update YAML files)
+
+The substantial difference of kubernetes is the level of abstraction in the process of creating a container on top of docker. When we **kubectl create** a Pod, in reality kubernetes is creating a nested layer of objects, each controllable and each with a specific purpose. We have the container itself tha is contained inside a Pod, which has been created and contained by a `ReplicaSet` (which controls the number of replica of the service/Pod) which is created and contained in the `Deployment`. We could potentially speak to each object separately, but in practice, what we end up to do is speak directly with the **Deployment**.
+
+This different layers of abstractions constitute the power and the flexibility of kubernetes since it can be tuned and controlled under multiple aspects (in a docker swarm we have a bulk service out of the box, which in general is faster but less flexible).
+
+### Generators
+
+Each kubernetes command has a support `Generator`, i.e. a YAML file that contains a set of default options used by the command itself; when we run a command we can actually specify at the end `--dry-run -o yaml` (dry-run is a fake run of the command) to have a print output of the YAML configuration of the associated generator (we can use this defaults to create later on our own YAML config file)
+
+## Expose Kubernetes ports
+
+*https://kubernetes.io/docs/concepts/services-networking/service/*
+
+*https://kubernetes.io/docs/tutorials/services/source-ip/*
+
+*https://kubernetes.io/docs/tutorials/kubernetes-basics/expose/expose-intro/*
+
+*https://kubernetes.io/docs/concepts/services-networking/service/#nodeport*
+
+Once we have created a Pod ecosystem at some point we will need to expose it to a service (which in kubernetes vocabulary is nothing more than a network) in order to make it talk with the outer world. In fact, Pods don't get an ip/dns out of the box, they need a service to be attached. Again there are different way to do the same thing in kubernetes, but the default command to expose a port to a pod is `kubectl expose`; together, we have 4 types of services that are of common use. In particular, we have:
+
+* `ClusterIP` (default type) (only good in the cluster) which are virtual IP used for internal communication between nodes and pods
+* `NodePort` are port to connects to outside the cluster and are open on every node's IP (it will create a ClusterIp to connect to)
+* `LoadBalancer` used in the Cloud, is an automation to set up a load balancer to manage traffic from the outside of our cluster (it will create a NodePort and A ClusterIp to connect to)
+* `ExternalName` used to enable the cluster to talk to specific dns name
+
+## Imperative vs Declarative
+
+*https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/*
+
+*https://kubernetes.io/docs/tasks/manage-kubernetes-objects/imperative-command/*
+
+*https://kubernetes.io/docs/tasks/manage-kubernetes-objects/imperative-config/*
+
+*https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/*
+
+
+*Imperative: focus on how the program operates one step after the other*
+
+*Declarative: focus on what the program should accomplish*
+
+Imperative and declarative are essentially strategies on how to proceed in the software development; the same applies in the usage of kubernetes: when we start to learn it (same goes for docker) we are bound to an imperative approach, we follow one command after the other, and thats the way we learn; in a later stage we switch to YAML files for general configuration and an higher level of abstraction, we care about the end results not of the single steps that the tools is performing to obtaining it, hence declarative approach, the easiest way to automate our work.. our production endpoint!
+
+## Kubernetes YAML
+
+*https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/*
+
+Like for swarm the **stack deploy** is our goal in production, for kubernetes we aim to be able to abstract our commands and our goals into one ore more YAML files that will takes care of almost everything. `kubectl apply -f [file_name.yml]` is one of the few commands we need to remember in the kubernetes declarative approach, the rest will be to learn and understand the various keys and concepts inside the YAML files.
+
+In comparison to the docker compose file, the kubernetes YAML is more complex since it has much more flexibility, hence a lot more parameters to setup. A single YAML file can have a single scope or multiple concatenated actions to perform; in jargon they are called `manifests`. A good way to start learning how to create or study manifest is printing the output of a **--dry-run**, i.e. a test of a command which can then be printed to a yaml file (`kubectl [some command ] --dry-run -o yaml`).
+
+## Kubernetes Dashboard
+
+*https://github.com/kubernetes/dashboard*
