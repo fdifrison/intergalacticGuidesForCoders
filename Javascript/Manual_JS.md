@@ -7,7 +7,7 @@ Javascript is an high-level, object-oriented, multi-paradigm programming languag
 ## JS release
 Starting from 2015, with the release of ES6 (ECMAScript) we talk about modern javascript, and since then an annual release has been done with some new features.
 
-<img src="js_release_history.png">
+<img src="./Images/js_release_history.png">
 
 An important dogma of the js release is **`DON'T BREAK THE WEB!`** which traduces is a full backward compatibility of modern js engine withe older version up to ES1 (1997).
 
@@ -46,7 +46,7 @@ This line activates the `strict mode` that forbid us to do certain errors and cr
 
 # JS Deep Dive
 
-<img src="js_deepdive.png" >
+<img src="./Images/js_deepdive.png" >
 
 The above image shows a dummy but full definition of what js is together with most of its feature. Let's analyze them:
 
@@ -54,7 +54,7 @@ The above image shows a dummy but full definition of what js is together with mo
 * `Garbage-collected`: hand-to-hand with high level definition, the garbage collector is essentially an algorithm that is able to determine when to remove un'used variables in order to free hardware resources.
 * `Interpreted or just-in-time compiled`: The conversion to machine language (series 0 and 1) happen at compilation time inside the **js engine**
 
-<img src="js_JIT.png" >  
+<img src="./Images/js_JIT.png" >  
 
 * `Multi-paradigm`: can follow different approach of structuring the code (e.g. OOP or FP)
 * `Prototype-based object-oriented`: like python, everything is an object and most of the built-ins (like tha array structure) is based on a blueprint that gives functionality to the new instances (class-instance relation in python).
@@ -69,7 +69,7 @@ A js Engine is essentially a program that execute js code; every browser is ship
 
 The js engine is composed of two part:  the `call stack` where the code is executed and the `heap` where the object are stored in memory. As explained above, js use JIT compilation to be more efficient in the execution of a task; this process start with the js engine parsing the code (reading the code) creating the `AST Abstract Syntax Tree`, i.e. the subdivision of the const or function keyword in a structured way, in this step **syntax error** are also checked. The second step is the compilation of the AST in machine code that finally get executed right away (execution happens in the **call stack**). In reality, the process in not linear, to speed the execution, the compiler create at first a very raw version of machine code from the AST in order to be able to start the execution asap; then, during execution the compilation is optimized even more then once, until the executed machine code is at its best performance. All this happens in non-accessible threads external to the main thread that we can access during the execution of our program.
 
-<img src="js_AST.png">
+<img src="./Images/js_AST.png">
 
 ## The Execution Context
 
@@ -85,7 +85,7 @@ Once the Global and all the local EC are created how does the js engine knows th
 
 The `js engine` alone is not sufficient, in fact we need also the `WEB APIs` to interact with, basically the tools to interact with the engine that are not part of the engine itself. The js engine, together with the web APIs and the `callback queue` (a data structure that contains all the callback function, like the *event handler* that we use to interact with the DOM) composed the so called `Runtime`. What happens essentially is that the command in the callback queue are unstacked and send to the js engine call stack (when it is free from the code being executed); this happen thanks to the `event loop` that does this transfer from callback queue to call stack, taking care of non-blocking the execution therefore handling concurrent event.
 
-<img src="js_runtime.png">
+<img src="./Images/js_runtime.png">
 
 The difference when talking about `node js` is that being on the server side, we are not talking to the browser, therefore we are not interacting with the web APIs but with **c++ bindings & thread pool**
 
@@ -108,13 +108,13 @@ The scope chian and the call stack ares related but have a fundamental differenc
 
 Following, an example of the relation between scope chain and call stack. In particular, looking at the function *third* we can see how it tries to access  **c** and **b** that are outside its scope chain, therefore js will thrown an error.
 
-<img src="js_scope_chain.png">
+<img src="./Images/js_scope_chain.png">
 
 ## Hoisting
 
 Before execution, in the so called `creation phase`, the code is scanned for variables declarations, and for each of these a property is created in the `variable environment`, one of the component of the **execution context** as we have seen. The result of this process is called `Hoisting` and it makes some variables accessible ans usable in the code before they are actually defined. The image below summarize the behavior of variable in js: `var` variables (don't use them!) are source of bugs also because they are hoisted, but their initial value is **undefined** (therefore, if we try to call them before their actual declaration, we do not get the actual value we have assigned but *undefined*); `let` and `const` variable instead are not hoisted and therefore they can't be accessed before their actual declaration (it is said that they leave in the **TDZ** **T**emporal **D**ead, **Z**one). Again, we can use function declaration before they are actually defined in the code, but we can't do it with function expression or arrow functions.
 
-<img src="js_hoisting.png">
+<img src="./Images/js_hoisting.png">
 
 The `windows` is the global object in the browser console that holds the some types of variables, like the **vars** or the **arrow functions** because these creates property on the windows object itself.
 
@@ -211,7 +211,7 @@ When working with `object` it works different because these can be too large to 
 
 Now the big difference with primitives is when we create a new variable and we set it equal to the object. In this case, a new identifier is created in the call stack, which point to the same address of the first object, therefore sharing also the same memory reference to the heap. Now if any of the properties of the two object get changed, also its value stored in the heap address change, and since both the variable points to the same address, both get changed. **N.B. this is valid even if the variables are defined as const!**, this because the values in the call stack doesn't get changed, only the values stored in the heap.
 
-<img src="js_primitives_objects.png">
+<img src="./Images/js_primitives_objects.png">
 
 ### Copying an object
 
@@ -547,7 +547,7 @@ while (i<10) {
 
 # Functions
 
-<img src="js_functions.png">
+<img src="./Images/js_functions.png">
 
 ## Function declaration
 

@@ -420,13 +420,13 @@ Here comes `Swarm Mode`, essentially a **clustering solution built inside docker
 
 **Swarm mode** is not enabled out of the box, but has to be explicitly started since the idea was not to affect the existing containers in any way.
 
-<img src="swarm_overview.png">
+<img src="./Images/swarm_overview.png">
 
 The picture above gives an idea of the swarm ecosystem. We have `Workers` and `Managers` (that are essentially workers with the permission of controlling the swarm). The Managers are attached to a so called `Raft Database` which stores the configurations and the information needed by the managers to know their role inside the swarm (each manager contains a copy of the database). A manager can be a virtual machine or a physical host that is tunning a linux distribution or a windows server, and all these can communicate since they are in the same `control plane`. Managers sends order to workers, and workers can be promoted to manager eventually.
 
 Looking at an example, since now we where used to **docker run** and deploy a single container at the time on the machine where the **docker CLI** was running; with the concept of swarm, we can tell a manager to perform multiple operations, like deploying more than one containers or replicate existing one (these action are called `task`). A single service can have multiple tasks and each task can be responsible of running a container. So, the **docker run** command is replaced by the `docker service`, like in the example below where we told the service to deploy a standard nginx container but with 3 replicas; therefore, the managers decide where to allocate the three nodes in the swarm but not just that, in reality the swarm api does much more than simply accept command from the user, instead it handles the allocation of IP to the tasks, their assignation to nodes, communicates constantly with the workers etc..
 
-<img src="swarm_manager.png">
+<img src="./Images/swarm_manager.png">
 
 ## Creating a Swarm
 
@@ -500,7 +500,7 @@ The routing mesh is an `incoming network` that helps distributing the traffic ac
 
 This is super helpful because we don't need to know the exact location of the container (actually if it fails and it is recreated by the swarm orchestrator, it might be placed in a different node)
 
-<img src="swarm_routing.png">
+<img src="./Images/swarm_routing.png">
 
 Looking at the first example in the image above, imagine we have created a swarm with 3 tasks, 3 container and 3 nodes, inside the **overlay network** docker creates a VIP that is mapped to the DNS name of the service (my-web). At this point, all the containers inside the swarm only need to use the same dns of the service and automatically, the VIP will balance the traffic among all the tasks in the service.
 

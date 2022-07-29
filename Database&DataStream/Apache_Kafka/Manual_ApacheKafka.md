@@ -24,7 +24,7 @@ Kafka natively speaks JAVA but there are community based implementation for othe
 
 `Topics` are a particular stream of data, we can associate them to a table in a database but without all the constraints a table has. Following a list of Topics' features:
 
-<img src="kafka_topic.png">
+<img src="./Images/kafka_topic.png">
 
 * We can have as many topic as we want a these will be distinguish by their unique name. 
 * Topics can store any kind of message format and the sequence of messages is called data stream
@@ -41,7 +41,7 @@ The replication factor is a property of the topics and by default is set to 1. E
 
 If we have replicas, we also need a `leader broker`, i.e. the broker that host the original partition. At any time, only one broker can be the leader for a given partition and it will be this broker that will communicate with the Producers to receive data.
 
-<img src="kafka_leaders.png">
+<img src="./Images/kafka_leaders.png">
 
 In the img above, `broker 101` is the leader for `partition 0` while `broker 102` for `partition 1`. If the replicas are well performed than we can say that **each partition has one leader and multiple ISR in-sync replica**.
 
@@ -144,7 +144,7 @@ Often, we have multiple consumer-groups, each one related to a specific end appl
 
 Kafka can store th offset at which a particular consumer-group has been reading, meaning that periodically (or at least once), an offset is committed to the topic named `__consumer_offsets` by the server in order to be able to restore the reading from that offset (e.g. in case of a system failure)
 
-<img src="kafka_consumerOffset.png">
+<img src="./Images/kafka_consumerOffset.png">
 
 By default, the Java Consumer will automatically commit the offset at least once, but there are different strategies possible:
 
@@ -154,7 +154,7 @@ By default, the Java Consumer will automatically commit the offset at least once
 
 The commit strategy of the offset can be specified whe using a Java Consumer API; for example we can specify the parameters `auto.commit=true` and `auto.commit.interval.ms=5000` as the max time that can elapsed from one commit to the other. In this way we are going to process the messages Synchronously (if we were processing messages asynchronously we wil find us in an `at most once` situation -> unsafe).
 
-<img src="kafka_autoOffset.png">
+<img src="./Images/kafka_autoOffset.png">
 
 We can potentially disable the `auto.commit` strategy but we need to encapsulate the poll process in a function that handle the batch and determine the condition for which a commit is to be performed (e.g. an amount of time or the size of a batch).
 
@@ -170,7 +170,7 @@ Kafka has two way to understand if a consumer is still up and running, one from 
 
 ## Messages anatomy
 
-<img src="kafka_message.png">
+<img src="./Images/kafka_message.png">
 
 How are composed the messages sent by the producers to the topics? Has we have seen, we have a key (optional), a value (the actual message), the compression adopted, a series of optional key-value pairs headers, the partition and the offset of destination and a system/user-specified time-stamp. Moreover, since kafka I/O only communicates in bytes, we need to specify one of the many built-in serializer, ie.e hashing keys that transform keys and values into binary format.
 
@@ -343,7 +343,7 @@ The idea behind kafka connectors is to be able to easily get and send data to co
 
 The architecture is schematically illustrated below: we have our kafka clusters with brokers, topic and partitions and we have a source of data (e.g. a database or a website); We create a `connect cluster`, with its own workers, that take data from the sources and send it to the cluster; the same connector can be then reused to read data from the cluster, perform actions and send data to a sink (e.g. another database or an application).
 
-<img src="kafka_connect.png">
+<img src="./Images/kafka_connect.png">
 
 Essentially we have:
 * `source connectors` to get data from common data sources
@@ -357,7 +357,7 @@ At https://www.confluent.io/hub/ we can find some pre-build connectors for the m
 
 Kafka streams is used to create application on the data that are on our cluster to perform data manipulation (e.g. do some statistics). We can define it as a **data processing and transformation library** for kafka.
 
-<img src="kafka_streams.png">
+<img src="./Images/kafka_streams.png">
 
 ## Kafka Schema Registry
 
@@ -367,6 +367,6 @@ Here comes to save the day the kafka schema registry; we don't want kafka to ver
 
 Therefore we need the schema registry to be a separate components that interpret the data format (identify and reject bad data) and somehow talk to producers and consumers
 
-<img src="kafka_schemaRegistry.png">
+<img src="./Images/kafka_schemaRegistry.png">
 
 Apache Avro is the standard format to send data from/to producers/consumers. 
