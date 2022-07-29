@@ -60,7 +60,7 @@ Probably the most important reason is to give full `accessibility` to the webpag
 
 Following the anatomy of an html element:
 
-<img src="html_element.png">
+<img src="./Images/html_element.png">
 
 ### DOCTYPE
 
@@ -93,7 +93,7 @@ To render images the tag is `<img>` and it has three arguments, `src` the source
 Another important attribute is `alt` (alternative text) i.e. a description of the image. This is important for two reasons, the first is related to the ability of web search engine to associate the image to a specific search, the second is to allow blind people to let the web reader tell them what the image is about. The alt description won't be printed to the screen unless the image itself cannot be found, in which case the alt text will substitute the image.
 
 ```html
-<img src="myImage.jpg" alt="Some text describing the image" width="104" height="142">
+<img src="./Images/myImage.jpg" alt="Some text describing the image" width="104" height="142">
 ```
 
 ### Attributes
@@ -153,7 +153,7 @@ CCS stands for **C**ascading **S**tyle **S**heets and it is used to give a visua
 * `declaration block`: a set of property-value pairs called
 * `declaration`: composed of a property and its value
 
-<img src="css_rule.png">
+<img src="./Images/css_rule.png">
 
 ## Where to insert CSS code? 
 
@@ -264,7 +264,7 @@ There are different ways to express colors in code depending on the standard we 
 
 The most common is probably the `RGB` model, where every color can be represented as a combination of `red, green and blue` in a scale from `0-255` for a total combination of more than 16M colors:
 
-<img src="rgb_model.png">
+<img src="./Images/rgb_model.png">
 
 In css, we have two way to specify an rgb color: using the `rgba notation` which is a function that takes 4 argument where the fourth is the transparency (alpha); using the `hexidecimal notation`, a string composed by an # follow by 6 characters that goes in couple from 0 to f (if one couple has the same value we can leave just one of the two). In hexadecimal, the transparency is given by two additional characters going from `ff` (alpha=1) to `00` (alpha=0) 
 
@@ -301,7 +301,7 @@ What is going to happen if we have different css selectors applied to the same e
 
 Actually, each property assign to an element is applied to it, but the one displayed depend on the following priority list:
 
-<img src="css_conflicts.png">
+<img src="./Images/css_conflicts.png">
 
 Aside from `!importat` which is the extreme way to resolve conflicts (an hack not to be used) and `inline style` in the html code (again, not to be used), the cascade priority goes as follow:
 
@@ -327,7 +327,7 @@ Universal selector are the lowest priority selectors but can brutally be applied
 
 The css box model is the fundamental structure that determines how an object is displayed and sized on a webpage. it is composed by a set of property, each of one can be specified or implied.
 
-<img src="css_boxModel.png">
+<img src="./Images/css_boxModel.png">
 
 As show in the image above, the visible part of an element is everything inside the border (included), while the margin is the distance between the object and its surrounding. 
 
@@ -425,7 +425,7 @@ The standard box model structure can be quite confusing, since to know the real 
 
 **Since it is so important, we can simply put it in the universal selector at the beginning of out css file.**
 
-<img src="box_sizing.png">
+<img src="./Images/box_sizing.png">
 
 ---
 
@@ -443,7 +443,7 @@ There are 3 ways of building a layout with css:
 
 ## Float Layout
 
-<img src="float_layout.png">
+<img src="./Images/float_layout.png">
 
 Float layout is based on the `float:` css property which basically remove the element from the *normal flow* letting the other elements floating around it (e.g. `float: left` will let the element sit in the most left corner of its parent container). If all the child elements in a component, e.g. the header, are *floating* then the height of the component goes to zero, as if nothing was inside it; in this case, the component is said to be **collapsed**. To restore the height of the parent element it is required to create a fictitious element, without content but the only purpose of occupy space, with the `clear:` css property which defines its relation with the floated object contained in the same parent element. Of course this is not ideal, it gets messy pretty fast; a minor hack that was invented when float layout was the main choice was to add a class to the parent element called *clearfix* and style a css property with a pseudo-class *.clearfix::after{}* in order to add directly a child element as last child (at the end of the container) and add again the *clear: both* property (remember that pseudo-class need a *content* property to be displayed, and by default their display style is *inline* but for this purpose we need to set it to *block*). We will have something like this:
 
