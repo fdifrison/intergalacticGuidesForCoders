@@ -1,4 +1,6 @@
-# Node Js Manual
+# Node Js Manual (v16 LTS)
+
+*https://nodejs.org/dist/latest-v16.x/docs/api/*
 
 ---
 
@@ -14,3 +16,46 @@ At an high level, `Node is a JS runtime that is built on google's open source V8
 * serve-side dynamic web application
 
 It is also god to know that `Node is NOT suited for heavy server-side application` (CPU intensive) due to is single-thread design; it just not meant to be used for that!
+
+## The Node terminal
+
+Once Node is installed, we can simply open a terminal and type `node` and it will open a node session where we can directly write and execute JS code.
+
+To run an external script we can simply:
+
+* `node [file_name].js`
+
+### Tips
+
+* `Ctrl + D`: close the session
+* double Tab: shows the environment variables or the method bounded to a particular object (also autocompletion)
+
+
+# Modules
+
+Like any programming language, Node has a countless number of third party libraries (modules) specialized to perform specific task.
+
+To import a module inside a script we simply assign it to a constant with the `require()` method:
+
+* `const fs = require('fs')`; where fs is the **file system** module to work with files and directories.
+
+## `fs` filesystem
+
+* read from file
+
+```js
+const readFile = fs.readFileSync("./readme.txt", "utf-8"); // if utf is not specified, return a buffer
+```
+
+* write to file
+
+```js
+const writeFile = fs.writeFileSync("./writeme.txt", somethingToWrite); // if utf is not specified, return a buffer
+```
+
+
+# Synchronous Vs Asynchronous
+
+Synchronous programming means that each line of the script is executed in order, and its execution **blocks** the single Node thread, i.e. nothing else can happen. For the way Node was designed and for its applications, synchronous programming is not acceptable, since we may need to execute different task at the same time without freezing our program. In an Asynchronous task, the work is performed in the background, so that in the meantime other actions can happen, and the results is retrieved only when effectively needed.
+
+Thinking of Node as a backend service for web applications, the need of asynchronicity is crystal clear: imagine that our web app is accessed by 10 user at the same time, if the backed was written synchronously, each user would need to wait for the one requesting an action.. unacceptable. We want our users to be able to asynchronously operates our app without any interruption.
