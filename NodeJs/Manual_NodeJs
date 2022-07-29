@@ -1,0 +1,14 @@
+# Node Js Manual
+
+---
+
+## What is Node Js?
+
+At an high level, `Node is a JS runtime that is built on google's open source V8 JS engine`. While standard JS engine is meant to communicate inside a browser (and any browser is able to understand JS), **Node is the way we run JS code outside the browser**. Therefore, since we don't have the browser to parse and run the code, we need a new "container", and this is the **V8 Js engine**. Running outside the browser gives JS the potential to access the filesystem and improved networks capability making it a perfect solution to be used as `web servers` in order to create the **backend** of fast (single-thread based on event driven I/O model) and scalable applications. The features of Node makes it ideal for solution like:
+
+* databases API (preferably NoSQL)
+* data streaming
+* real-time chat
+* serve-side dynamic web application
+
+It is also god to know that `Node is NOT suited for heavy server-side application` (CPU intensive) due to is single-thread design; it just not meant to be used for that!

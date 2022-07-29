@@ -580,6 +580,8 @@ The healthcheck is what determine the state of the container after it started: w
 
 *https://kubernetes.io/it/docs/concepts/overview/what-is-kubernetes/*
 
+*https://www.bretfisher.com/kubernetes-vs-docker/*
+
 Kubernetes, in short `k8s` or `kube`, is an alternative to docker swarm, i.e. it is an orchestrator of containers that runs on top of docker (even if it can run also on top of other containerization tools), i.e. a tool to solve a lot of problems in the scale up of applications across multiple servers. The raw github kubernetes codes is something to use only with a learning purpose, for development and production instead there are a lot of commercial release that offers many functionality for different aspects of the deployment. A list of distribution, depending on the OS, can be found here https://kubernetes.io/partners/#conformance.
 
 If we have to synthesize in a word the two services we would tag swarm as `easy`, due to its easiness in deploy and managing, while kubernetes as `more feature and flexibilities` together with a mass adoption.
@@ -706,3 +708,5 @@ In comparison to the docker compose file, the kubernetes YAML is more complex si
 ## Kubernetes Dashboard
 
 *https://github.com/kubernetes/dashboard*
+
+*https://docs.google.com/spreadsheets/d/1FCgqz1Ci7_VCz_wdh8vBitZ3giBtac_H8SBw4uxnrsE/edit#gid=0*
