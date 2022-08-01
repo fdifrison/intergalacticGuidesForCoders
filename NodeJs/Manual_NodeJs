@@ -39,7 +39,9 @@ To import a module inside a script we simply assign it to a constant with the `r
 
 * `const fs = require('fs')`; where fs is the **file system** module to work with files and directories.
 
-## `fs` filesystem
+## `fs`: filesystem manager
+
+*const fs = require('fs')*
 
 * read from file
 
@@ -53,9 +55,32 @@ const readFile = fs.readFileSync("./readme.txt", "utf-8"); // if utf is not spec
 const writeFile = fs.writeFileSync("./writeme.txt", somethingToWrite); // if utf is not specified, return a buffer
 ```
 
+## `http`: building a web server
+
+http is the module used to create a web server
+
+*const http = require('http')*
+
+The main constructor is given by:
+
+```js
+const server = http.createServer((req, res) => {});
+```
+
+where `req` and `res` are the request made to the server and the response given back. Both the method have many arguments to handle the user interactions
+
+
+## `url`: create Routing
+
+*const url = require('url')*
 
 # Synchronous Vs Asynchronous
 
-Synchronous programming means that each line of the script is executed in order, and its execution **blocks** the single Node thread, i.e. nothing else can happen. For the way Node was designed and for its applications, synchronous programming is not acceptable, since we may need to execute different task at the same time without freezing our program. In an Asynchronous task, the work is performed in the background, so that in the meantime other actions can happen, and the results is retrieved only when effectively needed.
+Synchronous programming means that each line of the script is executed in order, and its execution **blocks** the single Node thread, i.e. nothing else can happen. For the way Node was designed and for its applications, synchronous programming is not acceptable, since we may need to execute different task at the same time without freezing our program. In an Asynchronous task, the work is performed in the background by so called `callbacks functions`, so that in the meantime other actions can happen, and the results is retrieved only when effectively needed.
 
-Thinking of Node as a backend service for web applications, the need of asynchronicity is crystal clear: imagine that our web app is accessed by 10 user at the same time, if the backed was written synchronously, each user would need to wait for the one requesting an action.. unacceptable. We want our users to be able to asynchronously operates our app without any interruption.
+Thinking of Node as a backend service for web applications, the need of asynchronicity is crystal clear: imagine that our web app is accessed by 10 user at the same time, if the backed was written synchronously, each user would need to wait for the one requesting an action.. unacceptable. We want our users to be able to asynchronously operates our app without any interruption. Therefore, the structure of a Node code is strongly based on callbacks functions to generate a `Non-blocking I/O model`. N.B. callbacks function are not natively asynchronous, only specific functions from the Node API are specifically design to run asynchronously (e.g. the filesystem function `fs.readFileSync` has is async counterpart `fs.readFile`).
+
+
+# Routing
+
+Routing is the process of handling different url requests to a web-server. To most basic way to perform it it to use the `url` module and check the requested url, redirecting the user to the appropriate page or eventually handling errors (like 404 Page not found)
