@@ -661,6 +661,43 @@ Arrays have a myriad of methods, i.e. functions, that can be applied to them to 
 * `array.include(arg)`: check with strict equality (===, i.e no type coercion) if arg is in array; return is boolean
 
 
+## Destructuring arrays
+
+Destructuring is the way to unpack arrays inline and it is simply performed by putting in square brackets the variable that are going to receive the elements of the array:
+
+```js
+const array = [1,2,3]
+const [x, y, z] = array
+```
+
+We can extract only some of the values in the array or skipping a value by simply adding an empty slot in the destructuring operator
+
+```js
+const array = [1,2,3]
+const [x, ,z] = array // x=1 z=3
+```
+
+We destructure also nested array simply using the destructuring technique recursively
+
+```js
+const array = [1,2, [3, 4]]
+const [x, ,[z,k]] = array // x=1 z=3 k=4
+```
+
+If we try to unpack an element that doesn not exist (e.g. the array is shorter than what we think), we get an `undefined` object in return assigned to the variable that had nothing to unpack.
+
+### destructuring as in place variable switch
+
+We can also use destructuring to switch variables in place:
+
+```js
+[x, y] = [y, x]
+```
+
+
+
+
+
 ---
 
 # Objects
