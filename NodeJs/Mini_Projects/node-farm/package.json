@@ -1,0 +1,14 @@
+{
+  "name": "node-farm",
+  "version": "1.0.0",
+  "description": "First Exercise with NodeJs",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "G. Frison",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}

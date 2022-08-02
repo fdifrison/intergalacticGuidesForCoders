@@ -5,3 +5,5 @@ __*.txt
 .vscode
 bin
 session_saver/
+node_modules
+package-lock.json

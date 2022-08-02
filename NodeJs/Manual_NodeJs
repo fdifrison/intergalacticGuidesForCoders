@@ -30,6 +30,75 @@ To run an external script we can simply:
 * `Ctrl + D`: close the session
 * double Tab: shows the environment variables or the method bounded to a particular object (also autocompletion)
 
+---
+
+# NPM - Node package manager
+
+*https://www.npmjs.com/*
+
+The npm is the pip of js, it contains all the natively available modules that can be imported to expand the functionality of our code. It is the larger registry online!
+
+At the beginning of a new project we should type:
+
+* `npm init`
+
+This will generate a `package.json` file (similar to the requirement.txt with pip freeze), listing the specification of the project and all the external module installed in order to be able to recreate the same environment anywhere we deploy our code.
+
+## Installing dependency
+
+We have two type of dependency:
+
+* **simple/regular dependency**: is code, imported in our code, upon which we built our code! (e.g. express)
+  * `npm install slugify`: once we perform the installation, the dependency will be added to our package.json file
+* **developer dependency**: like a debugger, something that we don't use directly in our code. To install a dependency as dev we need to add at the end of the install command `--save-dev`
+  * `npm install nodemon --save-dev`
+
+To install all the dependency of our project, i.e. the ones listed in our **package.json**, we cna simply enter in the project folder and type:
+
+* `npm install`
+
+### Global install
+
+There are some packages that are spo commonly used that aren't worth to be installed only locally in our project environment; instead it is more useful to install them in the `global` environment adding the flag `--location=global` to the install command.
+
+### Using local install
+
+To use locally project-depended modules (e.g. we want to start a specif version of nodemon installed locally for our app) we can't directly call them from terminal since by default it access the global installs. Instead, we can add in the `package.json` under the field `script` special pairs of keyword:command (called nom scripts) to be executed with the local packages:
+
+```json
+"scripts": {
+    "test": "myTest.js",
+    "start": "nodemon index.js"
+  }
+```
+
+Then we can execute our app simply typing in our terminal 
+
+```sh
+npm start
+```
+
+### Package versioning
+
+*in general true for every programming language*
+
+package version is composed by 3 set of numbers *x.y.z*, eg. 1.10.25; the rhs number is used for bug fixes, the central one for feature update that won't brake backward compatibility and the first number is for major new release that might break backward compatibility
+
+With the command `npm outdated` we retrieve a list of modules that have a potential update to be installed
+
+To install a specific version of a package, simply write its name followed by @x.y.z:
+
+* `npm install nodemon@1.0.0`
+
+In the **package.json**, local installation of modules is usually written as *"package-name" : "^x.y.z"*; the `^` means that we accept **minor update** (update on **y** and **z**) of the same package to be used in the project. If instead we replace `^` with `~` it means that we only accept **bug fixes** (update on the **z**). To accept new version, even major update, use `*` instead
+
+## Uninstall a package
+
+To uninstall a package simply type:
+
+* `npm uninstall [package_name]`
+
+---
 
 # Modules
 
@@ -43,21 +112,11 @@ To import a module inside a script we simply assign it to a constant with the `r
 
 *const fs = require('fs')*
 
-* read from file
-
-```js
-const readFile = fs.readFileSync("./readme.txt", "utf-8"); // if utf is not specified, return a buffer
-```
-
-* write to file
-
-```js
-const writeFile = fs.writeFileSync("./writeme.txt", somethingToWrite); // if utf is not specified, return a buffer
-```
+**fs** is the filesystem manager module for js; everything from read/write files/folders etc..
 
 ## `http`: building a web server
 
-http is the module used to create a web server
+**http** is the module used to create a web server
 
 *const http = require('http')*
 
@@ -72,7 +131,30 @@ where `req` and `res` are the request made to the server and the response given 
 
 ## `url`: create Routing
 
+**url** modules is used to parse url query in a format that can be handled by js
+
 *const url = require('url')*
+
+We can use it to parse the queries in the url and properly redirect the routing:
+
+```js
+url.parse(req.url, true)
+```
+
+This will return an object that under the field `query` will contain a dictionary with listed the query information (e.g. if **req.url** is **mypage?id=0**, the dictionary will contain **{id:'0'}**)
+
+
+## `nodemon`: automatic restart server 
+
+**nodemon** is a useful dev utility that check for modification in our project folder and automatically restart our server to appreciate the changes without the need of relaunch and refresh. To use it simply lunch the application with 
+
+```sh
+nodemon app.js
+```
+
+Basically it is a wrapper around the node command
+
+---
 
 # Synchronous Vs Asynchronous
 
@@ -80,6 +162,7 @@ Synchronous programming means that each line of the script is executed in order,
 
 Thinking of Node as a backend service for web applications, the need of asynchronicity is crystal clear: imagine that our web app is accessed by 10 user at the same time, if the backed was written synchronously, each user would need to wait for the one requesting an action.. unacceptable. We want our users to be able to asynchronously operates our app without any interruption. Therefore, the structure of a Node code is strongly based on callbacks functions to generate a `Non-blocking I/O model`. N.B. callbacks function are not natively asynchronous, only specific functions from the Node API are specifically design to run asynchronously (e.g. the filesystem function `fs.readFileSync` has is async counterpart `fs.readFile`).
 
+---
 
 # Routing
 
