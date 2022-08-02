@@ -684,7 +684,14 @@ const array = [1,2, [3, 4]]
 const [x, ,[z,k]] = array // x=1 z=3 k=4
 ```
 
-If we try to unpack an element that doesn not exist (e.g. the array is shorter than what we think), we get an `undefined` object in return assigned to the variable that had nothing to unpack.
+If we try to unpack an element that does not exist (e.g. the array is shorter than what we think), we get an `undefined` object in return assigned to the variable that had nothing to unpack.
+
+At last, we can destructure an array and at the same time set a default value to the variables we are unpacking, in order to avoid the `undefined` in case the unpacking can't be done:
+
+```js
+const array = [5,2]
+const [x=1,y=1,z=1] = array // x=5 y=2 z=1
+```
 
 ### destructuring as in place variable switch
 
