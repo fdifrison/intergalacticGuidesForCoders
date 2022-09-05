@@ -32,6 +32,21 @@ To run an external script we can simply:
 
 ---
 
+# Intro to back-end development
+
+*https://www.cloudflare.com/it-it/learning/dns/what-is-dns/* -> what is the DNS
+*https://www.ionos.it/digitalguide/server/know-how/presentazione-dei-protocolli-tcpip/* -> what is the TCP/IP
+
+Each time we query the browser for a webpage or an API we are making a **request** to the server that is hosting the service and we receive back a **response**; this is defined as the **client-server architecture**. A web address is commonly composed by a **protocol** (http or https), a **domain name** (e.g. www.google.com) and a **resource** (e.g. /maps). The domain name is not the real address at which the website is hosted but a nice human-readable replacement, therefore we need a service called **DNS** to translate it for our browser. The first step is a **DNS lookup**, something similar to a search in a phone book aimed to find a match in the DNS between the alias and the real ip address that hosts the webpage.
+Once the ip address is resolved, a **TCP/IP socket connection** is enstablished between the client and the server and kept alive for the entire duration of the communication. Once the connection is enstablished the client can perform an `HTTP request` (Hyper Text Trasfert Protocol) (N.B. TCP/IP and HTTP are only communication protocols, i.e. a set of rules that need to be enstablished to create a common ground for data transfer in the through the internet).
+
+<img src="./Images/http_request.png">
+
+The image above shows an example of an http request, something that we don't wrtie ourself but still we should be able to read and understand. In the start line we have the `http method` (e.g. GET, POST) that  depend on the action we want to performe (e.g get or send data to the server).
+
+
+---
+
 # NPM - Node package manager
 
 *https://www.npmjs.com/*
@@ -59,7 +74,7 @@ To install all the dependency of our project, i.e. the ones listed in our **pack
 
 ### Global install
 
-There are some packages that are spo commonly used that aren't worth to be installed only locally in our project environment; instead it is more useful to install them in the `global` environment adding the flag `--location=global` to the install command.
+There are some packages that are so commonly used that aren't worth to be installed only locally in our project environment; instead it is more useful to install them in the `global` environment adding the flag `--location=global` to the install command.
 
 ### Using local install
 
@@ -166,4 +181,4 @@ Thinking of Node as a backend service for web applications, the need of asynchro
 
 # Routing
 
-Routing is the process of handling different url requests to a web-server. To most basic way to perform it it to use the `url` module and check the requested url, redirecting the user to the appropriate page or eventually handling errors (like 404 Page not found)
+Routing is the process of handling different url requests to a web-server. The most basic way to perform it is to use the `url` module and check the requested url, redirecting the user to the appropriate page or eventually handling errors (like 404 Page not found)
