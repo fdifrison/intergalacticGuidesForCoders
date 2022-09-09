@@ -31,7 +31,7 @@ public class timeToString {
         return getDurationString(min, remainder);
 
     }
-    
+
 
 
 }

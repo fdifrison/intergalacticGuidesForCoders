@@ -36,6 +36,7 @@ When running a program, java looks for the `main` method as an entry point
 * indentation is not significant but helps readability
 * string are enclosed in double quotes only **"**
 * **=** is the assign while **==** is the comparison 
+* there is no implicit conversion to boolean of particular symbols (e.g. 0 and 1 are only int, don't have an implicit boolean conversion)
 
 ---
 
@@ -119,6 +120,12 @@ Strings datatype **are not actually primitives** but class instead with some exc
 
 Strings are an **immutable** datatype, therefore any modification to its original values require java to create a new variable under the hood. This is not particularly efficient, in fact we will use a class called **StringBuffer** that is mutable instead.
 
+Being a class, String comes with a series of method attached that can be extremely useful for string manipulation and comparison; some of the most common are:
+
+* `.toLowerCase()`
+* `.isEmpty()`
+* `.format("%.2f", myString)`
+
 
 ## Boolean
 
@@ -129,6 +136,8 @@ The truth value of a variable can be reversed with the **negation symbol `!`**
 boolean var = true;
 boolean negation = !var; // false
 ```
+
+N.B. there is no implicit conversion to boolean of particular symbols (e.g. 0 and 1 are only int, don't have an implicit boolean conversion)
 
 
 # Operators, operands and expression
@@ -207,8 +216,72 @@ if (test < 100) {
 
 # The switch statement 
 
-The switch statement is an alternative to a possible messy concatenation of nested if-elseif statement. From a python perspective, we are essentially talking of a dictionary (a defaultdict to be precise) where a specific output is set depending on the input. The reserved JAVA keyword is `switch(someValue)` where **someValue** will be the testing parameter. Here an example
+The switch statement is an alternative to a possible messy concatenation of nested if-elseif statement. From a python perspective, we are essentially talking of a dictionary (a defaultdict to be precise) where a specific output is set depending on the input. The reserved JAVA keyword is `switch(someValue)` where **someValue** will be the testing parameter. The switch statement can only be use with some primitive types: **int, long, byte, char, String, Enum**.
 
+Here an example:
+
+```java
+switch (value) {
+            case 1:
+                System.out.println("You chose 1");
+                break;
+
+            case 2:
+                System.out.println("You chose 2");
+                break;
+
+            case 3: case 4: case 5:
+                System.out.println("You chose either 3, 4 or 5");
+                break;
+
+            default:
+                System.out.println("You chose " + value);
+        }
+```
+
+The limitation of the switch statement is that is checking only one variable while the if statement can contain different conditions not related.
+
+N.B. the **break** keyword is necessary to close the case test otherwise java will execute also all the condition after the one correctly selected with the input value.
+
+# The for loop
+
+As always, the for statement is used to creates loop in our code. The for loop needs 3 parameters: an initial value, a termination criteria that will stop the loop when evaluated to false and an increment step. In JAVA the syntax is the following.
+
+```java
+for (int i = 0; i < 4; i++) {
+    // for loop body
+        System.out.println( i + "!");
+    }
+```
+
+The keyword `break` can be used to terminate prematurely the looping while the keyword `continue` can be used to skip the iteration if a certain condition is met.
+
+# The while loop
+
+Instead a predefined number of times, we may want to loop until a specific condition is met; for this we need a while loop. The syntax in JAVA is the following:
+
+```java
+int count = 1;
+while (count!=5) {
+    // while loop body
+    count ++
+    }
+```
+
+The while loop is often used to create **infinite loops** with the expression `while(true)`; in this case the exit strategy needs to be coded with a **break** inside the while body, otherwise the loop will be de facto endless.
+
+## The `do` while statement
+
+The difference of a do-while loop is that we have an initial expression that is always executed at least one since the termination condition is checked only after. The syntax is the following: 
+
+```java
+int count = 0;
+do {
+    System.out.println(count);
+} while(count <5);
+```
+
+In the example above, even if the initial value of *count* would have been 5 (thus evaluating to false in the while condition), we would have the execution of the **do statement** once; in a traditional while loop nothing would have been executed because the exit strategy would have been met before the beginning of the while body.
 
 # Methods
 
