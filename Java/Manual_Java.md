@@ -14,9 +14,11 @@ Moreover, there are different vendors (Oracle, Amazon, IBM etc..) that release t
 
 Following some basic information to start a java project.
 
-## Keywords
+# Keywords
 
-Keyword are case sensitive special name used by jdk to perform specific task. For example:
+*https://en.wikipedia.org/wiki/List_of_Java_keywords* -> list of java keywords
+
+Keyword are case sensitive **reserved** name used by jdk to perform specific task. For example:
 
 * `public` is an **access modifier**, it defines the scope of the class, i.e. how other part of the code or someone else code can access the class.
 * `static` 
@@ -30,13 +32,22 @@ When running a program, java looks for the `main` method as an entry point
 # General style rules
 
 * semicolon is needed at the end of any statement
-* indentation is not significant
+* we can have more than one statement inline but is not good for readability
+* indentation is not significant but helps readability
 * string are enclosed in double quotes only **"**
 * **=** is the assign while **==** is the comparison 
 
 ---
 
 # Primitives
+
+## Constants
+
+Constants are by definition immutable object that are usually defined at the root of the class to be accessible from all the methods. To be so, we define a constant with the keyword `private static final`:
+
+```java
+private static final String MY_ERROR_MESSAGE = "This is an Error!"
+```
 
 ## Variables
 
@@ -122,10 +133,15 @@ boolean negation = !var; // false
 
 # Operators, operands and expression
 
+*https://docs.oracle.com/javase/tutorial/java/nutsandbolts/opsummary.html* -> list of operators
+
+*http://www.cs.bilkent.edu.tr/~guvenir/courses/CS101/op_precedence.html* -> operators precedence
+
+
 Operators are those symbols that can be used to perform operations on variable such as addition, multiplication etc. Operands are the subjects of the operation. An expression is the whole block where the variable is defined as the combination of two or more operands with an operator
 
 ```java
-// an example of expression
+// an example of expression -> myInt = 10 + 5
 int myInt = 10 + 5; // + is the operator, 10 and 5 are the operands
 ```
 
@@ -137,8 +153,29 @@ There are some shortcut that can be used when dealing with operators; some examp
 * `var--` : subtract 1 to var
 * `var += 2` : in place addition to var
 
+## Logical operators
 
-# The if-then Statement
+Logical operators are used to compare boolean values (the standard rules of boolean logic applies, also short-circuit). In particular we have:
+
+* `&&` : logical AND
+* `||` : logical OR
+* `&` : bitwise AND (comparison at bit level, more advanced)
+* `|` : bitwise OR (comparison at bit level, more advanced)
+* `==` : logical EQUALS TO
+* `!` : logical NEGATION
+
+## The Ternary operator
+
+The ternary operator is essentially a shortcut for an inline if-then-else and is composed in java by so:
+
+```java
+boolean ternary = ourTest ? true : false;
+```
+
+In the example, **ourTest** is the variable/expression that is tested to be true or false, whats after the **?** is the true condition and after **:** is the false condition
+
+
+# The if-then statement
 
 The if-then statement in the most basic **conditional logic** constructor we have in JAVA; it allows to check if a condition evaluates to true or false and therefore to decide if a code block has to be executed or not.
 
@@ -150,3 +187,73 @@ boolean human = false;
 ```
 
 notice how the **if ()** line is not ended with a semicolon that is placed instead at the end of the condition. We could potentially avoid the code block (the curly brackets) but then we could only have one expression in the if-statement, moreover the code would be less readable!
+
+## if-then-else
+
+As usual, we can give an **else** condition to the if-then statement that will be executed in case the expression given is evaluated to false:
+
+```java
+int test = 101;
+if (test < 100) {
+    System.out.println("the test is < 100");
+} else if (test > 100) {
+    System.out.println("the test is > 100");
+} else {
+    System.out.println("something different");
+}
+```
+
+**N.B variables created inside a code block are not accessible from outside the block scope! The opposite instead is possible, a code block can always access variable in its outer blocks scopes**
+
+# The switch statement 
+
+The switch statement is an alternative to a possible messy concatenation of nested if-elseif statement. From a python perspective, we are essentially talking of a dictionary (a defaultdict to be precise) where a specific output is set depending on the input. The reserved JAVA keyword is `switch(someValue)` where **someValue** will be the testing parameter. Here an example
+
+
+# Methods
+
+A method is essentially a function bounded to a class instance. Methods can't be nested within each other. We can of course pass arguments and return variables from methods but we need to explicitly state the datatype:
+
+```java
+public static double kgToPound(double kilos) {
+        double conversion = 2.205d;
+        return kilos * conversion;
+    }
+```
+If the methods has no return than the appropriate keyword is `void`.
+
+```java
+public static void kgToPound(double kilos) {
+        double conversion = 2.205d;
+        System.out.println("your weight in pound is: " + kilos * conversion);
+    }
+```
+
+## Methods Overloading
+
+Like in other programming language, overloading a function or a method means to have the same method defined multiple times with the same time but with a different number of arguments. Java will infer which method to call based on the number of argument we are actually passing. **println** is a common example of method overloading since it can be called with different datatype in argument and still produces the correct output. With overloading we improve the readability and the consistency of our code.
+
+
+
+
+
+
+
+
+
+
+# Tools
+
+## DiffMerge
+
+DiffMerge is a tool used to visually compare and merge files on any OS
+
+
+
+
+
+
+
+
+
+
