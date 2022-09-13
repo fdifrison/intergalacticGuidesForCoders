@@ -254,7 +254,7 @@ for (int i = 0; i < 4; i++) {
     }
 ```
 
-The keyword `break` can be used to terminate prematurely the looping while the keyword `continue` can be used to skip the iteration if a certain condition is met.
+The keyword `break` can be used to terminate prematurely the looping while the keyword `continue` can be used to skip the execution of the code that is in the while block for the current iteration if a certain condition is met.
 
 # The while loop
 
@@ -307,10 +307,42 @@ public static void kgToPound(double kilos) {
 Like in other programming language, overloading a function or a method means to have the same method defined multiple times with the same time but with a different number of arguments. Java will infer which method to call based on the number of argument we are actually passing. **println** is a common example of method overloading since it can be called with different datatype in argument and still produces the correct output. With overloading we improve the readability and the consistency of our code.
 
 
+# Reading User-Input
 
+N.B. *The Scanner class is part of the `java.util.Scanner` module*
 
+```java
+import java.util.Scanner
+```
 
+In order to read a user input in JAVA we need to use the class `Scanner` to create a scanner object, able to receive information in input from the system; in fact, the argument passed to the scanner will be **System.in** (while for printing to screen we use the **System.out**). The basic syntax is the following:
 
+```java
+Scanner myScanner = new Scanner(System.in);
+        System.out.println("Enter your name: ");
+        String name = myScanner.nextLine();
+        System.out.println("Your name is " + name);
+        myScanner.close();
+```
+
+With the keyword `new` we are creating an instance of the class **Scanner** and we are storing in a variable called **name** the first line input by the user. After the operation of input are ended, the Scanner needs to be **closed**.
+
+If we need to read more than one line in the same scanner, and in particular if one of the line to be read is a number (we need to use the method `myScanner.nextInt` in this case), we need to handle the fact that the user will have to **press the button return** that for the compiler has the same meaning of reading a next line; therefore we need an empty `myScanner.nextLine()` before reading some other user input data:
+
+```java
+Scanner myScanner = new Scanner(System.in);
+        System.out.println("Enter your year of birth: ");
+        String year = myScanner.nextInt();
+        myScanner.nextLine(); // handle next line character (enter key)
+        //
+        // other queries for the user to input
+        //
+        myScanner.close();
+```
+
+## Limiting the input
+
+We want to avoid as much as possible our program o crush of course. Therefore, without talking about exception handling right now, we can use some of the Scanner built-in methods to check for the user input. For example, if we are expecting a number as input (or, to better say a string that can be directly casted into a number) we can use the method `scanner.hasNextInt()` and store the result into a boolean, do detect if the input can be casted into an **Int**; in this way we can structure our code around an if-then-else loop which check the condition of this boolean variable to proceed, avoiding the potential error in the tentative conversion of a string that can't be casted into an **Int** (e.g. "1989a").
 
 
 
