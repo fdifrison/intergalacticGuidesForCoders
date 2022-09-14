@@ -14,7 +14,7 @@ Moreover, there are different vendors (Oracle, Amazon, IBM etc..) that release t
 
 Following some basic information to start a java project.
 
-# Keywords
+## Keywords
 
 *https://en.wikipedia.org/wiki/List_of_Java_keywords* -> list of java keywords
 
@@ -24,12 +24,7 @@ Keyword are case sensitive **reserved** name used by jdk to perform specific tas
 * `static` 
 * `void` indicates that the method won't return any information
 
-
-## Methods
-
-When running a program, java looks for the `main` method as an entry point
-
-# General style rules
+## General style rules
 
 * semicolon is needed at the end of any statement
 * we can have more than one statement inline but is not good for readability
@@ -139,6 +134,7 @@ boolean negation = !var; // false
 
 N.B. there is no implicit conversion to boolean of particular symbols (e.g. 0 and 1 are only int, don't have an implicit boolean conversion)
 
+---
 
 # Operators, operands and expression
 
@@ -183,6 +179,7 @@ boolean ternary = ourTest ? true : false;
 
 In the example, **ourTest** is the variable/expression that is tested to be true or false, whats after the **?** is the true condition and after **:** is the false condition
 
+---
 
 # The if-then statement
 
@@ -214,6 +211,8 @@ if (test < 100) {
 
 **N.B variables created inside a code block are not accessible from outside the block scope! The opposite instead is possible, a code block can always access variable in its outer blocks scopes**
 
+---
+
 # The switch statement 
 
 The switch statement is an alternative to a possible messy concatenation of nested if-elseif statement. From a python perspective, we are essentially talking of a dictionary (a defaultdict to be precise) where a specific output is set depending on the input. The reserved JAVA keyword is `switch(someValue)` where **someValue** will be the testing parameter. The switch statement can only be use with some primitive types: **int, long, byte, char, String, Enum**.
@@ -243,6 +242,8 @@ The limitation of the switch statement is that is checking only one variable whi
 
 N.B. the **break** keyword is necessary to close the case test otherwise java will execute also all the condition after the one correctly selected with the input value.
 
+---
+
 # The for loop
 
 As always, the for statement is used to creates loop in our code. The for loop needs 3 parameters: an initial value, a termination criteria that will stop the loop when evaluated to false and an increment step. In JAVA the syntax is the following.
@@ -255,6 +256,8 @@ for (int i = 0; i < 4; i++) {
 ```
 
 The keyword `break` can be used to terminate prematurely the looping while the keyword `continue` can be used to skip the execution of the code that is in the while block for the current iteration if a certain condition is met.
+
+---
 
 # The while loop
 
@@ -283,6 +286,8 @@ do {
 
 In the example above, even if the initial value of *count* would have been 5 (thus evaluating to false in the while condition), we would have the execution of the **do statement** once; in a traditional while loop nothing would have been executed because the exit strategy would have been met before the beginning of the while body.
 
+---
+
 # Methods
 
 A method is essentially a function bounded to a class instance. Methods can't be nested within each other. We can of course pass arguments and return variables from methods but we need to explicitly state the datatype:
@@ -302,10 +307,15 @@ public static void kgToPound(double kilos) {
     }
 ```
 
+When running a program, java looks for the `main` method as an entry point
+
+
 ## Methods Overloading
 
 Like in other programming language, overloading a function or a method means to have the same method defined multiple times with the same time but with a different number of arguments. Java will infer which method to call based on the number of argument we are actually passing. **println** is a common example of method overloading since it can be called with different datatype in argument and still produces the correct output. With overloading we improve the readability and the consistency of our code.
 
+
+---
 
 # Reading User-Input
 
@@ -344,8 +354,128 @@ Scanner myScanner = new Scanner(System.in);
 
 We want to avoid as much as possible our program o crush of course. Therefore, without talking about exception handling right now, we can use some of the Scanner built-in methods to check for the user input. For example, if we are expecting a number as input (or, to better say a string that can be directly casted into a number) we can use the method `scanner.hasNextInt()` and store the result into a boolean, do detect if the input can be casted into an **Int**; in this way we can structure our code around an if-then-else loop which check the condition of this boolean variable to proceed, avoiding the potential error in the tentative conversion of a string that can't be casted into an **Int** (e.g. "1989a").
 
+---
+
+# OOP in JAVA
+
+*https://www.tutorialspoint.com/java/java_encapsulation.htm#:~:text=Encapsulation%20in%20Java%20is%20a,methods%20of%20their%20current%20class.* -> encapsulation
+
+A class is essentially a blueprint for creating objects that can have many kind of behavior. 
+
+The class definition begins with a statement composed by an `access modifier` (e.g. **public**) which defines the accessibility we are giving to the class (e.g. whether we can reach it from other classes or not), the `class` keyword and the custom defined `ClassName` (the standard in JAVA is to have capitalized names for classes).
+
+Inside a class we have `field` which contains the `state components` of a class; as for the name class, also the fields begins with a statement but in this case it is most common to use the access modifier **private** due to the concept of `encapsulation`.
+
+`Encapsulation` : the internal definitions of the fields of a class are hidden from the class's user perspective (unlike python where the concept of private does not exist). The variable or the methods defined as **private** inside the class are **accessible only from the method of the class itself an not from the instance of the class we create later**.
+
+```java
+public class Car {
+    public String name;
+    // encapsulation
+    private String owner;
+}
+```
+
+To create an object from a class, as for a primitive datatype, we need to specify the datatype, the **name of the instance** and then instantiate the class using the keyword `new`.
+
+```java
+Car ferrari = new Car(); // initialization of a new object of Car type
+ferrari.name = "Enzo"; // the state name of the Class Car is accessible from outside the class since it has been defined as public
+// ferrari.owner is not accessible since it has been defined as private 
+```
+
+However, leaving public access on variable is against the programming style of java which aims for absolute encapsulation. Therefore, the correct way to **access and modify** the state of a class is through the use of **methods** that instead are defined as **public** and therefore accessible from an instance of the class.
+
+```java
+public class Car {
+    private String name;
+    private String owner;
+
+    public void setName(name) {
+        this.name = name;
+    }
+}
+```
+N.B. notice the `this` keyword used inside the method **setName**; it refers to the class (it is equal to say Car.name) in order to distinguish the **name** that refers to the private state variable with the **name** that indicates the argument of the function setName.
+
+Now we can set the name of our Car without illegally access a state variable but through an had hoc method of which behavior should have been structured in a way of not potentially harming the stability of the code.
+
+```java
+Car ferrari = new Car();
+ferrari.setName = "Enzo";
+```
+
+Standard methods are usually divided into `setter` and `getters` depending on the fact that they are specialized to retrieve or to modify the state of an object. The meaning of having setter and getters is to be able to create specific rules or validations that will keep under control the behavior of the class; for example we may want to limit the length of our car name to a string of 10 characters and this rule can be easily implemented inside the method **setName**.
+
+```java
+// Inside the context of the Car class...
+// setter
+public void setName(name) {
+        this.name = name;
+    }
+
+// getter
+public void getName(name) {
+        return this.name;
+    }
+```
+
+When creating a class, java automatically equips it with a series of methods (to be precise, unless otherwise specified, a class always inherit from the `Object` java base class).
+
+## Constructors  
+
+A `constructor` is a special method that is used by JAVA when the `new ClassName()` is called to create an instance of our class. We can enrich the standard behavior of the constructor implemented by java adding more functionality to it (e.g. setting some default values for the state variables). Moreover, constructor can be **overloaded** to gain more flexibility in the class initialization.
+
+```java
+public class Car {
+    private String name;
+    private String owner;
+
+    public Car(){
+        //this is an empty constructor
+    }
+
+    // Overload the constructor
+    public Car(String name, String owner){
+        this.name = name;
+        this.owner = owner;
+    }
+}
+```
+
+Once the constructor is overloaded with some required arguments, we can initialize a new Car object specifying those parameters directly without calling setters manually after initialization. Moreover, we can **call a constructor within another constructor** with a special use of the keyword `this`; for example, to allow for setting default values even when an empty constructor is called:
 
 
+```java
+```java
+public class Car {
+    private String name;
+    private String owner;
+
+    public Car(){
+        // overload the "standard" constructor with another constructor to which default values are passed.
+        this("default name", "default owner");
+    }
+
+    public Car(String owner){
+        // partial overloaded constructor
+        this("default name");
+        this.owner = owner;
+    }
+
+    public Car(String name, String owner){
+        this.name = name;
+        this.owner = owner;
+    }
+}
+```
+
+**N.B. it is a common non-written rule in java to not use methods inside constructors since the object is still being created during initialization and some unexpected behavior might arise**
+
+
+
+
+---
 
 # Tools
 
