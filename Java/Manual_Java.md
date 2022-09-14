@@ -310,9 +310,34 @@ public static void kgToPound(double kilos) {
 When running a program, java looks for the `main` method as an entry point
 
 
-## Methods Overloading
+## Methods Overloading vs Overriding
 
 Like in other programming language, overloading a function or a method means to have the same method defined multiple times with the same time but with a different number of arguments. Java will infer which method to call based on the number of argument we are actually passing. **println** is a common example of method overloading since it can be called with different datatype in argument and still produces the correct output. With overloading we improve the readability and the consistency of our code.
+
+Overloading is different from **polymorphism** but it is often referred by java developers as **compile time polymorphism** since it is the compiler that choose the appropriate version of the method depending on the number of argument and the return type.
+
+In essence the rules for overloading a method are:
+* having the same method name
+* having different arguments
+
+If this condition are satisfied, the the methods can have:
+* different return types
+* different access modifier
+* different exception handling
+
+
+**Overriding** instead means to redefine a method in a child class that is already present in the parent class (**derived method**); overriding is known as **runtime polymorphism** and **dynamic method dispatch** because the JVM decide at runtime which method to call. To declare to the compiler that we are overriding a derived method we need to place the `@Override` signature above the method in the child class.
+
+In essence the rules for overriding a method are:
+* having same name and **same arguments**
+* return type can be a subclass of the return type in the parent class
+* it can't have a lower access modifier
+* it can't thrown new or broader exceptions
+
+Moreover:
+* methods can be overridden only in child classes
+* constructor and private methods **can't be overridden**
+* methods that are final cannot be overridden
 
 
 ---
@@ -472,8 +497,114 @@ public class Car {
 
 **N.B. it is a common non-written rule in java to not use methods inside constructors since the object is still being created during initialization and some unexpected behavior might arise**
 
+## Inheritance
+
+**N.B. even if not specified, each java class implicitly inherit from the `java.lang.Object` class which is the root of the class hierarchy and it implements some basic functionality like *equals()* , *toString()* etc..** 
+
+**N.B. with standard inheritance we can only extend our class with one class, oterwise we need to create an Interface or a Composition**
+
+Inheritance is the ability of classes to inherit behavior from other classes allowing to build more and more specific objects that still share a common blueprint. To inherit from another class we need to use the keyword `extends` in the new class statement. Moreover, **if the class from which we are inheriting has a constructor** we need the new class to initialize that constructor (otherwise we get a compilation error). 
+
+```java
+public class Animal {
+    private String name;
+    private int legs;
+    private boolean tail;
+
+    public Animal(String name, int legs, boolean tail) {
+        this.name = name;
+        this.legs = legs;
+        this.tail = tail;
+    }
 
 
+public class Dog extends Animal{
+    private String breed;
+    private int teeth; 
+
+    public Dog(String name, int legs, boolean tail) {
+        super(name, legs, tail);
+    }
+}
+```
+
+In the new constructor, we will have the keyword `super()` that is essentially calling the constructor of the class we are extending from (Animal in this case); from this point, we can enrich the Dog class with extra states and methods, keeping the animal class as base blueprint (which represents the basic feature of an Animal). All the methods that are defined in the Animal class are accessible automatically also in the Dog class.
+
+There are different scenario in the handling of the inherited constructor; for example we may want to set some default parameters from the parent class Animal as default in the child class Dog (e.g. all dogs have tails, therefore it is something we don't want to specify when calling the Dog class directly). Therefore, we can modify the parent class constructor, removing the arguments of the parent class that we don't need and specifying a constant value inside the **super()** constructor; then we can extend the constructor with the states component relative to the child class.
+
+```java
+public class Dog extends Animal{
+    private String breed;
+    private int teeth; 
+
+    // removing the state "tail" and setting a default "true" values since all dogs have a tail
+    public Dog(String name, int legs, String breed, int teeth) {
+        super(name, legs, true);
+        // extending the base constructor of the parent class
+        this.breed = breed;
+        this.teeth = teeth;
+    }
+}
+```
+
+The child class can also modify the methods that are inherited from the parent class by redefine the method with the same name and the `@Override` keyword placed abode the method definition. By default, the overwritten methods contains the keyword `super.myMethod()` where **super** indicates the parent class, hence we are calling the method of the parent class directly from the child class.
+
+```java
+@Override
+public void talk() {
+    super.talk();
+    }
+```
+
+## `this` vs `super`
+
+As already seen, the keyword `super` is used to access/call the parent class variables and methods while the `this` keyword is used to call the current class variable and methods (it is also required when a method has an argument with the same name of a state variable). These can't be used in **static blocks/methods**.
+
+**this()** and **super()** in java can also be called as methods, in particular:
+*  `this()` is used to call a constructor from another overloaded constructor in the same class. It can be used **only inside a constructor** and has to be the **first argument** of the constructor (it helps to reduce duplicate code).
+*  `super()` is used as **first argument** (mandatory) in a constructor of a child class to inherit the constructor of the parent class; if not specified, java insert an empty **super()** constructor when a child class is instantiated.
+
+**N.B. a constructor can have one between *super()* or *this()* but not both**
+
+
+## `static` vs `instance` methods
+
+Static methods, declared with the `static` modifier, can't access instance methods or instance variables directly, in fact their are used for operation that don't require any data from the instance of the class; therefore a good indicator of a static method is a method that doesn't use instance variable, and as a confirmation, the `this` keyword cant be used inside a static method. Another key difference is that static method can be used without instantiate the class (i.e. without using the `new` keyword) but simply calling `className.staticMethodName()`.
+
+As opposite, instance methods are bounded to an instance of the class, therefore they can only be called if the object is created. Instance methods can access instance methods and variables as well as static methods and static variables.
+
+## `static` vs `instance` variables
+
+Static variables are definitely less used than instance variable but they can become quite handy in certain situation. The power of a static variables is that they are shared by the instance of the classes, if one instance change the static variable, that change will affect all the other instance of that same class.
+
+As opposite, instance variables are build without the **static** keyword and belong to a specific instance of the class and their value is not shared between different instance.
+
+
+## Composition
+
+While inheritance is the way in which we create classes and subclasses of objects that have a common origin, with composition we have one or more classes which are composed by one or more other classes, this to create an higher level class which is composed by all the functionality implemented in the classes that compose it. Imagine a PC, which is composed by a case, a monitor, a motherboard etc.. To create the class PC, instead of creating a very complex class we can create as many subclasses as we need and then **compose** them in the higher level Pc class which will retain all the functionality of a case, a monitor, a motherboard etc..
+
+Standard inheritance allows for a single extension (meaning that one class can only inherit from one other class); with composition (and later on with interfaces) we are able to create more complex structure. In general, composition gives much more flexibility then inheritance.
+
+**Inheritance expose the relationship `is a` between two objects while Composition `has a`**
+
+
+## Encapsulation
+
+Encapsulation is the mechanism that allow us to restrict the access to certain components of the object created; this is fundamental to have more control on the code flow and in the possible raise of unexpected behavior. Particularly true for state variable, which scope should be strictly restricted to the class in which are defined (thus defined as **private**), if we are able to access them from outside the class then unexpected behavior might arise in the call of methods that uses those variables expecting a particular type/value.
+
+Another reason for encapsulation along side with security is code **duplication**, **checking** and **validation**; as a matter of fact if we modify states variables from other classes and at some point we need to modify the parent variable or the behavior of a parent method (that should have been declared as **private**), then all the child classes would be broken and need updating. A lot of work and an extremely easy source of hidden errors.
+
+ 
+## Polymorphism
+
+When we have classes bounded by inheritance to a parent class we might have the same method inherit to all the child classes but it might have a different behavior depending on the specif child class which is calling it. The ability of having the same method displaying different behavior based on the context of the child class is exactly the definition of **polymorphism** (many forms), i.e. having the same method (with the same name) with different output.
+
+Imagine we have a parent class called Animal that implements a method called ***sound()*** which should reproduce the cry of a particular animal; then we have several child classes, representing several type of animal, each with its peculiar sound, thats **inherit** and **override** the method ***Animal.sound()***. We can now call the same method on instances of the child classes and gain a different output (the sound of the particular animal).
+
+This behavior is called polymorphism. N.B. if one of the child classes would have the method *.sound()* overridden, then calling the method on these classes would result in calling the original parent method *Animal.sound()*
+
+**At the end, using polymorphism means to write generic code that can be reused in different scenarios**
 
 ---
 
