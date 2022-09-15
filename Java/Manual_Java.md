@@ -136,6 +136,57 @@ N.B. there is no implicit conversion to boolean of particular symbols (e.g. 0 an
 
 ---
 
+# Data structures
+
+Until now we have seen so called `value types`, i.e. a variable directly holds the value of the prescribed datatype declared in the statement. Now we are going to investigate what are `reference types`, i.e. variables that holds a reference to the object assigned but not the object itself. 
+
+```java
+int myInt = 10;
+int mySecondInt = myInt;
+myInt++;
+// the two variables holds their value, therefore, even if they are created one as a copy of the other, their value is not linked
+// and the ++ on miUnt won't affect mySecondInt
+
+int[] myArr1 = new int[10];
+int[] myArr2 = myArr1;
+// since arrays are reference type, myArr2 that is not initialized with the keyword **new** is actually a copy of the memory reference of myArr1;
+// the two are pointing to the same array of ten int, and therefore, a change to one will affect also the other, since they are not actually holding the object, only its memory reference
+```
+
+## Array
+
+In Java, an array is an object that store multiple elements of the same type. To tell the jdk that we are coding an array we need to inter in the statement, after the datatype specification, the square brackets `[]`.
+
+```java
+int [] myIntArray = new int[10];
+myIntArray[5] = 69;
+```
+
+With the line above we have created an array that contains **10** elements of type **int** and we are storing at 6th position (java starts counting from 0). If we already know how many and which elements will be in the array, we explicitly input at creation phase without the **new** keyword:
+
+```java
+int [] myIntArray = {0,1,2,3,4,5,6,7,8,9};
+```
+
+We are implicitly telling java that we want to initialize an array object with 10 elements from 0 to 9. (this king of assignation with `{}` can be done only at the initialization of the array). A third way to initialize an array can be through a for loop where essentially we compress the first approach in the looping (myIntArray[i] = someFormula in the loop). If not specified, the initialization of an array will use the default value for the datatype chosen; for **int** it will be **0**, for **boolean** will be **false** while for **String** and other objects will be **null**.
+
+Arrays are objects that comes equipped with useful methods like `.length` to retrieve the length of the array.
+
+One useful methods from the `java.util.Arrays` class, is the method `.toString()` to which we can pass an array and have its content printed (like a python list).
+
+If we use a negative index or an out of bound index we get the exception `ArrayIndexOutOfBoundsException`.
+
+
+## List ans ArrayList
+
+Lists in java are an `interface`, i.e. a class that can be inherit from multiple classes (unlike **extends** which imply single inheritance), and `ArrayList` is class that **implements** (the keyword for inherit an interface) the interface `List`. The main difference with standard **Array** is that ArrayList are dynamic in size, therefore in the initialization we don't need to specify the number of elements that will be contained (also because often is something difficult to know a priori).
+
+
+
+
+
+---
+
 # Operators, operands and expression
 
 *https://docs.oracle.com/javase/tutorial/java/nutsandbolts/opsummary.html* -> list of operators
@@ -605,6 +656,8 @@ Imagine we have a parent class called Animal that implements a method called ***
 This behavior is called polymorphism. N.B. if one of the child classes would have the method *.sound()* overridden, then calling the method on these classes would result in calling the original parent method *Animal.sound()*
 
 **At the end, using polymorphism means to write generic code that can be reused in different scenarios**
+
+
 
 ---
 
