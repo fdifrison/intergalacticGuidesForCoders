@@ -177,13 +177,50 @@ One useful methods from the `java.util.Arrays` class, is the method `.toString()
 If we use a negative index or an out of bound index we get the exception `ArrayIndexOutOfBoundsException`.
 
 
-## List ans ArrayList
+## List and ArrayList
 
-Lists in java are an `interface`, i.e. a class that can be inherit from multiple classes (unlike **extends** which imply single inheritance), and `ArrayList` is class that **implements** (the keyword for inherit an interface) the interface `List`. The main difference with standard **Array** is that ArrayList are dynamic in size, therefore in the initialization we don't need to specify the number of elements that will be contained (also because often is something difficult to know a priori).
+*https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/ArrayList.html*
 
+Lists in java are an `interface` (which extends the **Collection** interface), i.e. a class that can be inherit from multiple classes (unlike **extends** which imply single inheritance), and `ArrayList` is class that **implements** (the keyword for inherit an interface) the interface `List` (actually an **AbstractList** which in turns implement the List interface). The main difference with standard **Array** is that ArrayList are dynamic in size, therefore in the initialization we don't need to specify the number of elements that will be contained (also because often is something difficult to know a priori).
 
+The initialization for objects like ArrayLists is different from value types or simple arrays; as we have seen we usually declare a datatype in front of the constructor, for ArrayLists, since they are containers, we need to tell java which type of elements will be contained and this is performed with the `ArrayList<T>` notation. This is called a `generic` and the **T** stands for type, meaning that at initialization we need to replace the **T** with the actual datatype we are going to insert in the list.
 
+```java
+import java.util.ArrayList;
+private ArrayList<String> myList = new ArrayList<String>(); // initialization
+myList.add(0, "first element"); // add with index
+myList.add("last element"); // add without index
+myList.remove(0); // remove element at index 0
+myList.contains("first element"); // true or false
+myList.indexOf("first element"); // return index of the element if exist
+myList.get(0); // get element at index 0
+```
 
+The `()` at the end of the statement are needed to invoke the constructor behind ArrayList since it is actually a class and has to be initialized. The insertion of elements inside the list is performed simply using the `.add()` method implemented in the class (overloaded to be used with or without specifying the position of insertion), and its definition will handle under the hood all the resizing, allocation etc.
+
+### Autoboxing and Unboxing
+
+The reference datatype that we pass to the ArrayList constructor needs to be a class, therefore primitive type like **int** or **double** are not accepted. A way to overcome this issue would be to create a class that simply receive and int as argument in the constructor (a wrapper essentially to the **int** primitive) and pass this class as datatype to the array list, but it become tedious quite fast. 
+
+The `autoboxing` is the java functionality builtin to take care of this problem. All the primitives in java as a boxing class that does exactly what the wrapper above was supposed to do; instead of passing the **int** primitive type we pass the boxing class `Integer` to the ArrayList (same applies for the other primitive datatype).
+
+```java
+ArrayList<Integer> myIntList = new ArrayList<Integer>; // initialize a list of int through the boxing class Integer
+myIntList.add(Integer.valueOf(10)); //adding the value 10 to the list
+myIntList.get(0).intValue(); // unboxing, we are retrieving the element at index 0 which is an instance of the Integer class and we are extracting its value back to a primitive int
+```
+
+In the last row we see the concept of `unboxing`, i.e. retrieving the primitive type from the boxing class.
+
+N.B. Java should be able to extract from the context the fact that we are adding/retrieving an int to the ArrayList even if we don't explicitly write the **.valueOf** and **.intValue()** methods.
+
+## LinkedLists
+
+LinkedLists are another type of list data structure that differs from standard list for the way they store the reference in memory to the objects that they contain. As a matter of fact, lists use continuos blocks of memories to store their content while in LL each slots contains the object and the particular address in memory of that object. Each slot is called **node** and contains the object with it's memory address and a pointer to the next element. 
+
+Long story short, LL has a computational efficiency greater than standard lists in **insertion** and **deletion** of elements (O(1) compared to O(n) since standard lists have to shift all the elements. th opposite happens for elements retrieval where list performs better O(1) while LL have a O(n/2).
+
+- storage: 4 bytes for each integer, 8 bytes for each double
 
 ---
 
@@ -656,6 +693,81 @@ Imagine we have a parent class called Animal that implements a method called ***
 This behavior is called polymorphism. N.B. if one of the child classes would have the method *.sound()* overridden, then calling the method on these classes would result in calling the original parent method *Animal.sound()*
 
 **At the end, using polymorphism means to write generic code that can be reused in different scenarios**
+
+---
+
+# Interfaces
+
+The idea behind interfaces is to create a common behavior that can be used by several classes that implements the same interface. The interface itself is **abstract** meaning that it doesn't contains any actual code for the methods it implements but only the `signature` (like the statement for private variables), the methods are actually coded inside the classes that implements them. 
+
+In practical terms, the interface are implemented using the signature `public interface interfaceName {}` and inside the curly brackets we will write the signatures off all the methods that the interface implements and that will be inherited from the classes that implements the interface. 
+
+```java
+public interface MyInterface {
+    void methodOne();
+    boolean methodTwo(boolean var1);
+    int methodThree(int var1, int var2);
+}
+```
+
+A class, in order to implements an interface has to declare the `implements` keyword in its signature:
+
+```java
+public class MyClass implements MyInterface {
+    @Override
+    public void methodOne() {}
+    @Override
+    public boolean methodTwo(boolean var1) {return var1}
+    @Override
+    public int methodThree(int var1, int var2) {return var1 + var2}
+}
+```
+
+In this case, since **MyClass** is implementing the interface **MyInterface** to be valid (to be compiled) it needs to implements all the methods that are stated indside the interface itself, respecting of course the prescribed datatype. If a specific method from the interface is not needed we can simply override it (actually all the methods are overridden) and giving it a dummy behavior (do nothing). 
+
+The power of interfaces is that they enable `multiple inheritance` since in our classes we can **implements** as many interfaces as we want given that the class then implements all the methods inside the interface signature (e.g. we could implements the interface **List** because we are interested in a particular behavior that lists has, but still we will need to implements all the methods present in the List interface).
+
+## Type inheritance
+A cool feature of interfaces is that, if we initialize a variable with the interface signature as datatype, we can reassign that variable to new objects from different classes given that these all implements the same interface. Imagine we have an interface called **ITelephone** and two classes that implements the same interface **Mobile** and **Desk**; if that so then the following is valid:
+
+```java
+// IT WORKS!
+ITelephone myPhone;
+myPhone = new Desk();
+myPhone = new Mobile(); // OK! both Desk() and Mobile() implements the interface ITelephone
+
+// It DO NOT works
+Desk myPhone;
+myPhone = new Desk();
+myPhone = new Mobile(); // ERROR the class Desk was declared to hold the variable "myPhone"!
+
+```
+
+
+
+N.B. a good practice is to start interfaces names with the capital `I` (independently by the name that follows).
+N.B. Java libraries make extensive use of interfaces!
+
+---
+
+# Nested and Inner classes
+
+*https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html*
+
+**Personal tough: I won't go in deep of nested classes at this stage since I don't think it is a rather advanced topic to apply in production.. see you later nested classes**
+
+Why Use Nested Classes?
+Compelling reasons for using nested classes include the following:
+
+* **It is a way of logically grouping classes that are only used in one place**: If a class is useful to only one other class, then it is logical to embed it in that class and keep the two together. Nesting such "helper classes" makes their package more streamlined.
+
+* **It increases encapsulation**: Consider two top-level classes, A and B, where B needs access to members of A that would otherwise be declared private. By hiding class B within class A, A's members can be declared private and B can access them. In addition, B itself can be hidden from the outside world.
+
+* **It can lead to more readable and maintainable code**: Nesting small classes within top-level classes places the code closer to where it is used.
+
+---
+
+# Abstract classes
 
 
 
