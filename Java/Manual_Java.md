@@ -136,6 +136,13 @@ N.B. there is no implicit conversion to boolean of particular symbols (e.g. 0 an
 
 ---
 
+# Generics
+
+
+
+
+---
+
 # Data structures
 
 Until now we have seen so called `value types`, i.e. a variable directly holds the value of the prescribed datatype declared in the statement. Now we are going to investigate what are `reference types`, i.e. variables that holds a reference to the object assigned but not the object itself. 
@@ -769,6 +776,18 @@ Compelling reasons for using nested classes include the following:
 
 # Abstract classes
 
+*https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html#:~:text=An%20abstract%20class%20is%20a,but%20they%20can%20be%20subclassed.&text=When%20an%20abstract%20class%20is,methods%20in%20its%20parent%20class.*
+
+Abstraction is when we define the functionality needed for a particular task without directly implementing them; **interfaces** are a perfect example of pure abstraction, where the interface itself holds nothing more than the methods signatures which will be then actually implemented in the classes that implement the interface. This results in the fact that we cannot instantiate directly the interface (since it is abstract) but we need to instantiate a class that **implements** the interface.
+
+Java implements both abstract classes and methods; an abstract class, like an interface, cannot be instantiated directly but can be subclassed with the keyword **extends**. An abstract class can implement both standard methods and statements, and these will inherit as supposed by the subclasses, together with abstract methods that, like for interfaces, contains only the signature of the method itself. A subclass, in order not to be abstract aswell, is required to implements all the abstract methods (same as a class that implements an interface).
+
+Summing up, the main differences between interfaces and abstract classes are:
+* abstract classes can contain both private and public methods, while interfaces signature are public and abstract by nature
+* abstract classes are de facto forced to **single inheritance**
+* abstract classes are more suited when we are designing a set of classes that are strictly related in semantics, while interfaces can be a mean to enhance  unrelated classes with a totally different scopes (e.g. many constructor might benefit from the List interface but for totally different use).
+
+Abstract classes and Interfaces can be concatenated, meaning that we can have a subclass of an abstract class that in turn implements an interface.
 
 
 ---
