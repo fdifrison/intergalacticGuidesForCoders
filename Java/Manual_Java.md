@@ -138,7 +138,23 @@ N.B. there is no implicit conversion to boolean of particular symbols (e.g. 0 an
 
 # Generics
 
+**N.B. DON'T USE RAW TYPES!**
 
+Prior to java 1.5 there was no definition of generics types and a data structure, say an ArrayList could only be initialized as `raw type` (without specifying the type of objects it will contains) and this is a very unsafe operation for a structured language such as java. Right now it is still possible to initialize an objects to raw type but only to ensure backwoard compatibility, **it should never be done!** we have generics now
+
+```java
+ArrayList items = new ArrayList();
+items.add(1);
+items.add("a");
+// for what concerns the compiler, what we have done is perfectly fine, since no type has been declared for the list "items".
+// so it is clear how easily this can be a source of bugs in our code!
+```
+
+What we should do is to declare `parametrized types` in angle brackets <> in the statement of the data structure
+
+```java
+ArrayList<Integer> items = new ArrayList<>(); //parametrized type <Integer>, the second one is not necessary but should be placed empty <>
+```
 
 
 ---
@@ -351,6 +367,19 @@ for (int i = 0; i < 4; i++) {
 ```
 
 The keyword `break` can be used to terminate prematurely the looping while the keyword `continue` can be used to skip the execution of the code that is in the while block for the current iteration if a certain condition is met.
+
+## for-each
+
+To improve the inelegance of the standard for loop, the for-each has been introduces to iterate over iterators types of objects. The syntax is more clean and concise, therefore it can be used always, the only limitation is that the for-each hides the iterator and therefore it is not possible to call **.remove** or filtering in general (also element replacements during traversing).
+The syntax is the following:
+
+```java
+int [] intArray = { 10, 20, 30, 40, 50 };
+        
+for( int value : intArray ) {
+   System.out.println( value );
+}
+```
 
 ---
 
