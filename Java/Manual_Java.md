@@ -33,6 +33,36 @@ Keyword are case sensitive **reserved** name used by jdk to perform specific tas
 * **=** is the assign while **==** is the comparison 
 * there is no implicit conversion to boolean of particular symbols (e.g. 0 and 1 are only int, don't have an implicit boolean conversion)
 
+## Naming convention
+
+*https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html*
+
+---
+
+# Access modifier
+
+*https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html*
+
+Access modifier are essentially keywords that define the accessibility of classes, methods and variables. 
+
+Following, a list of the access modifier :
+
+* `public`: the object is visible to all classes everywhere, both from the same package or even if imported from an outside package
+* `private`: the object is visible only from within the class in which it is declared (not visible even in subclasses)
+* `protected`: the object is visible anywhere in it own package and also in subclasses that are defined in other packages (same as package-private except for subclasses)
+* `package-private`: meaning that no access modifier is explicitly stated
+
+N.B. Methods without access modifier are inherently public
+
+
+At Top level (the outer level of a .java file) we have the following limitations:
+
+- Only **classes, interfaces and enums** can exist, everything else must be enclosed in one of these
+- Top level classes **CAN'T** be private
+
+
+N.B. as a rule of thumb, be as restrictive as it makes sense for the application you are developing; public should be avoided unless specifically needed.
+
 ---
 
 # Primitives
@@ -140,7 +170,7 @@ N.B. there is no implicit conversion to boolean of particular symbols (e.g. 0 an
 
 **N.B. DON'T USE RAW TYPES!**
 
-Prior to java 1.5 there was no definition of generics types and a data structure, say an ArrayList could only be initialized as `raw type` (without specifying the type of objects it will contains) and this is a very unsafe operation for a structured language such as java. Right now it is still possible to initialize an objects to raw type but only to ensure backwoard compatibility, **it should never be done!** we have generics now
+Prior to java 1.5 there was no definition of generics types and a data structure, say an ArrayList could only be initialized as `raw type` (without specifying the type of objects it will contains) and this is a very unsafe operation for a structured language such as java. Right now it is still possible to initialize an objects to raw type but only to ensure backward compatibility, **it should never be done!** we have generics now
 
 ```java
 ArrayList items = new ArrayList();
@@ -155,6 +185,58 @@ What we should do is to declare `parametrized types` in angle brackets <> in the
 ```java
 ArrayList<Integer> items = new ArrayList<>(); //parametrized type <Integer>, the second one is not necessary but should be placed empty <>
 ```
+
+## <T> generic type parameter
+
+So, we now know that we should never user raw typed classes because introduce liability in our code, but still we need a way to define in general terms the type passed at initialization to our class, both for validation and for reducing the quantity of duplicated code (if we need a class to behave differently for each type passed we could potentially create a class for each exception, but this is far from optimal in DRY terms). 
+
+To solve this problem the `<T>` notation was introduced, that indicates a `generic type`. A class defined with a generic type input will have the ability to adapt to different data types, since the final state will be reached only in the initialization statement, when the **<T>** will be replaced by the actual type we need.
+
+**Example**
+Imagine we have a class **Team** tha can receive objects representing the team players; players are created extending a **Player** abstract class, one for each type of sport. We want to use this class for different sports, therefore the Team class needs to have the ability to recognize the type of player it is receiving (we cant have a football and a basketball player in the same team). As said before, the easiest solution would be to duplicate the team class, one time for each sports (FootballTeam, BasteTeam etc..), but this will duplicate codes that essentially perform the same task. The java solution is to define the team class with the ability to receive a generic type (instead of a **Player** type)
+
+```java
+public class Team<T> {
+    /*
+    Some variables
+    */
+    private ArrayList<T> teamMembers = new ArrayList<>();
+    /*
+    methods common to all the kind of team
+    */
+}
+```
+
+Now, supposing we have 2 class **extended** from the abstract class **Player**, **FootballPlayer** and **BasketPlayer**, we can initialize the class **Team** explicating which kind of object it should receive instead of the generic `<T>`:
+
+```java
+// inside Main..
+Team<FootballPlayer> juventus = new Team<>();
+Team<BasketPlayer> fortitudo = new Team<>();
+```
+
+N.B. once we specify the generic type parameters **<T>**, our class can receive only objects and not primitive variables like **int** (but it can receive the boxing class **Integer**).
+
+### Extending generic type (bounded type parameter)
+
+In the way we have written the **Team** class signature we don't have any validation regarding which type of class we are passing instead of the generic type **<T>**; this is unsafe since we could potentially pass a **String** type and our IDE won't be able to identify any compilation error. What we want to do is to tell java that the class **Team** can accept any subclass of the abstract class **Player**, and to do so we need to **extend** the generic type behavior:
+
+```java
+public class Team<T extends Player> {...}
+```
+
+In this way we can be sure that any object passed to **Team** will be compliant with the abstract class **Player**; in this way, if other methods referred to the **Player** class are invoked inside **Team** w won't need to cast variables into the **Player** class because java now knows that the object passed as argument must be of **Player** type.
+
+We can apply multiple bounds to a generic type but this involves multiple inheritance and, as such, the use of interfaces. Multiple interfaces can be applied in concatenation with the `&` sign:
+
+```java
+public class Team<T extends Player & Coach & Manager> {...} // if Player is a class has to appear first in front of the interface Coach and Manager.
+```
+
+We can also have a mixture of one class and multiple interfaces but the first argument in the extension **MUST BE** the class
+
+
+
 
 
 ---
@@ -693,6 +775,8 @@ As already seen, the keyword `super` is used to access/call the parent class var
 
 ## `static` vs `instance` methods
 
+*Summary: static methods belong to the class and not to its instances*
+
 Static methods, declared with the `static` modifier, can't access instance methods or instance variables directly, in fact their are used for operation that don't require any data from the instance of the class; therefore a good indicator of a static method is a method that doesn't use instance variable, and as a confirmation, the `this` keyword cant be used inside a static method. Another key difference is that static method can be used without instantiate the class (i.e. without using the `new` keyword) but simply calling `className.staticMethodName()`.
 
 As opposite, instance methods are bounded to an instance of the class, therefore they can only be called if the object is created. Instance methods can access instance methods and variables as well as static methods and static variables.
@@ -703,6 +787,19 @@ Static variables are definitely less used than instance variable but they can be
 
 As opposite, instance variables are build without the **static** keyword and belong to a specific instance of the class and their value is not shared between different instance.
 
+## final variables
+
+Final keyword has a different meaning depending on the object to which is applied:
+
+* *final* variable: the variable can't be change by any instance of the class -> become a CONSTANT value
+* *final* method: the method can't be overridden
+* *final* class: the class cannot be inherited or subclassed
+
+Values that are truly constant are usually initialized as **static final** since there is no meaning that each subclass should store that value but only the main parent class (es. **Math.PI** is declared as **public static final double**)
+
+## static block
+
+Static blocks are part of codes enclosed in curly brackets and preceded only by the word **static** (`static {}`). This are used to initialize static variable and have the peculiarity of being executed before the class' constructor is called (we can have more than one static block, even placed below the constructor, but still executed first in their relative order).
 
 ## Composition
 
@@ -759,7 +856,7 @@ public class MyClass implements MyInterface {
 }
 ```
 
-In this case, since **MyClass** is implementing the interface **MyInterface** to be valid (to be compiled) it needs to implements all the methods that are stated indside the interface itself, respecting of course the prescribed datatype. If a specific method from the interface is not needed we can simply override it (actually all the methods are overridden) and giving it a dummy behavior (do nothing). 
+In this case, since **MyClass** is implementing the interface **MyInterface** to be valid (to be compiled) it needs to implements all the methods that are stated inside the interface itself, respecting of course the prescribed datatype. If a specific method from the interface is not needed we can simply override it (actually all the methods are overridden) and giving it a dummy behavior (do nothing). 
 
 The power of interfaces is that they enable `multiple inheritance` since in our classes we can **implements** as many interfaces as we want given that the class then implements all the methods inside the interface signature (e.g. we could implements the interface **List** because we are interested in a particular behavior that lists has, but still we will need to implements all the methods present in the List interface).
 
@@ -776,13 +873,22 @@ myPhone = new Mobile(); // OK! both Desk() and Mobile() implements the interface
 Desk myPhone;
 myPhone = new Desk();
 myPhone = new Mobile(); // ERROR the class Desk was declared to hold the variable "myPhone"!
-
 ```
 
-
-
 N.B. a good practice is to start interfaces names with the capital `I` (independently by the name that follows).
+N.B. Methods implemented in the Interface are inherently `abstract` even if not explicitly stated.
 N.B. Java libraries make extensive use of interfaces!
+
+
+## Useful Interfaces
+
+Java makes extensive use of interfaces and some of them are particularly useful to add functionality to our custom classes.
+
+### Comparable<T>
+
+*https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html*
+
+Interface to implements a natural ordering comparison of objects from the same class.
 
 ---
 
