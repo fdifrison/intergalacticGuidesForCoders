@@ -924,6 +924,43 @@ Summing up, the main differences between interfaces and abstract classes are:
 
 Abstract classes and Interfaces can be concatenated, meaning that we can have a subclass of an abstract class that in turn implements an interface.
 
+---
+
+# The java.util.Collections Class
+
+*https://docs.oracle.com/javase/9/docs/api/java/util/Collections.html*
+*https://docs.oracle.com/javase/tutorial/collections/interfaces/index.html*
+
+The collection class is consist exclusively of static methods that operates and/or return collections objects. Ii is part of the Java Collection Framework. Among the most useful class that can be operated through the collections methods we have Set, List, Queue and Deque (all at the same level of hierarchy). These data structure are implemented  so that they can be interchanged as easily as possible, providing the best performance depending on the specif use case.
+
+One useful things we can do with is implementing a binary search tree (`Collections.binarySearch`) for find elements in **sorted** lists (it require our class to implements the **Comparable** interface) which is much faster than a brute force for loop.
+
+We can sort, reverse shuffle, or more in general manipulate lists.
+
+## Sorting with Comparable vs Comparator
+
+The **java.lang.Comparable** is an interface that require our class to implements the method **compareTo(T, o)**. Therefore, our class needs to be modified since it has to be extended with the comparable interface (not always possible if our class is in a Jar), moreover, only a single criteria of sorting can be specified. In essence, it is the best choice only if our sequence follows natural ordering. Once our class has become *comparable*, we can then call the **Collection.sort(T)** on our sequence
+
+
+The **java.util.Comparator** is a more flexible interface that require our classes to implement two methods: **compare(T, T)** and **equals()**. We don't need to modify our class, instead we can create a new class that implements the comparator and define the logic of comparison. Once our comparator class is defined we can call the **Collection.sort(T, c)** where **c** is our comparator class (that contains our specific logic of comparison) and T is the specific collection we need to sort.
+
+## The Map interface
+
+*https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html*
+
+Map is not a true **Collections** but is an unordered set of key:value pairs.
+
+```java
+Map<String, String> mapName = new HashMap<>();
+// first parameter is the key and the second the value
+mapName.put("key1", "value associated to key1"); // insertion 
+mapName.get("key1"); // retrieve
+mapName.remove("key1"); // remove a key:value pair
+```
+
+For a particular key, only one value can exist, therefore, the standard behavior is that idf we try to place a new value for an already taken key, than the old value will be replaced.
+
+
 
 ---
 
