@@ -327,6 +327,36 @@ Long story short, LL has a computational efficiency greater than standard lists 
 
 - storage: 4 bytes for each integer, 8 bytes for each double
 
+## Map interface
+
+*https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html*
+
+Map is not a true **Collections** but is an unordered set of key:value pairs.
+
+```java
+Map<String, String> mapName = new HashMap<>();
+// first parameter is the key and the second the value
+mapName.put("key1", "value associated to key1"); // insertion 
+mapName.get("key1"); // retrieve
+mapName.remove("key1"); // remove a key:value pair
+```
+
+For a particular key, only one value can exist, therefore, the standard behavior is that idf we try to place a new value for an already taken key, than the old value will be replaced.
+
+## Set interface
+
+*https://docs.oracle.com/javase/tutorial/collections/interfaces/set.html*
+
+The main difference between sets and lists is that the sets are un **UNORDERED collection of UNIQUE elements**. The interface implements the standard methods **.add()**, **.remove()**, **isEmpty()**  etc.. to manipulates the objects contained in the set. A peculiarity is that we **cannot retrieve an element directly** from a set but only check for it existence with **.contains()**. The most efficient way to use sets is probably through the **hashSet**, essentially an hashmap composed only by keys; again the order of insertion is not retained as well as the order over time might change. All the operation on set theory are allowed.
+
+## LinkedHashMap and LinkedHashSet
+
+*https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/LinkedHashMap.html*
+
+Essentially we are talking about hashMaps and hashSet that retain the order of insertion due to a linked list running below.
+
+
+
 ---
 
 # Operators, operands and expression
@@ -548,7 +578,9 @@ Moreover:
 
 ---
 
-# Reading User-Input
+# I/O functionality
+
+## Reading User-Input
 
 N.B. *The Scanner class is part of the `java.util.Scanner` module*
 
@@ -581,9 +613,13 @@ Scanner myScanner = new Scanner(System.in);
         myScanner.close();
 ```
 
-## Limiting the input
+### Limiting the input
 
 We want to avoid as much as possible our program o crush of course. Therefore, without talking about exception handling right now, we can use some of the Scanner built-in methods to check for the user input. For example, if we are expecting a number as input (or, to better say a string that can be directly casted into a number) we can use the method `scanner.hasNextInt()` and store the result into a boolean, do detect if the input can be casted into an **Int**; in this way we can structure our code around an if-then-else loop which check the condition of this boolean variable to proceed, avoiding the potential error in the tentative conversion of a string that can't be casted into an **Int** (e.g. "1989a").
+
+
+## Reading/Writing from/to file
+
 
 ---
 
@@ -827,6 +863,13 @@ This behavior is called polymorphism. N.B. if one of the child classes would hav
 
 **At the end, using polymorphism means to write generic code that can be reused in different scenarios**
 
+## Immutable objects
+
+Depending on the use in the outer world of our classes, it might be a good idea to expose only what is strictly needed to perform further manipulation and keep private the rest. The goal is to transform our class in an immutable object (from the outside). Following a set of best practice:
+
+*https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html*
+
+
 ---
 
 # Interfaces
@@ -926,6 +969,95 @@ Abstract classes and Interfaces can be concatenated, meaning that we can have a 
 
 ---
 
+# Exceptions
+
+*https://docs.oracle.com/javase/specs/jls/se11/html/jls-11.html*
+*https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Exception.html*
+
+An exception is event that happen during the execution of a program that disrupts its normal flow.
+
+Since Java is a compiled programming language, we have two kind of exception: the `compile-time` and the `run-time` exceptions. The base class upon which all the exception are built is the `java.lang.Exception` which extends the `java.lang.Throwable` which is the superclass of all errors and exceptions (therefore, only objects that are subclassed by this class can be thrown by java **throw** statement).
+
+To throw an exception we simply need to call the **throw** method and initialize the exception object:
+
+```java
+throw new NoSuchElementException("Something went wrong!")
+```
+
+LBYL = **L**ook **B**efore **Y**ou **L**eave
+
+EAFP = **E**asier to **A**sk for **F**orgiveness than **P**ermission
+
+
+LBYL and EAFP are two common ways to handling exceptions, the former is usually preferred in java and it essentially require to test a variable before performing operation on it (e.g. **if(var !=null)**) while the latter is based on the concept of trying an operation and handle it in case it generates an unexpected error/output ("try.. except" in python).
+
+```java
+private static int divideLBYL(int x, int y) {
+    // the exception is handled before it can happen
+    if (y != 0) {
+        return x / y;
+    } else return 0;
+}
+
+private static int divideEAFP(int x, int y) {
+    // the operation is performed and in case it fails the exception is handled
+    try {
+        return x / y;
+    } catch (ArithmeticException e) {
+        throw new ArithmeticException("Can't divide by 0!")
+        return 0;
+    }
+}
+```
+
+Both the approach are valuable, which one to use should be sized by the context.
+
+We can catch more than one exception at the time simply creating more **catch block** or using the logical **or** to concatenate them if their handling traduce in the same action :
+
+```java
+try {
+        return x / y;
+    } catch (ArithmeticException e) {
+        throw new ArithmeticException("Can't divide by 0!")
+    } catch (NoSuchElementException e) {
+        throw new ArithmeticException("Invalid input type!")
+    }
+
+try {
+        return x / y;
+    } catch (ArithmeticException | NoSuchElementException e) {
+        throw new ArithmeticException("Something went wrong!")
+
+```
+
+
+## stack-trace and call-stack
+
+When raising an exception, java prints in output the stack-trace, which duty is to store the call-stack of each method in execution; at the point in which the exception occur, java call the stack-trace to return the call-stack, i.e. a list of all the methods called in a particular point in the code (the one that is causing the exception raising), in the specific point where the program crushed. The call stack is usually composed of many lines: 
+
+* the first line usually indicates the exception raised
+* then starting from the bottom we first have the call-stack inside the code, i.e. the methods or statements that we directly called (usually indicated in a different color)
+* above these, there is the call-stack of the methods called by java under the hood to actually perform the operation we required
+
+```java
+Exception in thread "main" java.util.InputMismatchException // exception that caused the program to crush
+    // java internal call-stack
+	at java.base/java.util.Scanner.throwFor(Scanner.java:939) // Scanner method to determine which type of exception raise
+	at java.base/java.util.Scanner.next(Scanner.java:1594)
+	at java.base/java.util.Scanner.nextInt(Scanner.java:2258)
+	at java.base/java.util.Scanner.nextInt(Scanner.java:2212)
+    // our code call-stack
+	at Main.divideNoExceptionHandling(Main.java:25)
+	at Main.main(Main.java:5)
+
+Process finished with exit code 1
+```
+
+
+
+---
+
+
 # The java.util.Collections Class
 
 *https://docs.oracle.com/javase/9/docs/api/java/util/Collections.html*
@@ -941,25 +1073,7 @@ We can sort, reverse shuffle, or more in general manipulate lists.
 
 The **java.lang.Comparable** is an interface that require our class to implements the method **compareTo(T, o)**. Therefore, our class needs to be modified since it has to be extended with the comparable interface (not always possible if our class is in a Jar), moreover, only a single criteria of sorting can be specified. In essence, it is the best choice only if our sequence follows natural ordering. Once our class has become *comparable*, we can then call the **Collection.sort(T)** on our sequence
 
-
 The **java.util.Comparator** is a more flexible interface that require our classes to implement two methods: **compare(T, T)** and **equals()**. We don't need to modify our class, instead we can create a new class that implements the comparator and define the logic of comparison. Once our comparator class is defined we can call the **Collection.sort(T, c)** where **c** is our comparator class (that contains our specific logic of comparison) and T is the specific collection we need to sort.
-
-## The Map interface
-
-*https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html*
-
-Map is not a true **Collections** but is an unordered set of key:value pairs.
-
-```java
-Map<String, String> mapName = new HashMap<>();
-// first parameter is the key and the second the value
-mapName.put("key1", "value associated to key1"); // insertion 
-mapName.get("key1"); // retrieve
-mapName.remove("key1"); // remove a key:value pair
-```
-
-For a particular key, only one value can exist, therefore, the standard behavior is that idf we try to place a new value for an already taken key, than the old value will be replaced.
-
 
 
 ---
