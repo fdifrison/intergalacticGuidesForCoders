@@ -11,7 +11,7 @@ public class Locations implements Map<Integer, Location>{
     public static void main(String[] args) throws IOException {
         FileWriter localFile = new FileWriter("locations.txt");
         for (Location location: locations.values()) {
-            localFile.write(location.getLocationID() + ", " + location.getDescription());
+            localFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
         }
         localFile.close();
     }

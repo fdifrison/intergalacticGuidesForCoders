@@ -617,8 +617,36 @@ Scanner myScanner = new Scanner(System.in);
 
 We want to avoid as much as possible our program o crush of course. Therefore, without talking about exception handling right now, we can use some of the Scanner built-in methods to check for the user input. For example, if we are expecting a number as input (or, to better say a string that can be directly casted into a number) we can use the method `scanner.hasNextInt()` and store the result into a boolean, do detect if the input can be casted into an **Int**; in this way we can structure our code around an if-then-else loop which check the condition of this boolean variable to proceed, avoiding the potential error in the tentative conversion of a string that can't be casted into an **Int** (e.g. "1989a").
 
-
 ## Reading/Writing from/to file
+
+To read or write to file there is a specific class : `java.io.FileWriter`. Unlike python, java doesn't provide a syntactic sugar for context manager (**with** block in python) therefore, in order to initialize an instance of **FileWriter** we have to deal with a checked exception that requires our file to be opened in a safe context. This is due to the fact that, if not handled, leaving a file open when a programs end or crush might lead to data leakage or to the inaccessibility of the output file/source. Therefore, the exception that needs to be handled is the `IOException` and this can be done with a **try block** or, since we are talking about a **checked exception** (an exception that is handled ar compilation time and not at runtime) be adding to the method signature  `throws IOException`:
+
+```java
+public static void main(String[] args) throws IOException {
+    String string = "This is going to be written to file";
+    FileWriter file = new FileWriter("file.txt");
+    for (String i: string.split(" ")) {
+        file.write(i + "\n");
+    }
+    file.close();
+}
+
+// or with the try-catch
+
+public static void main(String[] args) {
+    FileWriter file = null;
+    try {
+        String string = "This is going to be written to file";
+        file = new FileWriter("file.txt");
+        for (String i : string.split(" ")) {
+            file.write(i + "\n");
+        }
+        file.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+```
 
 
 ---
@@ -973,6 +1001,7 @@ Abstract classes and Interfaces can be concatenated, meaning that we can have a 
 
 *https://docs.oracle.com/javase/specs/jls/se11/html/jls-11.html*
 *https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Exception.html*
+*https://docs.oracle.com/javase/tutorial/essential/exceptions/throwing.html*
 
 An exception is event that happen during the execution of a program that disrupts its normal flow.
 
@@ -1004,7 +1033,7 @@ private static int divideEAFP(int x, int y) {
     try {
         return x / y;
     } catch (ArithmeticException e) {
-        throw new ArithmeticException("Can't divide by 0!")
+        e.printStackTrace();
         return 0;
     }
 }
