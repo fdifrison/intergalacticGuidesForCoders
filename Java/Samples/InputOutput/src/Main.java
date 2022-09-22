@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -6,7 +7,8 @@ public class Main {
     //private static Map<Integer, Location> locations = new HashMap<Integer, Location>();
     private static Locations locations = new Locations();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        locations.loadData();
         Scanner scanner = new Scanner(System.in);
 
         int loc = 1;

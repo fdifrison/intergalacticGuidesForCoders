@@ -353,7 +353,7 @@ The main difference between sets and lists is that the sets are un **UNORDERED c
 
 *https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/LinkedHashMap.html*
 
-Essentially we are talking about hashMaps and hashSet that retain the order of insertion due to a linked list running below.
+Essentially we are talking about hashMaps and hashSet that retain the order of insertion due to a linked list running below. Their main use it when writing and reading Maps or Set to file, if we don't use their corresponding linked version we can't be sure that we are writing and then reading back the content in the same order, and this might cause some problem in the program's logic.
 
 
 
@@ -524,22 +524,53 @@ In the example above, even if the initial value of *count* would have been 5 (th
 
 ---
 
+# Try-catch-finally
+
+The **try** statement is the most common construct to handle exceptions. In the try block we define statements that, for some reason, might throw an exception; a classic situation where java obligates us to use a `try-catch` is when dealing with I/O operation due to the checked exception **IOException** (see I/O chapter). If a particular exception is expected we can catch it in the `catch-block` where we can define the behavior of our program: we can decide to handle that exception or expose it (it is not always a good practice trying to by pass all the exceptions, some of them needs to be thrown due to their relevance). Like in Python, also java has a `finally` keyword that can be used in place of or in addition to the catch-block; the peculiarity of the final block is that it is always executed (unless the jvm crush!) therefore ensuring some fallbacks operability (e.g. closing a file to avoid data leakage or its inaccessibility).
+
+```java
+try{
+    //Code that is checked for error
+} catch(Exception e){
+    //Code runs when error is caught
+} finally {
+    //This run no matter what
+}
+```
+
+## try-with-resources
+
+*https://docs.oracle.com/javase/7/docs/technotes/guides/language/try-with-resources.html*
+
+From jdk 7 an addition to the try statement, called `try-with-resources`; the behavior is similar to a context manager and can be used with all the classes that inherit from `java.lang.AutoCloseable`. In the case of opening a file, the try-with resources ensure that the file read stream is closed even if an exception occur. Another advantage of this syntax is that in a try-finally block, the potential errors rasing in the try block are shadowed by the finally statement; here instead, the error of the try block is exposed (and usually is the one we are interested in.. e.g. why we couldn't open the file rather than why it didn't close).
+
+```java
+try (FileWriter localFile = new FileWriter("file.txt")) {
+    // some I/O operations
+    }
+```
+
+We can place more than one resources simply separating them with a semicolon `try (resource1; resource2) {}`
+
+
+---
+
 # Methods
 
 A method is essentially a function bounded to a class instance. Methods can't be nested within each other. We can of course pass arguments and return variables from methods but we need to explicitly state the datatype:
 
 ```java
 public static double kgToPound(double kilos) {
-        double conversion = 2.205d;
-        return kilos * conversion;
+    double conversion = 2.205d;
+    return kilos * conversion;
     }
 ```
 If the methods has no return than the appropriate keyword is `void`.
 
 ```java
 public static void kgToPound(double kilos) {
-        double conversion = 2.205d;
-        System.out.println("your weight in pound is: " + kilos * conversion);
+    double conversion = 2.205d;
+    System.out.println("your weight in pound is: " + kilos * conversion);
     }
 ```
 
@@ -592,10 +623,10 @@ In order to read a user input in JAVA we need to use the class `Scanner` to crea
 
 ```java
 Scanner myScanner = new Scanner(System.in);
-        System.out.println("Enter your name: ");
-        String name = myScanner.nextLine();
-        System.out.println("Your name is " + name);
-        myScanner.close();
+    System.out.println("Enter your name: ");
+    String name = myScanner.nextLine();
+    System.out.println("Your name is " + name);
+    myScanner.close();
 ```
 
 With the keyword `new` we are creating an instance of the class **Scanner** and we are storing in a variable called **name** the first line input by the user. After the operation of input are ended, the Scanner needs to be **closed**.
@@ -604,14 +635,21 @@ If we need to read more than one line in the same scanner, and in particular if 
 
 ```java
 Scanner myScanner = new Scanner(System.in);
-        System.out.println("Enter your year of birth: ");
-        String year = myScanner.nextInt();
-        myScanner.nextLine(); // handle next line character (enter key)
-        //
-        // other queries for the user to input
-        //
-        myScanner.close();
+    System.out.println("Enter your year of birth: ");
+    String year = myScanner.nextInt();
+    myScanner.nextLine(); // handle next line character (enter key)
+    //
+    // other queries for the user to input
+    //
+    myScanner.close();
 ```
+
+Other useful methods of the scanner class are:
+
+* `scanner.useDelimiter("")` : to set a pattern for the delimiter while parsing a file
+* `scanner.skip(scanner.delimiter)`: skip the delimiter while parsing
+* `scanner.next()`: scan the next token, where a token is the input between two delimiters
+
 
 ### Limiting the input
 
@@ -622,31 +660,155 @@ We want to avoid as much as possible our program o crush of course. Therefore, w
 To read or write to file there is a specific class : `java.io.FileWriter`. Unlike python, java doesn't provide a syntactic sugar for context manager (**with** block in python) therefore, in order to initialize an instance of **FileWriter** we have to deal with a checked exception that requires our file to be opened in a safe context. This is due to the fact that, if not handled, leaving a file open when a programs end or crush might lead to data leakage or to the inaccessibility of the output file/source. Therefore, the exception that needs to be handled is the `IOException` and this can be done with a **try block** or, since we are talking about a **checked exception** (an exception that is handled ar compilation time and not at runtime) be adding to the method signature  `throws IOException`:
 
 ```java
+// exposing the checked exception in the method signature
 public static void main(String[] args) throws IOException {
+    try {
     String string = "This is going to be written to file";
     FileWriter file = new FileWriter("file.txt");
-    for (String i: string.split(" ")) {
-        file.write(i + "\n");
-    }
-    file.close();
+    for (String i: string.split(" ")) {file.write(i + "\n");}
+    } 
 }
 
 // or with the try-catch
-
 public static void main(String[] args) {
     FileWriter file = null;
     try {
         String string = "This is going to be written to file";
         file = new FileWriter("file.txt");
-        for (String i : string.split(" ")) {
-            file.write(i + "\n");
-        }
-        file.close();
+        for (String i : string.split(" ")) {file.write(i + "\n");}
     } catch (IOException e) {
         e.printStackTrace();
+    } finally { if (file != null) {
+        try {
+            file.close();
+            } catch (IOException e) {
+            e.printStackTrace();
+            }
+        }
     }
 }
 ```
+
+To be noted, in the try-catch approach we need to initialize the **file** variable outside the try block due to the fact that the try block has it own locale scope that it is not accessible from outside; therefore, defining the variable inside the block won't allow us to further reference it in other part of the code.
+
+A neater way is to use a **try-with-resources**, leaving to java the task of ensuring that the file will be closed also in the event of an exception:
+
+```java
+try (FileWriter file = new FileWriter("file.txt")) {
+        // some manipulation on the file
+        file.close();
+    }
+```
+
+Similarly we can read from a file making use of the **Scanner** class 
+
+```java
+public static void loadData() throws IOException{
+        try(Scanner scanner = new Scanner(new FileReader("file.txt"));) {
+            scanner.useDelimiter(",");
+            while(scanner.hasNextLine()) {
+                String someString = scanner.nextLine();
+                System.out.println(someString);
+            }
+        }
+```
+
+### Buffer reader
+
+*https://docs.oracle.com/javase/tutorial/essential/io/buffers.html*
+
+A buffer reader reads text from the **input stream** and buffers the character into a character array. The main advantage of buffering is that is usually much more efficient than scanning the input line by line from a **FileReader**; this because buffer reads from a memory area called **buffer** while for **FileReader** the request is handled by the OS (triggering dicks access and network activity). The buffer reader implements the **Closable** interface and therefore its **IOException** can be handled in a try-with-resources block.
+
+We can buffer in input and in output both bytes and characters.
+
+```java
+ try (Scanner scanner = new Scanner(new BufferedReader(new FileReader("file.txt")))) {
+        scanner.useDelimiter(",");
+        while (scanner.hasNextLine()) {
+            String someString = scanner.nextLine();
+            System.out.println(someString);
+        }
+    } finally {scanner.close();}
+```
+
+The same concept applies to writing files:
+
+```java
+try (BufferWriter file = new BufferWriter("file.txt")) {
+        // some manipulation on the file
+        file.close();
+    }
+```
+
+### Byte Stream
+
+*https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html*
+
+We can perform the same I/O operations but working with a stream of bytes; the only difference is that we need a different java class (`DataOutputStream`, buffered with `BufferedOutputStream`, and the same for reading but with the word **Input**) that has custom methods to decode/encode the proper java types (e.g. `.writeInt()`, `writeUTF` etc..).
+
+```java
+// an example of writing a file in a byte stream; the file i called locations.dat and contains the fields of an hasMap called locations<Int, String>
+try (DataOutputStream file = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("file.dat")))) {
+    for (Map<Integer, String> map : map.values()) {
+        file.writeInt(map.getKey());
+        file.writeUTF(map.getValues);
+```
+
+### Object Serialization/Deserialization
+
+*https://docs.oracle.com/javase/tutorial/jndi/objects/serial.html#:~:text=To%20serialize%20an%20object%20means,io.*
+
+We could decide to serialize an entire object instead of simple digits or string and to allow this java requires us to implement the `Serializable` interface (and also that the other class that are initialized inside our class are serializable as well). This interface doesn't have any methods but it is a flag for the jdk to say "hey, I may need to serialize this object!".
+
+Another requirement that is not mandatory, but can create difficult-to-spot error, exception or compatibility issue depending on the compiler we use, is the `serialVersionUID` that is a sort of serial number for our class. This should have a **private** access modifier and should be of type **long**. 
+
+```java
+try (ObjectOutputStream file = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("file.dat")))) {
+    for(Map map : map.values()) {
+        file.writeObject(map);
+    }
+}
+```
+
+### RandomAccessFile
+
+*https://docs.oracle.com/javase/tutorial/essential/io/rafs.html*
+
+Without entering too much into details, while until now we have read/wrote files sequentially it is possible also to access files in a non-sequential (or random) way. This means that the writer/reader needs to be able to store a pointer to the particular position at which we want to access. 
+
+## Java NIO.2 (New Input/Output)
+
+*https://docs.oracle.com/en/java/javase/15/core/java-nio.html*
+
+*https://docs.oracle.com/javase/tutorial/essential/io/fileio.html*
+
+*https://www.baeldung.com/java-nio-vs-nio-2*
+
+As an improvement to **java.io**, `java.nio` was introduced as an improvement mainly for the fact that allows I/O operations in a **non-blocking manner** (when using the **java.io** package a thread will block until the end of the reading/writing operation)and because improves the working with the **file system**.
+
+
+### I/O with NIO.2
+
+Differences between java.io and java.nio syntax:
+
+The use of `Path` is preferred by **nio**, therefore, thanks to the `FileSystem` class, instead of instantiate a class representing a file, we initialize a **Path** object. The **BufferedWriter** is not created directly but through the `Files` class which accept a **Path** instance (**nio** can still accept file instance instead of path, e.g. ifa constructor requires it, but if possible it s always better to work with paths because they belong to a more robust class in terms of files handling).
+ 
+
+```java
+Path filePath1 = FileSystems.getDefault().getPath("file1.txt");
+Path filePath2 = FileSystems.getDefault().getPath("file2.txt");
+try (BufferedWriter file1 = Files.newBufferedWriter(filePath1);
+    BufferedWriter file2 = Files.newBufferedWriter(filePath2)) {
+    locFile.write("Something to write on file1");
+    dirFile.write("Something to write on file2");
+} catch(IOException e) {
+    System.out.println("IOException: " + e.getMessage());
+}
+```
+
+All the operation described above related to reading/writing files to characters or bytes with the standard I/O can be done equivalently with the NIO.2 package.
+
+### The FileSystem
 
 
 ---
@@ -727,7 +889,7 @@ public class Car {
     private String owner;
 
     public Car(){
-        //this is an empty constructor
+    // this is an empty constructor
     }
 
     // Overload the constructor
@@ -1007,7 +1169,7 @@ An exception is event that happen during the execution of a program that disrupt
 
 Since Java is a compiled programming language, we have two kind of exception: the `compile-time` and the `run-time` exceptions. The base class upon which all the exception are built is the `java.lang.Exception` which extends the `java.lang.Throwable` which is the superclass of all errors and exceptions (therefore, only objects that are subclassed by this class can be thrown by java **throw** statement).
 
-To throw an exception we simply need to call the **throw** method and initialize the exception object:
+To throw an exception we simply need to call the **throw** method and initialize the exception object and this is actually something pretty useful to do during testing and debugging.
 
 ```java
 throw new NoSuchElementException("Something went wrong!")
@@ -1045,17 +1207,17 @@ We can catch more than one exception at the time simply creating more **catch bl
 
 ```java
 try {
-        return x / y;
-    } catch (ArithmeticException e) {
-        throw new ArithmeticException("Can't divide by 0!")
-    } catch (NoSuchElementException e) {
-        throw new ArithmeticException("Invalid input type!")
-    }
+    return x / y;
+} catch (ArithmeticException e) {
+    throw new ArithmeticException("Can't divide by 0!")
+} catch (NoSuchElementException e) {
+    throw new ArithmeticException("Invalid input type!")
+}
 
 try {
-        return x / y;
-    } catch (ArithmeticException | NoSuchElementException e) {
-        throw new ArithmeticException("Something went wrong!")
+    return x / y;
+} catch (ArithmeticException | NoSuchElementException e) {
+    throw new ArithmeticException("Something went wrong!")
 
 ```
 
