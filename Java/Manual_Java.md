@@ -2,6 +2,10 @@
 
 by Ing. Giovanni Frison
 
+## JAVA LANGUAGE UPDATES
+
+*https://docs.oracle.com/en/java/javase/19/language/java-language-changes.html* 
+
 ---
 
 # JDK - Java Development Kit
@@ -16,12 +20,12 @@ Following some basic information to start a java project.
 
 ## Keywords
 
-*https://en.wikipedia.org/wiki/List_of_Java_keywords* -> list of java keywords
+*<https://en.wikipedia.org/wiki/List_of_Java_keywords>* -> list of java keywords
 
 Keyword are case sensitive **reserved** name used by jdk to perform specific task. For example:
 
 * `public` is an **access modifier**, it defines the scope of the class, i.e. how other part of the code or someone else code can access the class.
-* `static` 
+* `static`
 * `void` indicates that the method won't return any information
 
 ## General style rules
@@ -30,20 +34,20 @@ Keyword are case sensitive **reserved** name used by jdk to perform specific tas
 * we can have more than one statement inline but is not good for readability
 * indentation is not significant but helps readability
 * string are enclosed in double quotes only **"**
-* **=** is the assign while **==** is the comparison 
+* **=** is the assign while **==** is the comparison
 * there is no implicit conversion to boolean of particular symbols (e.g. 0 and 1 are only int, don't have an implicit boolean conversion)
 
 ## Naming convention
 
-*https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html*
+*<https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html>*
 
 ---
 
 # Access modifier
 
-*https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html*
+*<https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html>*
 
-Access modifier are essentially keywords that define the accessibility of classes, methods and variables. 
+Access modifier are essentially keywords that define the accessibility of classes, methods and variables.
 
 Following, a list of the access modifier :
 
@@ -54,12 +58,10 @@ Following, a list of the access modifier :
 
 N.B. Methods without access modifier are inherently public
 
-
 At Top level (the outer level of a .java file) we have the following limitations:
 
-- Only **classes, interfaces and enums** can exist, everything else must be enclosed in one of these
-- Top level classes **CAN'T** be private
-
+* Only **classes, interfaces and enums** can exist, everything else must be enclosed in one of these
+* Top level classes **CAN'T** be private
 
 N.B. as a rule of thumb, be as restrictive as it makes sense for the application you are developing; public should be avoided unless specifically needed.
 
@@ -95,12 +97,11 @@ Byte datatype is meant for very small integers [-128, 127] on a x64 OS and their
 
 ### Short
 
-Short are meant for medium range integers [-32768, 32767] and have a *width of 16* 
+Short are meant for medium range integers [-32768, 32767] and have a *width of 16*
 
 ### Long
 
 Long is meant for vey big integers and have a *width of 64* (the double of an Int). To tell the computer that a value is long we should also place a capital L after the numeric value assigned `long val = 100L` (if we don't do so, the number it treated like an Int).
-
 
 ### Arithmetic operations on Integers
 
@@ -112,26 +113,24 @@ byte notWorking = (val/2) // what is inside () is treated like an int
 // we need casting
 byte Working = (byte)(val/2) 
 ```
-        
-Casting is not needed when working with long since it will fall back to basic Int unless required by the width.
 
+Casting is not needed when working with long since it will fall back to basic Int unless required by the width.
 
 ## Floating Numbers
 
 ### Float
 
-Floats are *single precision* decimal numbers that occupy 32 bits. Like Int, double is the default decimal datatype, therefore, when writing literal float values we need to add the letter **f** after the value (`float myFloat = 5.25f`). 
+Floats are *single precision* decimal numbers that occupy 32 bits. Like Int, double is the default decimal datatype, therefore, when writing literal float values we need to add the letter **f** after the value (`float myFloat = 5.25f`).
 
 ### Double
 
-Double are *double precision* decimal numbers that occupy 64 bits. We could use the suffix **d** after the literal value, but it is not required since double are the default java format. 
+Double are *double precision* decimal numbers that occupy 64 bits. We could use the suffix **d** after the literal value, but it is not required since double are the default java format.
 
 N.B. despite the logic, doubles are usually faster to process than floats (even if they occupy more space) because modern architecture and math ans scientific modules are optimized to work with doubles instead of floats.
 
 ### BigDecimal
 
 Due to how floats and doubles are stored in memory, they cannot be used when precise calculations are required (e.g. currency conversion). Therefore, we need another datatype that handle the truncation exactly as specified so that arithmetic operation on decimals are exact an not approximate by floats approximate representation.
-
 
 ## Strings
 
@@ -150,7 +149,6 @@ Being a class, String comes with a series of method attached that can be extreme
 * `.toLowerCase()`
 * `.isEmpty()`
 * `.format("%.2f", myString)`
-
 
 ## Boolean
 
@@ -188,7 +186,7 @@ ArrayList<Integer> items = new ArrayList<>(); //parametrized type <Integer>, the
 
 ## <T> generic type parameter
 
-So, we now know that we should never user raw typed classes because introduce liability in our code, but still we need a way to define in general terms the type passed at initialization to our class, both for validation and for reducing the quantity of duplicated code (if we need a class to behave differently for each type passed we could potentially create a class for each exception, but this is far from optimal in DRY terms). 
+So, we now know that we should never user raw typed classes because introduce liability in our code, but still we need a way to define in general terms the type passed at initialization to our class, both for validation and for reducing the quantity of duplicated code (if we need a class to behave differently for each type passed we could potentially create a class for each exception, but this is far from optimal in DRY terms).
 
 To solve this problem the `<T>` notation was introduced, that indicates a `generic type`. A class defined with a generic type input will have the ability to adapt to different data types, since the final state will be reached only in the initialization statement, when the **<T>** will be replaced by the actual type we need.
 
@@ -235,15 +233,11 @@ public class Team<T extends Player & Coach & Manager> {...} // if Player is a cl
 
 We can also have a mixture of one class and multiple interfaces but the first argument in the extension **MUST BE** the class
 
-
-
-
-
 ---
 
 # Data structures
 
-Until now we have seen so called `value types`, i.e. a variable directly holds the value of the prescribed datatype declared in the statement. Now we are going to investigate what are `reference types`, i.e. variables that holds a reference to the object assigned but not the object itself. 
+Until now we have seen so called `value types`, i.e. a variable directly holds the value of the prescribed datatype declared in the statement. Now we are going to investigate what are `reference types`, i.e. variables that holds a reference to the object assigned but not the object itself.
 
 ```java
 int myInt = 10;
@@ -281,10 +275,9 @@ One useful methods from the `java.util.Arrays` class, is the method `.toString()
 
 If we use a negative index or an out of bound index we get the exception `ArrayIndexOutOfBoundsException`.
 
-
 ## List and ArrayList
 
-*https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/ArrayList.html*
+*<https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/ArrayList.html>*
 
 Lists in java are an `interface` (which extends the **Collection** interface), i.e. a class that can be inherit from multiple classes (unlike **extends** which imply single inheritance), and `ArrayList` is class that **implements** (the keyword for inherit an interface) the interface `List` (actually an **AbstractList** which in turns implement the List interface). The main difference with standard **Array** is that ArrayList are dynamic in size, therefore in the initialization we don't need to specify the number of elements that will be contained (also because often is something difficult to know a priori).
 
@@ -305,7 +298,7 @@ The `()` at the end of the statement are needed to invoke the constructor behind
 
 ### Autoboxing and Unboxing
 
-The reference datatype that we pass to the ArrayList constructor needs to be a class, therefore primitive type like **int** or **double** are not accepted. A way to overcome this issue would be to create a class that simply receive and int as argument in the constructor (a wrapper essentially to the **int** primitive) and pass this class as datatype to the array list, but it become tedious quite fast. 
+The reference datatype that we pass to the ArrayList constructor needs to be a class, therefore primitive type like **int** or **double** are not accepted. A way to overcome this issue would be to create a class that simply receive and int as argument in the constructor (a wrapper essentially to the **int** primitive) and pass this class as datatype to the array list, but it become tedious quite fast.
 
 The `autoboxing` is the java functionality builtin to take care of this problem. All the primitives in java as a boxing class that does exactly what the wrapper above was supposed to do; instead of passing the **int** primitive type we pass the boxing class `Integer` to the ArrayList (same applies for the other primitive datatype).
 
@@ -321,15 +314,15 @@ N.B. Java should be able to extract from the context the fact that we are adding
 
 ## LinkedLists
 
-LinkedLists are another type of list data structure that differs from standard list for the way they store the reference in memory to the objects that they contain. As a matter of fact, lists use continuos blocks of memories to store their content while in LL each slots contains the object and the particular address in memory of that object. Each slot is called **node** and contains the object with it's memory address and a pointer to the next element. 
+LinkedLists are another type of list data structure that differs from standard list for the way they store the reference in memory to the objects that they contain. As a matter of fact, lists use continuos blocks of memories to store their content while in LL each slots contains the object and the particular address in memory of that object. Each slot is called **node** and contains the object with it's memory address and a pointer to the next element.
 
 Long story short, LL has a computational efficiency greater than standard lists in **insertion** and **deletion** of elements (O(1) compared to O(n) since standard lists have to shift all the elements. th opposite happens for elements retrieval where list performs better O(1) while LL have a O(n/2).
 
-- storage: 4 bytes for each integer, 8 bytes for each double
+* storage: 4 bytes for each integer, 8 bytes for each double
 
 ## Map interface
 
-*https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html*
+*<https://docs.oracle.com/javase/tutorial/collections/interfaces/map.html>*
 
 Map is not a true **Collections** but is an unordered set of key:value pairs.
 
@@ -345,26 +338,23 @@ For a particular key, only one value can exist, therefore, the standard behavior
 
 ## Set interface
 
-*https://docs.oracle.com/javase/tutorial/collections/interfaces/set.html*
+*<https://docs.oracle.com/javase/tutorial/collections/interfaces/set.html>*
 
 The main difference between sets and lists is that the sets are un **UNORDERED collection of UNIQUE elements**. The interface implements the standard methods **.add()**, **.remove()**, **isEmpty()**  etc.. to manipulates the objects contained in the set. A peculiarity is that we **cannot retrieve an element directly** from a set but only check for it existence with **.contains()**. The most efficient way to use sets is probably through the **hashSet**, essentially an hashmap composed only by keys; again the order of insertion is not retained as well as the order over time might change. All the operation on set theory are allowed.
 
 ## LinkedHashMap and LinkedHashSet
 
-*https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/LinkedHashMap.html*
+*<https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/LinkedHashMap.html>*
 
 Essentially we are talking about hashMaps and hashSet that retain the order of insertion due to a linked list running below. Their main use it when writing and reading Maps or Set to file, if we don't use their corresponding linked version we can't be sure that we are writing and then reading back the content in the same order, and this might cause some problem in the program's logic.
-
-
 
 ---
 
 # Operators, operands and expression
 
-*https://docs.oracle.com/javase/tutorial/java/nutsandbolts/opsummary.html* -> list of operators
+*<https://docs.oracle.com/javase/tutorial/java/nutsandbolts/opsummary.html>* -> list of operators
 
-*http://www.cs.bilkent.edu.tr/~guvenir/courses/CS101/op_precedence.html* -> operators precedence
-
+*<http://www.cs.bilkent.edu.tr/~guvenir/courses/CS101/op_precedence.html>* -> operators precedence
 
 Operators are those symbols that can be used to perform operations on variable such as addition, multiplication etc. Operands are the subjects of the operation. An expression is the whole block where the variable is defined as the combination of two or more operands with an operator
 
@@ -436,7 +426,7 @@ if (test < 100) {
 
 ---
 
-# The switch statement 
+# The switch statement
 
 The switch statement is an alternative to a possible messy concatenation of nested if-elseif statement. From a python perspective, we are essentially talking of a dictionary (a defaultdict to be precise) where a specific output is set depending on the input. The reserved JAVA keyword is `switch(someValue)` where **someValue** will be the testing parameter. The switch statement can only be use with some primitive types: **int, long, byte, char, String, Enum**.
 
@@ -511,7 +501,7 @@ The while loop is often used to create **infinite loops** with the expression `w
 
 ## The `do` while statement
 
-The difference of a do-while loop is that we have an initial expression that is always executed at least one since the termination condition is checked only after. The syntax is the following: 
+The difference of a do-while loop is that we have an initial expression that is always executed at least one since the termination condition is checked only after. The syntax is the following:
 
 ```java
 int count = 0;
@@ -540,7 +530,7 @@ try{
 
 ## try-with-resources
 
-*https://docs.oracle.com/javase/7/docs/technotes/guides/language/try-with-resources.html*
+*<https://docs.oracle.com/javase/7/docs/technotes/guides/language/try-with-resources.html>*
 
 From jdk 7 an addition to the try statement, called `try-with-resources`; the behavior is similar to a context manager and can be used with all the classes that inherit from `java.lang.AutoCloseable`. In the case of opening a file, the try-with resources ensure that the file read stream is closed even if an exception occur. Another advantage of this syntax is that in a try-finally block, the potential errors rasing in the try block are shadowed by the finally statement; here instead, the error of the try block is exposed (and usually is the one we are interested in.. e.g. why we couldn't open the file rather than why it didn't close).
 
@@ -551,6 +541,41 @@ try (FileWriter localFile = new FileWriter("file.txt")) {
 ```
 
 We can place more than one resources simply separating them with a semicolon `try (resource1; resource2) {}`
+
+---
+
+# Lambda Expressions
+
+Introduced in jdk 8, **lambda expression** are a handy way to work with interfaces that **has only one method**.
+It is composed of 3 parts:
+
+* the argument list `()`
+* the arrow token `->`
+* the body : the code that needs to run
+
+
+
+```java
+// creating a runnable thread and calling it directly, without the use of a Thread class or an anonymous class
+new Thread(()-> System.out.println("Printing from runnable")).start();
+```
+
+In the example above, the Thread implements the **Runnable** interface that has only the method **Run** that require no arguments; the compiler is therefore able to match the argument list with the requirement of the **Run** method.
+Interfaces like **Runnable** that contains only one method are referred as `functional interfaces`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---
@@ -565,6 +590,7 @@ public static double kgToPound(double kilos) {
     return kilos * conversion;
     }
 ```
+
 If the methods has no return than the appropriate keyword is `void`.
 
 ```java
@@ -576,7 +602,6 @@ public static void kgToPound(double kilos) {
 
 When running a program, java looks for the `main` method as an entry point
 
-
 ## Methods Overloading vs Overriding
 
 Like in other programming language, overloading a function or a method means to have the same method defined multiple times with the same time but with a different number of arguments. Java will infer which method to call based on the number of argument we are actually passing. **println** is a common example of method overloading since it can be called with different datatype in argument and still produces the correct output. With overloading we improve the readability and the consistency of our code.
@@ -584,28 +609,46 @@ Like in other programming language, overloading a function or a method means to 
 Overloading is different from **polymorphism** but it is often referred by java developers as **compile time polymorphism** since it is the compiler that choose the appropriate version of the method depending on the number of argument and the return type.
 
 In essence the rules for overloading a method are:
+
 * having the same method name
 * having different arguments
 
 If this condition are satisfied, the the methods can have:
+
 * different return types
 * different access modifier
 * different exception handling
 
-
 **Overriding** instead means to redefine a method in a child class that is already present in the parent class (**derived method**); overriding is known as **runtime polymorphism** and **dynamic method dispatch** because the JVM decide at runtime which method to call. To declare to the compiler that we are overriding a derived method we need to place the `@Override` signature above the method in the child class.
 
 In essence the rules for overriding a method are:
+
 * having same name and **same arguments**
 * return type can be a subclass of the return type in the parent class
 * it can't have a lower access modifier
 * it can't thrown new or broader exceptions
 
 Moreover:
+
 * methods can be overridden only in child classes
 * constructor and private methods **can't be overridden**
 * methods that are final cannot be overridden
 
+## Wildcard ?
+
+*<https://docs.oracle.com/javase/tutorial/extra/generics/wildcards.html>*
+
+In methods is it possible to specify a wildcard with the symbol `<?>` when the object type passed to the method is not always uniquely defined. We can also bound a wildcard for example stating a mandatory extension to a specific class e.g. `List<? extends somClass>`.
+
+A common example of wildcard usage is to print the elements of a Collection subclass using the for each loop:
+
+```java
+void printCollection(Collection<?> c) {
+    for (Object e : c) {
+        System.out.println(e);
+    }
+}
+```
 
 ---
 
@@ -649,7 +692,6 @@ Other useful methods of the scanner class are:
 * `scanner.useDelimiter("")` : to set a pattern for the delimiter while parsing a file
 * `scanner.skip(scanner.delimiter)`: skip the delimiter while parsing
 * `scanner.next()`: scan the next token, where a token is the input between two delimiters
-
 
 ### Limiting the input
 
@@ -700,7 +742,7 @@ try (FileWriter file = new FileWriter("file.txt")) {
     }
 ```
 
-Similarly we can read from a file making use of the **Scanner** class 
+Similarly we can read from a file making use of the **Scanner** class
 
 ```java
 public static void loadData() throws IOException{
@@ -715,7 +757,7 @@ public static void loadData() throws IOException{
 
 ### Buffer reader
 
-*https://docs.oracle.com/javase/tutorial/essential/io/buffers.html*
+*<https://docs.oracle.com/javase/tutorial/essential/io/buffers.html>*
 
 A buffer reader reads text from the **input stream** and buffers the character into a character array. The main advantage of buffering is that is usually much more efficient than scanning the input line by line from a **FileReader**; this because buffer reads from a memory area called **buffer** while for **FileReader** the request is handled by the OS (triggering dicks access and network activity). The buffer reader implements the **Closable** interface and therefore its **IOException** can be handled in a try-with-resources block.
 
@@ -742,7 +784,7 @@ try (BufferWriter file = new BufferWriter("file.txt")) {
 
 ### Byte Stream
 
-*https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html*
+*<https://docs.oracle.com/javase/tutorial/essential/io/bytestreams.html>*
 
 We can perform the same I/O operations but working with a stream of bytes; the only difference is that we need a different java class (`DataOutputStream`, buffered with `BufferedOutputStream`, and the same for reading but with the word **Input**) that has custom methods to decode/encode the proper java types (e.g. `.writeInt()`, `writeUTF` etc..).
 
@@ -756,11 +798,11 @@ try (DataOutputStream file = new DataOutputStream(new BufferedOutputStream(new F
 
 ### Object Serialization/Deserialization
 
-*https://docs.oracle.com/javase/tutorial/jndi/objects/serial.html#:~:text=To%20serialize%20an%20object%20means,io.*
+*<https://docs.oracle.com/javase/tutorial/jndi/objects/serial.html#:~:text=To%20serialize%20an%20object%20means,io>.*
 
 We could decide to serialize an entire object instead of simple digits or string and to allow this java requires us to implement the `Serializable` interface (and also that the other class that are initialized inside our class are serializable as well). This interface doesn't have any methods but it is a flag for the jdk to say "hey, I may need to serialize this object!".
 
-Another requirement that is not mandatory, but can create difficult-to-spot error, exception or compatibility issue depending on the compiler we use, is the `serialVersionUID` that is a sort of serial number for our class. This should have a **private** access modifier and should be of type **long**. 
+Another requirement that is not mandatory, but can create difficult-to-spot error, exception or compatibility issue depending on the compiler we use, is the `serialVersionUID` that is a sort of serial number for our class. This should have a **private** access modifier and should be of type **long**.
 
 ```java
 try (ObjectOutputStream file = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("file.dat")))) {
@@ -772,27 +814,25 @@ try (ObjectOutputStream file = new ObjectOutputStream(new BufferedOutputStream(n
 
 ### RandomAccessFile
 
-*https://docs.oracle.com/javase/tutorial/essential/io/rafs.html*
+*<https://docs.oracle.com/javase/tutorial/essential/io/rafs.html>*
 
-Without entering too much into details, while until now we have read/wrote files sequentially it is possible also to access files in a non-sequential (or random) way. This means that the writer/reader needs to be able to store a pointer to the particular position at which we want to access. 
+Without entering too much into details, while until now we have read/wrote files sequentially it is possible also to access files in a non-sequential (or random) way. This means that the writer/reader needs to be able to store a pointer to the particular position at which we want to access.
 
 ## Java NIO.2 (New Input/Output)
 
-*https://docs.oracle.com/en/java/javase/15/core/java-nio.html*
+*<https://docs.oracle.com/en/java/javase/15/core/java-nio.html>*
 
-*https://docs.oracle.com/javase/tutorial/essential/io/fileio.html*
+*<https://docs.oracle.com/javase/tutorial/essential/io/fileio.html>*
 
-*https://www.baeldung.com/java-nio-vs-nio-2*
+*<https://www.baeldung.com/java-nio-vs-nio-2>*
 
 As an improvement to **java.io**, `java.nio` was introduced as an improvement mainly for the fact that allows I/O operations in a **non-blocking manner** (when using the **java.io** package a thread will block until the end of the reading/writing operation)and because improves the working with the **file system**.
-
 
 ### I/O with NIO.2
 
 Differences between java.io and java.nio syntax:
 
 The use of `Path` is preferred by **nio**, therefore, thanks to the `FileSystem` class, instead of instantiate a class representing a file, we initialize a **Path** object. The **BufferedWriter** is not created directly but through the `Files` class which accept a **Path** instance (**nio** can still accept file instance instead of path, e.g. ifa constructor requires it, but if possible it s always better to work with paths because they belong to a more robust class in terms of files handling).
- 
 
 ```java
 Path filePath1 = FileSystems.getDefault().getPath("file1.txt");
@@ -810,14 +850,94 @@ All the operation described above related to reading/writing files to characters
 
 ### The FileSystem
 
+Let's first define what a filepath is: a filepath is an unique address to a directory or a file on a machine composed by **nodes** representing drive or folders (usually the root node is the driver location e.g. **C:\\**) separated by **delimiters** that can differ from one OS to another (e.g. backslash on windows and forward slash on Unix). Paths can be **absolute or relative** depending if they include the root node or not; often we use the concept of **current directory** meaning the relative path (**.** to indicate the cwd) from which we are working/launching our own application. When creating a java Path object with NIO we are specifying **FileSystems.getDefault().getPath("file.txt")**, where the path in **getPath()** is the relative path (since in the example the file is in the project directory) and the method **getDefault()** is used to set the current directory as root. Similarly we could decide to use a Path object with its method **get()** and inside it specify the absolute path to the directory/file we are interested in. In practice, absolute path aren't going to fit since our application will be installed by users in different machine and directories, therefore the application need to orient itself by using relative paths depending on where it is actually installed/launched.
+
+```java
+Path filePath = FileSystems.getDefault().getPath("file.txt"); // relative path - file in project directory (cwd)
+Path filePath = FileSystems.getDefault().getPath("..\\file.txt"); // relative path - go back one folder
+Path filePath = FileSystems.getDefault().getPath("files", "file.txt"); // relative path - enter folder files
+Path filePath = Paths.get("C:\\path\\to\\file\\file.txt"); // absolute path
+```
+
+Useful methods from the Path class are:
+
+* `.toAbsolutePath()` : return absolute path from a relative one
+* `.normalize()` : always good practice to normalize a path received from a user since t removes all the redundant or placeholder names (like the dots notations)
+
+N.B. also the standard java.io has the ability to handle paths but it is implemented with very few exception handling; moreover, it can't resolve symbolic links (link to a file that points to another file) used in networking to point to a remote location.
+
+N.B. path separators can be OS-specific. For example, windows use a back slash while unix uses a forward slash. To be able to generalize path separators, the **FileSystems** class has a method called `FileSystems.getDefault().getSeparator()` that returns the separator character specific to the OS.
+
+Other useful FileSystems methods are:
+
+* `FileSystems.getDefault().getFileStores()` :  which returns an iterable containing all the mounting point in the machines.
+* `FileSystems.getDefault().getRootDirectories()` : to get an iterable containing the root directory path
+
+#### Handling files
+
+*<https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html>*
+
+In the NIO module, the Path class is only devoted to handle paths, but a path can be abstract and be resolved without any issue even if not exists. To do operation that aims to check, for example, whether a file/directory exist or to delete a file, we have the `java.nio.file.Files` Class. Among the useful methods (most of them are static therefore can be used without initialization of the class) we have:
+
+* `Files.exists(filePath)` : check whether a file exist
+* `Files.copy(fromFile, toFile)` : create toFile as a copy of fromFile
+* `Files.copy(fromFile, toFile, StandardCopyOptions.REPLACE_EXISTING)` : copy with the oprion to replace if existing; it prevents to raise the exception for a file already existing. We cna also copy a folder, but without walking the tree we will copy only the folder itself and not what it contains
+* `Files.move(fileFromFolder, fileToFolder)`: move a file to a new location; if the location is the same, rename a file. We can also move folder but only if their are empty.. not very useful
+* `Files.deleteIfExist(fileName)`: delete a file or handle the exception if the file doesn't exist
+* `Files.create(fileName)`: create an empty file name.. at this point is it better to directly use a stream so that we can also write to it
+* `Files.createDirectory(dirName)`: can specify also a nested structure of folders and create them at once (e.g. **/dir1/dir2/dir3** passed in the Path object)
+* `Files.size(fileName)`: return the size of a file in Bytes
+* `Files.getLastModifiedTime(fileName)`: return the date of last modification
+  * Actually we can get all the file information in a single construct using the `BasicFileAttributes` class initialized as `Files.readAttributes(fileName, BasicFileAttribute.class)`; then we can interrogate the resulting variable with the methods **.size()**, **.getLastModifiedTime()**, **isDirectory()**, **.creationTime()** etc..
+
+#### Walking directory tree with `newDirectoryStream`
+
+To navigate through files in folder, and later on to copy them in bulk, the smart way is to use a stream implemented in the class **Files** called `newDirectoryStream` which implements iterable and therefore can be used to recursively find the path of folders, subfolder and files.
+
+```java
+private static void walkDir() {
+    Path dir = FileSystems.getDefault().getPath("../");
+    try (DirectoryStream<Path> content = Files.newDirectoryStream(dir)) {
+        for (Path file : content) {
+            System.out.println(file.getFileName());
+        }
+    } catch (IOException | DirectoryIteratorException e) {
+        System.out.println(e.getMessage());
+    }
+}
+```
+
+In the **newDirectoryStream** we could specify a second argument with a regex expression to pars only files that match specific patterns. We can also specify a filter build with the `DirectoryStream.Filter` class where we can code a boolean expression (e.g. is file or not) and use it as a filter in the directory stream.
+
+#### Walking file tree with `SimpleFileVisitor`
+
+By creating a class that extends  the **SimpleFileVisitor** class,  we are able to leverage the `Files.walkFileTree()` methods to traverse al the files and folder from the path specified. the method takes two arguments: the path from which the traverse start and a new instance of our custom class that extends **SimpleFileVisitor**. Similarly we can create a method that not only walks down the tree but copy all the files and folder in the process. But we won't enter into detail now. (see Section 14 of Tim Buchalka Udemy course).
+
+---
+
+# Concurrency and Threads
+
+First define some semantics of java concurrency:
+
+* a `process` is a unit of execution that has its own **memory space** (called `heap`), each instance of the jvm run as a process; running a java application start a process. If two process are launched simultaneously, each process has its own heap and the two can't interact (the heap can't be shared).
+
+* a `thread` is a unit of execution within a process; each process can have multiple threads (but at least one, called **main thread**). In reality, most of the application we write in java use multiple threads, even if not explicitly coded, to handle operation like memory management or I/O. Unlike different processes, different threads share the same heap; this can be an advantage but also a source of problems. Each thread has also a `thread stack` which is the memory dedicated only to that specific thread.
+
+* `concurrency` is the ability of an application of doing more than one thing at the time; it doesn't mean that the execution of more than one task happen simultaneously, but that a task doesn't need to way for the prior task to finish, they can concur together (e.g. a call to an external db is hold by one task, instead of blocking the application waiting for the response, with concurrency another task can start).
+
+The advantage to use multiple threads is to not block the main thread while performing other task (e.g. querying a database, an operation that can take some time). Another reason might be that an API requires to use a thread at a certain point in the code. Working with threads we are at the mercy of the jvm and the OS since it is in their power to decide threads priority (actually we can set threads priority but it is not guaranteed) (for this reason, when running a concurrent app on different machine we might see slightly different behavior/output).
+
+## Threads
+
+*https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html*
 
 ---
 
 # OOP in JAVA
 
-*https://www.tutorialspoint.com/java/java_encapsulation.htm#:~:text=Encapsulation%20in%20Java%20is%20a,methods%20of%20their%20current%20class.* -> encapsulation
+*<https://www.tutorialspoint.com/java/java_encapsulation.htm#:~:text=Encapsulation%20in%20Java%20is%20a,methods%20of%20their%20current%20class>.* -> encapsulation
 
-A class is essentially a blueprint for creating objects that can have many kind of behavior. 
+A class is essentially a blueprint for creating objects that can have many kind of behavior.
 
 The class definition begins with a statement composed by an `access modifier` (e.g. **public**) which defines the accessibility we are giving to the class (e.g. whether we can reach it from other classes or not), the `class` keyword and the custom defined `ClassName` (the standard in JAVA is to have capitalized names for classes).
 
@@ -853,6 +973,7 @@ public class Car {
     }
 }
 ```
+
 N.B. notice the `this` keyword used inside the method **setName**; it refers to the class (it is equal to say Car.name) in order to distinguish the **name** that refers to the private state variable with the **name** that indicates the argument of the function setName.
 
 Now we can set the name of our Car without illegally access a state variable but through an had hoc method of which behavior should have been structured in a way of not potentially harming the stability of the code.
@@ -902,7 +1023,6 @@ public class Car {
 
 Once the constructor is overloaded with some required arguments, we can initialize a new Car object specifying those parameters directly without calling setters manually after initialization. Moreover, we can **call a constructor within another constructor** with a special use of the keyword `this`; for example, to allow for setting default values even when an empty constructor is called:
 
-
 ```java
 ```java
 public class Car {
@@ -931,11 +1051,11 @@ public class Car {
 
 ## Inheritance
 
-**N.B. even if not specified, each java class implicitly inherit from the `java.lang.Object` class which is the root of the class hierarchy and it implements some basic functionality like *equals()* , *toString()* etc..** 
+**N.B. even if not specified, each java class implicitly inherit from the `java.lang.Object` class which is the root of the class hierarchy and it implements some basic functionality like *equals()* , *toString()* etc..**
 
 **N.B. with standard inheritance we can only extend our class with one class, oterwise we need to create an Interface or a Composition**
 
-Inheritance is the ability of classes to inherit behavior from other classes allowing to build more and more specific objects that still share a common blueprint. To inherit from another class we need to use the keyword `extends` in the new class statement. Moreover, **if the class from which we are inheriting has a constructor** we need the new class to initialize that constructor (otherwise we get a compilation error). 
+Inheritance is the ability of classes to inherit behavior from other classes allowing to build more and more specific objects that still share a common blueprint. To inherit from another class we need to use the keyword `extends` in the new class statement. Moreover, **if the class from which we are inheriting has a constructor** we need the new class to initialize that constructor (otherwise we get a compilation error).
 
 ```java
 public class Animal {
@@ -993,11 +1113,11 @@ public void talk() {
 As already seen, the keyword `super` is used to access/call the parent class variables and methods while the `this` keyword is used to call the current class variable and methods (it is also required when a method has an argument with the same name of a state variable). These can't be used in **static blocks/methods**.
 
 **this()** and **super()** in java can also be called as methods, in particular:
-*  `this()` is used to call a constructor from another overloaded constructor in the same class. It can be used **only inside a constructor** and has to be the **first argument** of the constructor (it helps to reduce duplicate code).
-*  `super()` is used as **first argument** (mandatory) in a constructor of a child class to inherit the constructor of the parent class; if not specified, java insert an empty **super()** constructor when a child class is instantiated.
+
+* `this()` is used to call a constructor from another overloaded constructor in the same class. It can be used **only inside a constructor** and has to be the **first argument** of the constructor (it helps to reduce duplicate code).
+* `super()` is used as **first argument** (mandatory) in a constructor of a child class to inherit the constructor of the parent class; if not specified, java insert an empty **super()** constructor when a child class is instantiated.
 
 **N.B. a constructor can have one between *super()* or *this()* but not both**
-
 
 ## `static` vs `instance` methods
 
@@ -1035,14 +1155,12 @@ Standard inheritance allows for a single extension (meaning that one class can o
 
 **Inheritance expose the relationship `is a` between two objects while Composition `has a`**
 
-
 ## Encapsulation
 
 Encapsulation is the mechanism that allow us to restrict the access to certain components of the object created; this is fundamental to have more control on the code flow and in the possible raise of unexpected behavior. Particularly true for state variable, which scope should be strictly restricted to the class in which are defined (thus defined as **private**), if we are able to access them from outside the class then unexpected behavior might arise in the call of methods that uses those variables expecting a particular type/value.
 
 Another reason for encapsulation along side with security is code **duplication**, **checking** and **validation**; as a matter of fact if we modify states variables from other classes and at some point we need to modify the parent variable or the behavior of a parent method (that should have been declared as **private**), then all the child classes would be broken and need updating. A lot of work and an extremely easy source of hidden errors.
 
- 
 ## Polymorphism
 
 When we have classes bounded by inheritance to a parent class we might have the same method inherit to all the child classes but it might have a different behavior depending on the specif child class which is calling it. The ability of having the same method displaying different behavior based on the context of the child class is exactly the definition of **polymorphism** (many forms), i.e. having the same method (with the same name) with different output.
@@ -1057,16 +1175,30 @@ This behavior is called polymorphism. N.B. if one of the child classes would hav
 
 Depending on the use in the outer world of our classes, it might be a good idea to expose only what is strictly needed to perform further manipulation and keep private the rest. The goal is to transform our class in an immutable object (from the outside). Following a set of best practice:
 
-*https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html*
+*<https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html>*
 
+---
+
+## Anonymous classes
+
+*<https://docs.oracle.com/javase/tutorial/java/javaOO/anonymousclasses.html>*
+
+Anonymous class represents a syntactic sugar, i.e. they are expressions that allow to declare and instantiate a class at the same time and without giving it a name. A classic example is when creating a new thread, instead of implementing a thread class that implements the runnable **Runnable** interface we can:
+
+```java
+new Thread(new Runnable() {
+    @Override
+    public void run() {System.out.println("Printing from runnable");}
+}).start();
+```
 
 ---
 
 # Interfaces
 
-The idea behind interfaces is to create a common behavior that can be used by several classes that implements the same interface. The interface itself is **abstract** meaning that it doesn't contains any actual code for the methods it implements but only the `signature` (like the statement for private variables), the methods are actually coded inside the classes that implements them. 
+The idea behind interfaces is to create a common behavior that can be used by several classes that implements the same interface. The interface itself is **abstract** meaning that it doesn't contains any actual code for the methods it implements but only the `signature` (like the statement for private variables), the methods are actually coded inside the classes that implements them.
 
-In practical terms, the interface are implemented using the signature `public interface interfaceName {}` and inside the curly brackets we will write the signatures off all the methods that the interface implements and that will be inherited from the classes that implements the interface. 
+In practical terms, the interface are implemented using the signature `public interface interfaceName {}` and inside the curly brackets we will write the signatures off all the methods that the interface implements and that will be inherited from the classes that implements the interface.
 
 ```java
 public interface MyInterface {
@@ -1089,11 +1221,12 @@ public class MyClass implements MyInterface {
 }
 ```
 
-In this case, since **MyClass** is implementing the interface **MyInterface** to be valid (to be compiled) it needs to implements all the methods that are stated inside the interface itself, respecting of course the prescribed datatype. If a specific method from the interface is not needed we can simply override it (actually all the methods are overridden) and giving it a dummy behavior (do nothing). 
+In this case, since **MyClass** is implementing the interface **MyInterface** to be valid (to be compiled) it needs to implements all the methods that are stated inside the interface itself, respecting of course the prescribed datatype. If a specific method from the interface is not needed we can simply override it (actually all the methods are overridden) and giving it a dummy behavior (do nothing).
 
 The power of interfaces is that they enable `multiple inheritance` since in our classes we can **implements** as many interfaces as we want given that the class then implements all the methods inside the interface signature (e.g. we could implements the interface **List** because we are interested in a particular behavior that lists has, but still we will need to implements all the methods present in the List interface).
 
 ## Type inheritance
+
 A cool feature of interfaces is that, if we initialize a variable with the interface signature as datatype, we can reassign that variable to new objects from different classes given that these all implements the same interface. Imagine we have an interface called **ITelephone** and two classes that implements the same interface **Mobile** and **Desk**; if that so then the following is valid:
 
 ```java
@@ -1112,14 +1245,13 @@ N.B. a good practice is to start interfaces names with the capital `I` (independ
 N.B. Methods implemented in the Interface are inherently `abstract` even if not explicitly stated.
 N.B. Java libraries make extensive use of interfaces!
 
-
 ## Useful Interfaces
 
 Java makes extensive use of interfaces and some of them are particularly useful to add functionality to our custom classes.
 
-### Comparable<T>
+### Comparable <T>
 
-*https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html*
+*<https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html>*
 
 Interface to implements a natural ordering comparison of objects from the same class.
 
@@ -1127,7 +1259,7 @@ Interface to implements a natural ordering comparison of objects from the same c
 
 # Nested and Inner classes
 
-*https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html*
+*<https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html>*
 
 **Personal tough: I won't go in deep of nested classes at this stage since I don't think it is a rather advanced topic to apply in production.. see you later nested classes**
 
@@ -1144,13 +1276,14 @@ Compelling reasons for using nested classes include the following:
 
 # Abstract classes
 
-*https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html#:~:text=An%20abstract%20class%20is%20a,but%20they%20can%20be%20subclassed.&text=When%20an%20abstract%20class%20is,methods%20in%20its%20parent%20class.*
+*<https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html#:~:text=An%20abstract%20class%20is%20a,but%20they%20can%20be%20subclassed.&text=When%20an%20abstract%20class%20is,methods%20in%20its%20parent%20class>.*
 
 Abstraction is when we define the functionality needed for a particular task without directly implementing them; **interfaces** are a perfect example of pure abstraction, where the interface itself holds nothing more than the methods signatures which will be then actually implemented in the classes that implement the interface. This results in the fact that we cannot instantiate directly the interface (since it is abstract) but we need to instantiate a class that **implements** the interface.
 
-Java implements both abstract classes and methods; an abstract class, like an interface, cannot be instantiated directly but can be subclassed with the keyword **extends**. An abstract class can implement both standard methods and statements, and these will inherit as supposed by the subclasses, together with abstract methods that, like for interfaces, contains only the signature of the method itself. A subclass, in order not to be abstract aswell, is required to implements all the abstract methods (same as a class that implements an interface).
+Java implements both abstract classes and methods; an abstract class, like an interface, cannot be instantiated directly but can be subclassed with the keyword **extends**. An abstract class can implement both standard methods and statements, and these will inherit as supposed by the subclasses, together with abstract methods that, like for interfaces, contains only the signature of the method itself. A subclass, in order not to be abstract as well, is required to implements all the abstract methods (same as a class that implements an interface).
 
 Summing up, the main differences between interfaces and abstract classes are:
+
 * abstract classes can contain both private and public methods, while interfaces signature are public and abstract by nature
 * abstract classes are de facto forced to **single inheritance**
 * abstract classes are more suited when we are designing a set of classes that are strictly related in semantics, while interfaces can be a mean to enhance  unrelated classes with a totally different scopes (e.g. many constructor might benefit from the List interface but for totally different use).
@@ -1161,9 +1294,9 @@ Abstract classes and Interfaces can be concatenated, meaning that we can have a 
 
 # Exceptions
 
-*https://docs.oracle.com/javase/specs/jls/se11/html/jls-11.html*
-*https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Exception.html*
-*https://docs.oracle.com/javase/tutorial/essential/exceptions/throwing.html*
+*<https://docs.oracle.com/javase/specs/jls/se11/html/jls-11.html>*
+*<https://docs.oracle.com/javase/8/docs/api/index.html?java/lang/Exception.html>*
+*<https://docs.oracle.com/javase/tutorial/essential/exceptions/throwing.html>*
 
 An exception is event that happen during the execution of a program that disrupts its normal flow.
 
@@ -1178,7 +1311,6 @@ throw new NoSuchElementException("Something went wrong!")
 LBYL = **L**ook **B**efore **Y**ou **L**eave
 
 EAFP = **E**asier to **A**sk for **F**orgiveness than **P**ermission
-
 
 LBYL and EAFP are two common ways to handling exceptions, the former is usually preferred in java and it essentially require to test a variable before performing operation on it (e.g. **if(var !=null)**) while the latter is based on the concept of trying an operation and handle it in case it generates an unexpected error/output ("try.. except" in python).
 
@@ -1221,10 +1353,9 @@ try {
 
 ```
 
-
 ## stack-trace and call-stack
 
-When raising an exception, java prints in output the stack-trace, which duty is to store the call-stack of each method in execution; at the point in which the exception occur, java call the stack-trace to return the call-stack, i.e. a list of all the methods called in a particular point in the code (the one that is causing the exception raising), in the specific point where the program crushed. The call stack is usually composed of many lines: 
+When raising an exception, java prints in output the stack-trace, which duty is to store the call-stack of each method in execution; at the point in which the exception occur, java call the stack-trace to return the call-stack, i.e. a list of all the methods called in a particular point in the code (the one that is causing the exception raising), in the specific point where the program crushed. The call stack is usually composed of many lines:
 
 * the first line usually indicates the exception raised
 * then starting from the bottom we first have the call-stack inside the code, i.e. the methods or statements that we directly called (usually indicated in a different color)
@@ -1233,26 +1364,23 @@ When raising an exception, java prints in output the stack-trace, which duty is 
 ```java
 Exception in thread "main" java.util.InputMismatchException // exception that caused the program to crush
     // java internal call-stack
-	at java.base/java.util.Scanner.throwFor(Scanner.java:939) // Scanner method to determine which type of exception raise
-	at java.base/java.util.Scanner.next(Scanner.java:1594)
-	at java.base/java.util.Scanner.nextInt(Scanner.java:2258)
-	at java.base/java.util.Scanner.nextInt(Scanner.java:2212)
+ at java.base/java.util.Scanner.throwFor(Scanner.java:939) // Scanner method to determine which type of exception raise
+ at java.base/java.util.Scanner.next(Scanner.java:1594)
+ at java.base/java.util.Scanner.nextInt(Scanner.java:2258)
+ at java.base/java.util.Scanner.nextInt(Scanner.java:2212)
     // our code call-stack
-	at Main.divideNoExceptionHandling(Main.java:25)
-	at Main.main(Main.java:5)
+ at Main.divideNoExceptionHandling(Main.java:25)
+ at Main.main(Main.java:5)
 
 Process finished with exit code 1
 ```
 
-
-
 ---
-
 
 # The java.util.Collections Class
 
-*https://docs.oracle.com/javase/9/docs/api/java/util/Collections.html*
-*https://docs.oracle.com/javase/tutorial/collections/interfaces/index.html*
+*<https://docs.oracle.com/javase/9/docs/api/java/util/Collections.html>*
+*<https://docs.oracle.com/javase/tutorial/collections/interfaces/index.html>*
 
 The collection class is consist exclusively of static methods that operates and/or return collections objects. Ii is part of the Java Collection Framework. Among the most useful class that can be operated through the collections methods we have Set, List, Queue and Deque (all at the same level of hierarchy). These data structure are implemented  so that they can be interchanged as easily as possible, providing the best performance depending on the specif use case.
 
@@ -1266,7 +1394,6 @@ The **java.lang.Comparable** is an interface that require our class to implement
 
 The **java.util.Comparator** is a more flexible interface that require our classes to implement two methods: **compare(T, T)** and **equals()**. We don't need to modify our class, instead we can create a new class that implements the comparator and define the logic of comparison. Once our comparator class is defined we can call the **Collection.sort(T, c)** where **c** is our comparator class (that contains our specific logic of comparison) and T is the specific collection we need to sort.
 
-
 ---
 
 # Tools
@@ -1274,13 +1401,3 @@ The **java.util.Comparator** is a more flexible interface that require our class
 ## DiffMerge
 
 DiffMerge is a tool used to visually compare and merge files on any OS
-
-
-
-
-
-
-
-
-
-
