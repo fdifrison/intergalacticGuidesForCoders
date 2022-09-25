@@ -553,25 +553,44 @@ It is composed of 3 parts:
 * the arrow token `->`
 * the body : the code that needs to run
 
-
-
 ```java
 // creating a runnable thread and calling it directly, without the use of a Thread class or an anonymous class
 new Thread(()-> System.out.println("Printing from runnable")).start();
 ```
 
-In the example above, the Thread implements the **Runnable** interface that has only the method **Run** that require no arguments; the compiler is therefore able to match the argument list with the requirement of the **Run** method.
-Interfaces like **Runnable** that contains only one method are referred as `functional interfaces`
+In the example above, the Thread implements the **Runnable** interface that has only the method **Run** that require no arguments; the compiler is therefore able to match the argument list with the requirement of the **Run** method. Interfaces like **Runnable** that contains only one method are referred as `functional interfaces`.
 
+In the example below, a lambda expression is used to sort a list in a single line.
 
+```java
+// using lambda to sort a list of Employee objects called "employees"
+// the lambda expression substitute an anonymous Comparator function in a much more concise way
+Collections.sort(employees, (Employee o1, Employee o2) -> o1.getName().compareTo(o2.getName()));
+// The compiler is able to infer the types by the first parameters, therefore we can simplify even further
+Collections.sort(employees, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+```
 
+In th case of the **sort** method we don't have to worry about the return of the sorted list since it is handled by the the **Collections** class; anyway it would not be a problem, imagine to have an interface that require the implementation of a method with a return (e.g. the concatenation of two string): to use it we can define in our main a method that accept the interface and two strings as parameters an return the concatenation of the two string calling the method implemented in the interface:
 
+```java
+interface Concatenate { public String concatenate2Strings(String s1, String s2);}
+public static String doStuffOnString(Concatenate ct, String s1, String s2) {return ct.concatenate2Strings(s1, s2)}
+```
 
+Now, without a lambda we would need to create an anonymous class that, calling the method **doStuffOnString** create an instance of the interface and override the method **concatenate2Strings**, .. quite some line of code. With a lambda expression we can simply create an instance of the interface and then easily pass it as argument to the method. The compiler will take care of inferring the data types involved, to handle the return and to let use implement in one line the single method contained in the interface:
 
+```java
+Concatenate ct = (s1, s2) -> s1 + s2; // lambda expression that implements the interface
+String result = doStuffOnString(ct, someString1,someString2);
+```
 
+We can also execute multiple lines of code inside a lambda simply creating a code block with curly braces for the body and, for example, create a return variable (if we add a code block to the lambda expression, then the **return** statement becomes mandatory).
 
+As a rule of thumb, whenever we see an anonymous function, there lie an open for a lambda expression.
 
+## Lambda's scope
 
+An interesting fact about lambda expression is that these are not class per se; if we call the method `getClass().getSimpleName()` inside the lambda's bpdy we get back the name of the class which contains the lambda. Therefore, the lambda is treated as a nested block inside a class which implies that it can access the
 
 
 

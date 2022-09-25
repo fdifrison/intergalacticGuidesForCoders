@@ -15,7 +15,7 @@ public class Main {
 		
 		// Using Lambda Expression
 		
-		// new Thread(()-> System.out.println("Printing from runnable")).start();
+		new Thread(()-> System.out.println("Printing from runnable")).start();
 	}
 
 	
