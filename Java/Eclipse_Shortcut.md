@@ -36,3 +36,7 @@ Alt + Shift + R
 ## Change Signature of a Class
 
 Alt + Shift + C
+
+## Clean Import
+
+Ctrl + Shift + O

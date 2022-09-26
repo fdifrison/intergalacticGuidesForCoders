@@ -4,7 +4,7 @@ by Ing. Giovanni Frison
 
 ## JAVA LANGUAGE UPDATES
 
-*https://docs.oracle.com/en/java/javase/19/language/java-language-changes.html* 
+*<https://docs.oracle.com/en/java/javase/19/language/java-language-changes.html>*
 
 ---
 
@@ -470,9 +470,9 @@ for (int i = 0; i < 4; i++) {
 
 The keyword `break` can be used to terminate prematurely the looping while the keyword `continue` can be used to skip the execution of the code that is in the while block for the current iteration if a certain condition is met.
 
-## for-each
+## enhanced for
 
-To improve the inelegance of the standard for loop, the for-each has been introduces to iterate over iterators types of objects. The syntax is more clean and concise, therefore it can be used always, the only limitation is that the for-each hides the iterator and therefore it is not possible to call **.remove** or filtering in general (also element replacements during traversing).
+To improve the inelegance of the standard for loop, the enhanced for has been introduces to iterate over iterators types of objects. The syntax is more clean and concise, therefore it can be used always, the only limitation is that the enhanced for hides the iterator and therefore it is not possible to call **.remove** or filtering in general (also element replacements during traversing).
 The syntax is the following:
 
 ```java
@@ -482,6 +482,21 @@ for( int value : intArray ) {
    System.out.println( value );
 }
 ```
+
+## the for-each
+
+*<https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html>*
+
+With the introduction of lambda expressions in jdk 8, a new iterable method has been introduced that leverages lambda to iterate over a collection: this method is called `for-each`. The constructor is si quite straightforward:
+
+```java
+myList.forEach(listElement -> {
+    listElement.doSomething();
+    System.out.println(listElement.value);
+})
+```
+
+The for-each method is actually using a functional interface called **Consumer** which doesn't return anything (void) and use the method accept to "consume" an action over the element of the iterable. Hence the for each can't return anything, only looping on an iterable
 
 ---
 
@@ -558,7 +573,7 @@ It is composed of 3 parts:
 new Thread(()-> System.out.println("Printing from runnable")).start();
 ```
 
-In the example above, the Thread implements the **Runnable** interface that has only the method **Run** that require no arguments; the compiler is therefore able to match the argument list with the requirement of the **Run** method. Interfaces like **Runnable** that contains only one method are referred as `functional interfaces`.
+In the example above, the Thread implements the **Runnable** interface that has only the method **Run** that require no arguments; the compiler is therefore able to match the argument list with the requirement of the **Run** method. Interfaces like **Runnable** that contains only one method are referred as `functional interfaces` (actually an interface can be functional even if it has multiple methods but all but one need to have a default implementation).
 
 In the example below, a lambda expression is used to sort a list in a single line.
 
@@ -590,12 +605,134 @@ As a rule of thumb, whenever we see an anonymous function, there lie an open for
 
 ## Lambda's scope
 
-An interesting fact about lambda expression is that these are not class per se; if we call the method `getClass().getSimpleName()` inside the lambda's bpdy we get back the name of the class which contains the lambda. Therefore, the lambda is treated as a nested block inside a class which implies that it can access the
+An interesting fact about lambda expression is that these are not class per se; if we call the method `getClass().getSimpleName()` inside the lambda's body we get back the name of the class which contains the lambda. Therefore, the lambda is treated as a nested block inside a class which implies that it can see its outer scope.
 
+Like anonymous classes, lambda expressions can use variable from outer scope only if they are declared as final (or effectively final, meaning that their value doesn't change); this because lambda expression are compiled before being used, and they can be defined in one place and used in another (or some time might pass between the compilation and the actual execution of the lambda expression), therefore the java compiler need to be sure of the value of variables inside the lambda body at compilation time. Similarly, variable defined inside a lambda expression aren't accessible from the outer scope.
 
+It might seems an exception, but actually it is not, the fact that we can use a lambda expression in a for each (enhanced for) loop, e.g. creating a new thread do perform an action on the iterating variable; this is allowed because during the for each, java creates a copy of the variable subject of iteration and therefore that variable is effectively final in that context.
 
+## java.util.function
 
+With the introduction of lambda expressions in jdk 8, a new set of **functional interface**, meant to be used with lambdas, has been introduced.
 
+### Consumer
+
+For example, the forEach method is implemented upon the **Consumer** interface. See for-each chapter. The consumer takes one or two arguments (in the form of **BiConsumer**) and returns no value; it can be chained but it make no sense since the "returned" value of the first consumer is actually not returned and lost after the computation of the consumer is done.
+
+### Predicate
+
+A predicate is a function that evaluates a boolean expression with a lambda expression and can be passed as argument to a method, for example, to test an if condition. this helps to generalize the method signature and DRY our code.
+
+```java
+// imagine a list Students containing student objects with age parameter:
+private static void filterStudentByAge(List<Students> students, Predicate<Students> filterByAge) {
+    students.forEach(student -> if(filterByAge.test(student)) {System.out.println(student.getName()};
+}
+filterStudentByAge(students, student -> student.getAge() > 18); // the lambda expression represent the predicate to be tested in the if condition
+```
+
+Predicates can be also chained together with the boolean operators like **and** and **or** (`predicate1.and(predicate2).test(value)`)
+
+Predicates can also be types specific: e.g. `IntPredicate` can be used to create an inline lambda expression to test
+if a number is greater than a specific value (we can also chain to IntPredicates to test two condition at the time).
+
+N.B. the variable declared inside each predicates are living in a separate code block and are therefore independent even if they have the same name.
+
+### Supplier
+
+A Supplier is a class that has no input arguments and return a value (therefore a datatype must be declared in the signature; it is useful when we need to generates values on the fly (e.g. generates n random numbers). To return a value from the Supplier, we use the `.get()` method.
+
+```java
+Supplier<Integer> randomSupplier = () -> new Random.nextInt(); 
+randomSupplier.get();
+```
+
+### Functions
+
+*<https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>*
+
+Until now, the functional interface where not able to take value in input and elaborate an output (predicates returns boolean values and suppliers don't accept input arguments). To do this we have the `Interface Function<T,R>` where **T** is the input type and **R** is the output type parameters. We can therefore assign a Function to a variable and then use it to return the result of the lambda expression coded in the Function itself:
+
+```java
+Function<Integer, String> getNameAtIndex = (Integer i) -> {return employees.get(i).getName();};  
+String name = getNameAtIndex.apply(2);
+```
+
+The function is called using the method `.apply()` that receive the input argument.
+
+Like for predicates, we can have Function that are types specific (e.g. **int to long**, **double to int**) and also chain more than one Function at the time with the `.andThen(anotherFunction)` method.
+
+We also have the possibility to specify two arguments as input using the `BiFunction<T,U,R>` interface,
+
+*https://docs.oracle.com/javase/8/docs/api/java/util/function/BiFunction.html*
+
+and similarly we have **unary** functions that takes only one argument and return the same type. An example is the interface `IntUnaryOperator<T>` that takes an integer and returns another integer.
+
+## Method References
+
+We have seen that we can use lambda expression to create anonymous methods, but sometimes a lambda does nothing but calling an existing method in a compact form; In these case it may be more useful, and in streams will be suggested, to used `methods reference`, i.e. calling the existing method by name with the use of the `::` syntactic sugar notation. This can be done at different level:
+
+* Reference to a static method: `ContainingClass::staticMethodName`
+* Reference to an instance method of a particular object: `containingObject::instanceMethodName`
+* Reference to an instance method of an object type: `ContainingType::methodName` (e.g. **String**::concat)
+* Reference to a constructor method: `ClassName::new` (e.g. **HashMap**::**new**)
+
+---
+
+# Stream
+
+*https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html*
+
+N.B. in this context, streams are totally unrelated to I/O operations but concerns a sequence of computations.
+
+A Stream is set of computational steps that are chained together into a single expression. We use streams on collections to perform multiple operations in few lines of code; the first operation we need to perform is calling the `.stream()` method on the collection, then each step will built on top of the results of the prior operations.
+
+The stream operations must meet two requirements: be **non-interfering**, meaning that they can't change the source in any way, and be **stateless**, meaning that teh result of each operation in the stream CANNOT depend on any state outside of that particular operation (each operation must be seen as an independent step).
+
+Expression inside the stream can be expressed ad `method reference` therefore using the `::` notation. We can always use a lambda instead, but if the class/method/datatype has already that method implemented than method reference is a much clearer approach.
+
+In the following example, a list of integers is streamed to sort, filter and finally print its content (the printing is performed using method reference). The **.map()** method takes a function to apply at each element of the stream (therefore we can choose between a method reference or a lambda expression); the **.filter()** function takes a **predicate** and therefore requires a lambda; the **forEach** at the ends print the results to screen.
+
+```java
+list.stream().sorted().map(item -> item + 10).filter(item -> item > 10).forEach(System.out::println);
+// without method reference would have been .forEach(item -> System.out.println(item));
+```
+
+Since the **forEach** doesn't return anything (N.B. this forEach comes from the Stream class not from the java.util.functions), the stream can't be continued and for this reason, methods like this are called `terminal operations` since their return either void or a non-stream result.
+
+Something more about streams:
+
+* Streams are `Lazy operators` meaning that they are not evaluated until a **terminal operator** is called.
+* We have specialized type of streams depending on the datatype (e.g. for integer we have IntStream euipped with specific methods to work with integers)
+* There are also `parallel streams`, ie.e streams performed in parallel to increase performance
+
+## flatMap
+
+**flatMap** is a particular type of mapping used usually for flattening nested list; it takes a function that returns a stream that cna be then handled by other stream operations. Imagine we have a list composed by some inner lists and we want to flat all the objects in a single list; then flatMap is the perfect choice:
+
+```java
+someListOfLists.stream().flatMap(list -> list.getElement().stream();)
+```
+
+## peek
+
+**peek** is a useful method that can be called in any step of the stream for debugging purpose (e.g. to print the collection after a particular operation that we want to check).
+
+## Collect
+
+*https://www.baeldung.com/java-8-collectors*
+
+**Collect** is a **terminal operations** that is used to return the operations carried out by the stream into a variable (usually a list or a set).
+
+```java
+someListOfLists.stream().sorted().filter(i -> i> 10).collect(Collector.toList());
+```
+
+There are two use cases of the collect stream method, the one shown above, using a **Collector** object as container, or the more general constructor that takes 3 arguments: a `supplier` a construct that create an instance of an object; the `accumulator` i.e. the method that we use to add element to the object created in the supplier; the `combiner` that is used by java if and when it can improve the efficiency
+
+```java
+someListOfLists.stream().sorted().filter(i -> i> 10).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+```
 
 ---
 
@@ -948,7 +1085,7 @@ The advantage to use multiple threads is to not block the main thread while perf
 
 ## Threads
 
-*https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html*
+*<https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html>*
 
 ---
 
