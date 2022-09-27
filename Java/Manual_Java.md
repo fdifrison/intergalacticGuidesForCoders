@@ -150,6 +150,8 @@ Being a class, String comes with a series of method attached that can be extreme
 * `.isEmpty()`
 * `.format("%.2f", myString)`
 
+N.B. to performe string interpolation the best way is to use the method `MessageFormat.format("Some text {0}", varPlacedInPlaceOfZero)`. But be careful if you have single quote in the message, in the case you need to type them twice (see https://stackoverflow.com/questions/17569608/format-a-message-using-messageformat-format-in-java).
+
 ## Boolean
 
 As for any programming languages boolean values are used a lot to create the logic behind a software. Also in java, we have two reserved keywords for boolean values: `true` and `false`.
@@ -1554,6 +1556,82 @@ The **java.util.Comparator** is a more flexible interface that require our class
 
 # Databases JDBC
 
+*https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/*
+
+The JDBC **J**ava **D**ata**B**ase **C**onnectivity API it is a middle layer between Java and a data source (not only databases but also spreadsheets and flat files). For any specific data source we need a JDBC driver that sets a common language between java and the data source.
+
+A `JDBC Driver` is simply a series aof java class that implements the JDBC API. The driver is not 100% db agnostic, but we might try to write a JDBC code that take into account the possibility of changing the data source (e.g. from MySQL to PostGresql).
+
+
+N.B. this is only didactic work.. today, each db provider has its own JDBC driver implementation downloadable from their official website. Also JDBC has a very low level of abstraction, today we use JPA or, at an even higher abstraction level, Spring JPA to interact with databases.
+
+
+## SQLite3 
+
+*https://shanemcd.org/2020/01/24/how-to-set-up-sqlite-with-jdbc-in-eclipse-on-windows/* -> add jdbc to project
+
+*https://www.javadoc.io/doc/org.xerial/sqlite-jdbc/3.30.1/index.html* -> jdbc documentation
+
+Depending on the type of database we are trying to connect, we may have different requirements (usually at least *username* and *password*) but for sqlite3 we only need to call the `DriverManager.getConnection("jdbc:sqlite:pathTodb")` method (from the **java.sql** package) to establish a connection with a db and return a connection object (it is good practice to wrap it into a try-catch with a **SQLException**).
+
+```java
+Connection conn = DriverManager.getConnection("jdbc:sqlite:pathTodb\\myBd.db");
+```
+
+## Create  and populate a Table
+
+To create a table we need to use `Statement` objects from which we can **execute** a SQL statement:
+
+```java
+Statement statement = conn.createStatement();
+statement.execute("CREATE TABLE IF NOT EXISTS contacts (name TEXT, phone INTEGER, email TEXT)");
+statement.execute("INSERT INTO contacts (name, phone, email) VALUES ('Giovanni', 3398698317, 'ing.giovanni.frison@gmail.com')");
+statement.execute("SELECT * FROM contacts")
+```
+
+The execution of a statement from JDBC class are committed to the database immediately after the statement is executed, unless we explicitly specify the connection options to `conn.setAutoCommit(false);`.
+Each statement object can handle only one query at the time, therefore if we want to carry out multiple queries simultaneously we need to instantiate more statement objects.
+
+N.B. to handle the closure of the db we can insert he connection statement into a try-with-resources; otherwise we need to explicitly close the connection with `statement.close()` and `connection.close()` methods (Order matters! first close **statement** and then **connection** otherwise an exception will be raised).
+
+## Getting results
+
+To get results from a table we need a to create a **ResultSet** , connected to the statement object. Since a statement object is bounded to a single operation, it can holds only one query at the time, therefore we can perform a second query only after we have handled the first one (or we need more than one statement instance).
+
+```java
+ResultSet resultSet = statement.getResultSet();
+while(resultSet.next()) {resultSet.getString("name");}
+resultSet.close();
+```
+
+There is also a more efficient way to perform a query that is through the method `executeQuery(someSqlQuery)` which return directly the query result.
+
+```java
+ResultSet resultSet = statement.executeQuery("SELECT * FROM myTable");
+```
+
+## Constants
+
+Hard coding strings in our SQL code is far from ideal mainly for two reasons: first it greatly reduce the modularity and adaptivity of our code (imagine to hard code columns names that can changed in the future) and second it expose our application to **SQL injection attack** (security issue).
+
+The best practice is to create **constants** that hold our names so that, if in later these are changed, we only need to modify the constants in one place of our code and don't refactor the whole application. Moreover, the `CRUD` operations should be delegate to specific methods in order to reduce the lines of code and keep it DRY.
+
+```java
+private static final String DB_NAME = "music.db";
+private static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
+private static final String TABLE_ALBUMS = "albums";
+private static final String COLUMN_ALBUM_ID = "_id";
+private static final String COLUMN_ALBUM_NAME = "name";
+private static final String COLUMN_ALBUM_ARTIST = "artist";
+```
+
+N.B. **SQL is much faster in searching by index** than using the columns name, therefore we ideally want to map the columns names also to their index id (the index start from 1 in order of insertion of the columns). In this way we can use, for example, the **Result.getInt(1)** passing the `column index` instead of the column name.
+
+```java
+private static final String COLUMN_ALBUM_ID_INDEX = 1;
+private static final String COLUMN_ALBUM_NAME_INDEX = 2;
+private static final String COLUMN_ALBUM_ARTIST_INDEX = 3;
+```
 
 ---
 

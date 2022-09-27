@@ -1,9 +1,12 @@
 # Eclipse Shortcut
 
+## Add user defined aliases
+
+*https://stackoverflow.com/questions/12832141/eclipse-java-development-adding-a-private-static-final-string-tag-automaticall*
+
 ## Open Search Command
 
-Ctrl + 3 
-
+Ctrl + 3
 
 ## Constructors Getters/Setters Override/implement
 
@@ -21,7 +24,7 @@ Alt + X -> J
 
 Ctrl + Shift + F
 
-## Single Refactor 
+## Single Refactor
 
 Shift + Alt + T
 

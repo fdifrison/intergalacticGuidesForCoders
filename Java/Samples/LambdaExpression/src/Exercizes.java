@@ -76,6 +76,7 @@ public class Exercizes {
 		System.out.println("---------------------");
 		
 		toNames.stream().map((s) -> s.substring(0, 1).toUpperCase() + s.substring(1)).sorted(String::compareTo).peek(System.out::println);
+	
 	}
 
 	private static String everySecondCharacter(everySecondChar esc, String s1) {
