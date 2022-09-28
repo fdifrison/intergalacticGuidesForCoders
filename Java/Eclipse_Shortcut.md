@@ -2,7 +2,7 @@
 
 ## Add user defined aliases
 
-*https://stackoverflow.com/questions/12832141/eclipse-java-development-adding-a-private-static-final-string-tag-automaticall*
+*<https://stackoverflow.com/questions/12832141/eclipse-java-development-adding-a-private-static-final-string-tag-automaticall>*
 
 ## Open Search Command
 

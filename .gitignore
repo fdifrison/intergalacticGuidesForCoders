@@ -11,3 +11,5 @@ out/
 .idea/
 *.iml
 lib/
+*.jar
+*.db

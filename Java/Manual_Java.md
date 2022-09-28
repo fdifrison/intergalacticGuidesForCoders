@@ -150,7 +150,7 @@ Being a class, String comes with a series of method attached that can be extreme
 * `.isEmpty()`
 * `.format("%.2f", myString)`
 
-N.B. to performe string interpolation the best way is to use the method `MessageFormat.format("Some text {0}", varPlacedInPlaceOfZero)`. But be careful if you have single quote in the message, in the case you need to type them twice (see https://stackoverflow.com/questions/17569608/format-a-message-using-messageformat-format-in-java).
+N.B. to performe string interpolation the best way is to use the method `MessageFormat.format("Some text {0}", varPlacedInPlaceOfZero)`. But be careful if you have single quote in the message, in the case you need to type them twice (see <https://stackoverflow.com/questions/17569608/format-a-message-using-messageformat-format-in-java>).
 
 ## Boolean
 
@@ -666,7 +666,7 @@ Like for predicates, we can have Function that are types specific (e.g. **int to
 
 We also have the possibility to specify two arguments as input using the `BiFunction<T,U,R>` interface,
 
-*https://docs.oracle.com/javase/8/docs/api/java/util/function/BiFunction.html*
+*<https://docs.oracle.com/javase/8/docs/api/java/util/function/BiFunction.html>*
 
 and similarly we have **unary** functions that takes only one argument and return the same type. An example is the interface `IntUnaryOperator<T>` that takes an integer and returns another integer.
 
@@ -683,7 +683,7 @@ We have seen that we can use lambda expression to create anonymous methods, but 
 
 # Stream
 
-*https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html*
+*<https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html>*
 
 N.B. in this context, streams are totally unrelated to I/O operations but concerns a sequence of computations.
 
@@ -722,7 +722,7 @@ someListOfLists.stream().flatMap(list -> list.getElement().stream();)
 
 ## Collect
 
-*https://www.baeldung.com/java-8-collectors*
+*<https://www.baeldung.com/java-8-collectors>*
 
 **Collect** is a **terminal operations** that is used to return the operations carried out by the stream into a variable (usually a list or a set).
 
@@ -1407,11 +1407,13 @@ N.B. Java libraries make extensive use of interfaces!
 
 Java makes extensive use of interfaces and some of them are particularly useful to add functionality to our custom classes.
 
-### Comparable <T>
+### Sorting with Comparable vs Comparator
 
 *<https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html>*
 
-Interface to implements a natural ordering comparison of objects from the same class.
+The **java.lang.Comparable** is an interface that require our class to implements the method **compareTo(T, o)**. Therefore, our class needs to be modified since it has to be extended with the comparable interface (not always possible if our class is in a Jar), moreover, only a single criteria of sorting can be specified. In essence, it is the best choice only if our sequence follows natural ordering. Once our class has become *comparable*, we can then call the **Collection.sort(T)** on our sequence
+
+The **java.util.Comparator** is a more flexible interface that require our classes to implement two methods: **compare(T, T)** and **equals()**. We don't need to modify our class, instead we can create a new class that implements the comparator and define the logic of comparison. Once our comparator class is defined we can call the **Collection.sort(T, c)** where **c** is our comparator class (that contains our specific logic of comparison) and T is the specific collection we need to sort.
 
 ---
 
@@ -1535,42 +1537,29 @@ Process finished with exit code 1
 
 ---
 
-# The java.util.Collections Class
+# Debugging
 
-*<https://docs.oracle.com/javase/9/docs/api/java/util/Collections.html>*
-*<https://docs.oracle.com/javase/tutorial/collections/interfaces/index.html>*
+Debugging is a fundamental process in programming. Nowadays, almost every IDE has a builtin debugger thata can help us identify potential problems in our code, stopping and resuming the application execution, testing statements and creating variables on the fly. Debug our own code is quite straightforward, but if our application use third party libraries that doesn't expose their classes, then our task is much more complex, because the third party class must have debugging information, otherwise we will be left with a black box.
 
-The collection class is consist exclusively of static methods that operates and/or return collections objects. Ii is part of the Java Collection Framework. Among the most useful class that can be operated through the collections methods we have Set, List, Queue and Deque (all at the same level of hierarchy). These data structure are implemented  so that they can be interchanged as easily as possible, providing the best performance depending on the specif use case.
-
-One useful things we can do with is implementing a binary search tree (`Collections.binarySearch`) for find elements in **sorted** lists (it require our class to implements the **Comparable** interface) which is much faster than a brute force for loop.
-
-We can sort, reverse shuffle, or more in general manipulate lists.
-
-## Sorting with Comparable vs Comparator
-
-The **java.lang.Comparable** is an interface that require our class to implements the method **compareTo(T, o)**. Therefore, our class needs to be modified since it has to be extended with the comparable interface (not always possible if our class is in a Jar), moreover, only a single criteria of sorting can be specified. In essence, it is the best choice only if our sequence follows natural ordering. Once our class has become *comparable*, we can then call the **Collection.sort(T)** on our sequence
-
-The **java.util.Comparator** is a more flexible interface that require our classes to implement two methods: **compare(T, T)** and **equals()**. We don't need to modify our class, instead we can create a new class that implements the comparator and define the logic of comparison. Once our comparator class is defined we can call the **Collection.sort(T, c)** where **c** is our comparator class (that contains our specific logic of comparison) and T is the specific collection we need to sort.
+Another challenge may arise when debugging a multi-thread applications because the debugger slows things down in order to process the extra information required in debugging mode and this might cause different behavior, or masking threading issue, in the concurrency of the threads due to the added latency.
 
 ---
 
 # Databases JDBC
 
-*https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/*
+*<https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/>*
 
 The JDBC **J**ava **D**ata**B**ase **C**onnectivity API it is a middle layer between Java and a data source (not only databases but also spreadsheets and flat files). For any specific data source we need a JDBC driver that sets a common language between java and the data source.
 
 A `JDBC Driver` is simply a series aof java class that implements the JDBC API. The driver is not 100% db agnostic, but we might try to write a JDBC code that take into account the possibility of changing the data source (e.g. from MySQL to PostGresql).
 
-
 N.B. this is only didactic work.. today, each db provider has its own JDBC driver implementation downloadable from their official website. Also JDBC has a very low level of abstraction, today we use JPA or, at an even higher abstraction level, Spring JPA to interact with databases.
 
+## SQLite3
 
-## SQLite3 
+*<https://shanemcd.org/2020/01/24/how-to-set-up-sqlite-with-jdbc-in-eclipse-on-windows/>* -> add jdbc to project
 
-*https://shanemcd.org/2020/01/24/how-to-set-up-sqlite-with-jdbc-in-eclipse-on-windows/* -> add jdbc to project
-
-*https://www.javadoc.io/doc/org.xerial/sqlite-jdbc/3.30.1/index.html* -> jdbc documentation
+*<https://www.javadoc.io/doc/org.xerial/sqlite-jdbc/3.30.1/index.html>* -> jdbc documentation
 
 Depending on the type of database we are trying to connect, we may have different requirements (usually at least *username* and *password*) but for sqlite3 we only need to call the `DriverManager.getConnection("jdbc:sqlite:pathTodb")` method (from the **java.sql** package) to establish a connection with a db and return a connection object (it is good practice to wrap it into a try-catch with a **SQLException**).
 
@@ -1610,9 +1599,9 @@ There is also a more efficient way to perform a query that is through the method
 ResultSet resultSet = statement.executeQuery("SELECT * FROM myTable");
 ```
 
-## Constants
+## Constants everywhere
 
-Hard coding strings in our SQL code is far from ideal mainly for two reasons: first it greatly reduce the modularity and adaptivity of our code (imagine to hard code columns names that can changed in the future) and second it expose our application to **SQL injection attack** (security issue).
+Hard coding strings in our SQL code is far from ideal mainly for two reasons: first it greatly reduce the modularity and adaptivity of our code (imagine to hard code columns names that can changed in the future) and second it expose our application to **SQL injection attack** (security issue -> see *<https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html>* for `PreparedStatement`).
 
 The best practice is to create **constants** that hold our names so that, if in later these are changed, we only need to modify the constants in one place of our code and don't refactor the whole application. Moreover, the `CRUD` operations should be delegate to specific methods in order to reduce the lines of code and keep it DRY.
 
@@ -1625,13 +1614,49 @@ private static final String COLUMN_ALBUM_NAME = "name";
 private static final String COLUMN_ALBUM_ARTIST = "artist";
 ```
 
-N.B. **SQL is much faster in searching by index** than using the columns name, therefore we ideally want to map the columns names also to their index id (the index start from 1 in order of insertion of the columns). In this way we can use, for example, the **Result.getInt(1)** passing the `column index` instead of the column name.
+N.B. **SQL is much faster in searching by index** than using the columns name, therefore we ideally want to map the columns names also to their index id (the index start from 1 in order of insertion of the columns). In this way we can use, for example, the **Result.getInt(1)** passing the `column index` instead of the column name (Be aware that the column index is referred to the specific query we are performing and not to the tables columns indices).
 
 ```java
 private static final String COLUMN_ALBUM_ID_INDEX = 1;
 private static final String COLUMN_ALBUM_NAME_INDEX = 2;
 private static final String COLUMN_ALBUM_ARTIST_INDEX = 3;
 ```
+
+## PreparedStatement
+
+Tha safest way to write a sql query from JDBC is to use a `PreparedStatement` for two reasons: first we create a reusable constant that will reduce duplicate code, second and most important it will prevent our code from potential sql injection attacks. Using a prepare statement we can create a constant that holds a query and **ONLY** in place of the variables can handle the **wildcard** `?`. The wildcard will be then substituted by a specific method, depending on the datatype, and can receive only a single parameter.
+
+```java
+String query = "SELECT * FROM table WHERE var = ?"
+PreparedStatement querySecured = null;
+try {
+    querySecured = connection.prepareStatement(query);
+    querySecured.setString(1, title);
+    ResultSet resultSet = querySecured.executeQuery()
+} catch (SQLException e) {
+    System.out.println("SQL INJECTION");
+    e.printStackTrace();
+}
+```
+
+There are specific PreparedStatement for all the CRUD operations.
+
+## Transactions
+
+*<https://docs.oracle.com/javase/tutorial/jdbc/basics/transactions.html>*
+
+By default, the behavior of the JDBC is to commit changes to the database immediately after execution (unless differently specified with **connection.seAutoCommit(false)**); this behavior can be a source of many problems: for example one operation can be composed of more than one step, we might be able to complete the first step, that will be executed, but not the second generating an exception in our workflow. For example bank account that accept a payment: first it check the balance, then subtract the payed amount and then execute the payment, these are 3 steps that make sense only if performed all together. Again we might try to update a table in a relational database with a new entry, this imply that also the connected tables need to be updated, if for some reason the connection to the db falls down we might end up with a corrupted database where the relation between tables is no longer fulfilled.
+
+Here comes `transaction` i.e. a series of sql statements that have to be executed at once; if any of the statement in the transaction fail, the whole transaction will fail (**ROLLBACK**) without no repercussion on the db.
+
+To be more formal, a transaction must be `ACID-compliant` where the acronym stands for:
+
+* `Atomicity` : if a series of statements needs to be committed to the db, or all are committed or none
+* `Consistency` : the db must be in a valid state before and after the transaction
+* `Isolation` : transaction must be independent; until a change from a transaction is completed it mustn't be visible to other connections to the db
+* `Durability` : once a transaction is committed, its changes to the db must be permanent even if the application or the db goes down
+
+Transaction are only needed for UPDATE, INSERT and DELETE operations, since querying doesn't affect the data.
 
 ---
 
