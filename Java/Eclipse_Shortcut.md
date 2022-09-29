@@ -43,3 +43,11 @@ Alt + Shift + C
 ## Clean Import
 
 Ctrl + Shift + O
+
+# Testing
+
+Ctrl + 1 on Class/Method name to create test object
+
+## Running tests
+
+Shift + Alt + T

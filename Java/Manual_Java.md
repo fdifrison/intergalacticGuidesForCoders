@@ -36,6 +36,9 @@ Keyword are case sensitive **reserved** name used by jdk to perform specific tas
 * string are enclosed in double quotes only **"**
 * **=** is the assign while **==** is the comparison
 * there is no implicit conversion to boolean of particular symbols (e.g. 0 and 1 are only int, don't have an implicit boolean conversion)
+* Package names in lowercase
+* Class names in upper case
+* Method names in camel case (first letter lowercase)
 
 ## Naming convention
 
@@ -75,6 +78,50 @@ Constants are by definition immutable object that are usually defined at the roo
 
 ```java
 private static final String MY_ERROR_MESSAGE = "This is an Error!"
+```
+
+### Enum
+
+*<https://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html>*
+
+*<https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html>*
+
+Enums are a smart way to define a set of constant that are related. Defining an **enum** we can refer to the constant in the enum block with the dot notation.
+
+Working with strings:
+
+```java
+public enum Day {
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY 
+
+    public final String label;
+
+    private Element(String label) {
+        this.label = label;
+}
+
+String iHateThisDay = Day.MONDAY.label;
+```
+
+Working with int:
+
+```java
+public enum EXIT_CODE {
+    A(104), B(203);
+
+    private int numVal;
+
+    EXIT_CODE(int numVal) {
+        this.numVal = numVal;
+    }
+
+    public int getNumVal() {
+        return numVal;
+    }
+}
+
+int exitCode = EXIT_CODE.A.getNumVal();
 ```
 
 ## Variables
@@ -1089,6 +1136,26 @@ The advantage to use multiple threads is to not block the main thread while perf
 
 *<https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html>*
 
+*<https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html>*
+
+To start a thread, our class has two options: implement the **Runnable** interface or extend the **Thread** class; in both scenarios, the thread is created using the method `start()` on a new instance of the class (n.b. each thread instance can be executed only once, therefore if we want to run the thread more than once we have to instantiate it more than once). The approach that implements Runnable is more generic and less dependent from the thread class.
+
+The order of execution of threads is something that we can't guarantee and is usually machine and OS dependent, and even on the same machine and OS the order is not guaranteed from run to run (even more so when debugging since extra time is taken from the debugger to generates debugging information).
+
+**N.B.** Whether we implement a threaded class by extension or implementation, it is very important to understand that we need to launch the thread ALWAYS with the method `.start()` and not `.run()`. As a matter of fact, calling **run()** execute the  run method in the main thread (as if was a normal method), i.e. a new thread is NOT created. The method **start()** instead is responsible for creating a new thread and executing the run method.
+Another difference, that is an indicator of the fact that something wrong is happening, is that we can call the same thread with the run method multiple times (it is behaving as a normal method!) while if we try to call **.start()** a second time on an already consumed thread we will raise an **IllegalStateException**.
+
+### sleep(), wait(), join()
+
+One common operation on threads is to put them to sleep if, for example, they are waiting for another process to finish before continuing their computation. To put a thread to sleep we call the `.sleep(milliseconds, nanoseconds)` method and we need to try-catch the exception `InterruptedException`. In principle, we can never be sure that our thread won't be "waken up" and will sleep the prescribed amount of time, since it is the OS that handle the operation of suspending/resuming the thread and, for example, it might not be able to understand nanoseconds.
+
+If a thread is sleeping we can interrupt it in order to stop it. To interrupt a thread, we call the `.interrupt()` method on the instance of the thread, therefore we need to have access to the thread from whenever we want to interrupt it. Interrupting a thread will trigger the exception block, which should hold a return, and close the thread.
+
+However, if we know that the thread has to be restarted and we only want to stop to free space/computation for another thread or because we need data from another thread, we should use the `.join()` method to join the thread with the the one we want to finish its execution first. With **join**, the thread will wait for the joined thread to finish and only then it will start/resume its task (join can be used indistinctly on runnable or thread). Also join has to try-catch the **InterruptedException** because it can stop prematurely or being interrupted by another thread.
+
+If one thread is joined to another thread but for whatever reasons the latter don't come to an end, the application will stay in hold state and eventually crash. Therefore it is a good idea to pass a `timeout` value to the join method
+which will give a way out to the joined thread in case the other don't finish in the time expected. Of course, in a real application, if the thread fall in the timeout we need to handle that situations reporting to the user that something went wrong (e.g. failed connection to a db).
+
 ---
 
 # OOP in JAVA
@@ -1537,11 +1604,80 @@ Process finished with exit code 1
 
 ---
 
-# Debugging
+# Debugging  & Testing
 
 Debugging is a fundamental process in programming. Nowadays, almost every IDE has a builtin debugger thata can help us identify potential problems in our code, stopping and resuming the application execution, testing statements and creating variables on the fly. Debug our own code is quite straightforward, but if our application use third party libraries that doesn't expose their classes, then our task is much more complex, because the third party class must have debugging information, otherwise we will be left with a black box.
 
 Another challenge may arise when debugging a multi-thread applications because the debugger slows things down in order to process the extra information required in debugging mode and this might cause different behavior, or masking threading issue, in the concurrency of the threads due to the added latency.
+
+**Testing** is another fundamental phase in the software development lifecycle and goes hand to hand with debugging. There are different layers of testing; the first testing layer, usually carried out directly by the developer is called `Unit Testing`. When talking about java, a **unit** usually refers to a method. The idea is to use a unit test framework that will enable us to run unit test in an automated fashion; in this way we are able to test our code, each time we make changes, in an effortless way. In a production environment, it is most common to have as requirement to perform a series of unit test before building/pushing/deploying our code.
+
+## Testing best practices
+
+* Test methods name should be informative about the test they hold
+* Every test should be `self contained` meaning that it doesn't have to depend on any other test since we want to be able to run our test independently from the others
+* Ideally one test should contain only one **assertion**
+
+### Nomenclature
+
+* `stubs` = empty test method
+
+## JUnit
+
+*<https://junit.org/junit5/docs/snapshot/user-guide/>*
+
+*<https://www.eclipse.org/eclipse/news/4.7.1a/#junit-5-support>*
+
+*<https://junit.org/junit5/docs/current/api/>* -> current API documentation
+
+*<http://hamcrest.org/JavaHamcrest/tutorial>* -> assertThat()
+
+*<https://www.petrikainulainen.net/programming/testing/junit-5-tutorial-writing-assertions-with-hamcrest/>* -> assertThat()
+
+Junit is a popular framework to perform unit tests in java and it is currently at version 5 (not completely backwards compatible with previous versions).
+
+(In Eclipse) we need to add JUnit to the libraries of the project (right-click -> Build Path -> Add Libraries); then we can press **Ctrl + 1** on a class name and select "*create new Junit test*". A windows will open where we can decide which kind of test autogenerate (usually we need at least one for each method implemented in the class).
+
+### Assertions
+
+Assertions are the methods that enable us to test a condition inside out unit tests. There are several type of assertion conditions that can be tested. A good practice is to add a message to the assertion that will helps us (or other developer after us) to debut the method if it is failing. Following a list of the most common assertions:
+
+* `assertEquals(expected, actual, "message if fail")` : assert if a value is equal to the expected value
+* `assertNotEquals(expected, actual, "message if fail")` : assert if a value is NOT equal to the expected value
+* `assertTrue(condition, "message if fail")` : assert if an expression is true (specular for False)
+* `assertArrayEquals(expected, actual, "message if fail")` : assertEqual won't work on arrays (unless they are the same instance), equality is defined as same length, same elements and same order.
+* `assertNull(value, "message if fail")` : assert if a value is equal to **null** (specular for not null)
+* `assertSame(expected, actual, "message if fail")` : assert if two instances are equal comparing the memory reference (assertEqual use the equals() method instead)
+* `assertThat()` deprecated in Junit, see JavaHamcrest
+
+### @ Annotations
+
+JUnit define a set of annotations with the **@** sign that needs to placed above the tests methods definition to tell to the testing suit how to behave when encountering that particular method. The basic annotations is `@Test`, the one that is placed automatically by the wizard generator, and simply tells JUnit that the method is de facto a test.
+
+Following a list of the most common annotations:
+
+* `@Before`: a method that has to be run before the others; usually a setup that is common to all the tests method, like the initialization of a class object.
+* `@BeforeEach` / `@AfterEach`: a method that is executed before/after each other method; e.g. the initialization of a class object
+* `@BeforeAll` / `@AfterAll`: a method that is executed before/after all methods.
+
+### Test for exceptions
+
+We want be able to test also the exceptions that we raise in our code in order to cover all the possible scenarios. To test for an exception thrown, we must first generate the exception and then we can assertEquals if the exception message raised matches the exception message expected.
+
+```java
+// in the following example we cannot withdraw more than 500.00 from ATM (false condition in .withdraw() method)
+@Test()
+void testWithdraw_failed() {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {account.withdraw(600, false);});
+    assertEquals("Can't withdraw more than 500.00 from ATM", exception.getMessage());
+}
+```
+
+### Parametrized testing
+
+Often times we want to be able to test our code for multiple type of input and not just a single mockup; instead of writing a lot of duplicated code, we should use a parametrized test.
+
+*<https://www.youtube.com/watch?v=0xSCbTYAiF0>*
 
 ---
 
