@@ -1140,7 +1140,7 @@ The advantage to use multiple threads is to not block the main thread while perf
 
 To start a thread, our class has two options: implement the **Runnable** interface or extend the **Thread** class; in both scenarios, the thread is created using the method `start()` on a new instance of the class (n.b. each thread instance can be executed only once, therefore if we want to run the thread more than once we have to instantiate it more than once). The approach that implements Runnable is more generic and less dependent from the thread class.
 
-The order of execution of threads is something that we can't guarantee and is usually machine and OS dependent, and even on the same machine and OS the order is not guaranteed from run to run (even more so when debugging since extra time is taken from the debugger to generates debugging information).
+The order of execution of threads is something that we can't guarantee and is usually machine and OS dependent, and even on the same machine and OS the order is not guaranteed from run to run (even more so when debugging since extra time is taken from the debugger to generates debugging information). We can try to influence the thread execution order with the **.setPriority** method but it is nothing more than an indication for the JDK since some OS doesn't even support this kind of feature.
 
 **N.B.** Whether we implement a threaded class by extension or implementation, it is very important to understand that we need to launch the thread ALWAYS with the method `.start()` and not `.run()`. As a matter of fact, calling **run()** execute the  run method in the main thread (as if was a normal method), i.e. a new thread is NOT created. The method **start()** instead is responsible for creating a new thread and executing the run method.
 Another difference, that is an indicator of the fact that something wrong is happening, is that we can call the same thread with the run method multiple times (it is behaving as a normal method!) while if we try to call **.start()** a second time on an already consumed thread we will raise an **IllegalStateException**.
@@ -1155,6 +1155,75 @@ However, if we know that the thread has to be restarted and we only want to stop
 
 If one thread is joined to another thread but for whatever reasons the latter don't come to an end, the application will stay in hold state and eventually crash. Therefore it is a good idea to pass a `timeout` value to the join method
 which will give a way out to the joined thread in case the other don't finish in the time expected. Of course, in a real application, if the thread fall in the timeout we need to handle that situations reporting to the user that something went wrong (e.g. failed connection to a db).
+
+### Threads variables
+
+[counter-example](./Samples/Threads/src/counter)
+
+When we work with multiple threads, we need to be perfectly aware what the heap and the thread stack are, because this might change completely the expected output of our application. Imagine the following application where 2 thread2 are created from an class that implements the following method:
+
+```java
+// CASE 1 - INSTANCE VARIABLE
+private int i;
+public void doCountdown() {  
+    for(i =10; i> 0; i--) {
+        System.out.println("Printing: i = " +i);
+    }
+}
+// CASE 2 - LOCAL VARIABLE
+public void doCountdown() {  
+    for(int i =10; i> 0; i--) {
+        System.out.println("Printing: i = " +i);
+    }
+}
+```
+
+Case 1 and 2 showed above might look nearly the same but there is a fundamental difference that will totally change the behavior of the two threads we want to start in our main program. In case 1, we initialize the variable **int i** as an **instance variable** and as such, the jdk require to store it in the heap (hte memory allocation of the application, accessible from all the threads). Therefore, when we launch our program with two threads, they might concur for the first printing (we might see **i = 10** printed twice on the screen) but from there on, they will share the same object and therefore will concur to print the numbers up to i = 1 (in a semi-random run-dependent fashion). The threads are accessing the same resource and can suspend each other in one of the many suspension point in the for loop (i assignation, i decrement, string concatenation, printing function ...). This situation in known as `thread interference` or `race condition` and is generally not a problem when we are reading resources but it can be problematic when we are writing or updating since the order of execution might become imperatively important.
+
+In case 2, we create a local variable inside the for loop, therefore each thread, upon which we call the **doCountdown()** method from the **run()** method, will hold a private copy of that variable in his **thread stack**; the result is that each thread prints the number from 10 to 1 (always in a semi-random run-dependent fashion). The same behavior could be achieve also with the instance variable in case 1 but creating the threads from two different instances; in that case they would each point to a different variable in the heap without interference. The problem ids that often, in real world applications, it makes no sense to have multiple instances of the same class (e.g. two instance of a client in a bank account application) otherwise we could mine the integrity of the data.
+
+### Synchronization
+
+*<https://docs.oracle.com/javase/tutorial/essential/concurrency/newlocks.html>* -> about lock
+
+To handle threads that concur to a single instance we use `synchronization`, i.e. the process of blocking the access to heap memory to a single thread until its task is completed. Both methods and statements can be synchronized but synchronization is limited to the area of code where it is specified, outside these areas interference can still happen. Constructor can't be synchronized and it doesn't make sense to do that since it threads can construct an instance and only it is able to access that instance.
+
+To synchronize a method we only need to specify the keyword `synchronized` in the method signature.
+
+Another way is to synchronize a block of statements using a `lock`; every java object has an intrinsic lock (primitive types don't), also called **monitor**; therefore we can force a thread to obtain the lock of an object before being able to access the synchronized block statement and, since only one thread at the time can obtain the lock, interference is secured. The threads that don't hold the locks will have to **wait** until the acting thread release the lock. Again, there is a caveat related to local variables since this are stored in the thread stack, therefore, if we try to synchronize a block of statement using the lock of a local variable, than we will have interference for sure because each thread owns a copy of the variable and therefore a copy of the lock (exceptions made for string variables because of they are threated inside the JVM - see string pools). We want the threads to **compete** for the lock that therefore needs to come from a shared variable.
+
+A thread that holds a lock, can reacquire that same lock if for example we are using a static object to acquire the lock and, inside the synchronized block, we call a method that use that same object for which we have acquired the lock; due to this behavior, synchronizations is said to be `re-entrant`.
+
+`Critical sections` of code are defined so because they hold shared resources like variables and, for this reason, only one thread at the time should be allowed to enter a critical section.
+In contrast, we define a `thread safe` class or method when the developer has synchronized al the **critical sections** in the code, hence avoiding any source of thread interference.
+
+As a general good practice, we want to synchronize only where it is required to have a thread safe code, no more no less, since over-synchronization may lead to unexpected and useless suspension of threads, hence reducing the performance of the application or jeopardize the user experience.
+
+### *weight*, *notify* and *notify all*
+
+Let's consider the classic **Producer**/**Consumer** application: we have a **producer** class that sends messages and a **consumer** class that receives them. Each class belongs to a thread and holds the same instance of the class **Message** which implements two synchronized methods: one to read and one to write these messages; If we implements these methods without the aid of `wait()` and `notifyAll()` methods, we most probably will incur in a `deadlock`, i.e. producers and consumers are competing on the same lock but none of them is able to acquire it, hence we are in a stall position.
+
+When a thread call the `wait()` method, it release the lock it is holding until another thread issue a notification that something important has happened with the `notify()` or `notifyAll()` methods.
+
+**N.B.** it is important to **wait()** inside a while loop that verify the condition for the thread to be awaken; this because many issue (also depending from the machine and not the code) might accidentally awaken the thread, and if this happen we want to test one more time for the awakening condition to check if the thread really needs to be awake or it was an accident.
+
+Usually we tend to call the method `notifyAll()` to awake a thread because the notification doesn't accept any parameters and therefore can't be targeted to a specific thread; the only situation where we don't want to call **notifyAll** is when there are  a lot of concurrent threads that are waiting for a lock, and awakening them all together at once can cause a very big overhead, hence performance issues.
+
+Again, a thread can be suspended in many situations; in a single statement there are usually plenty opportunity of suspension because a simple method calls can actually be composed by many more sub calls; however, there are some cases where suspension is not possible and these are called `Atomic operations`:
+
+* reading and writing reference variable (e.g. obj1 = obj2)
+* reading and writing primitives variable except those of type long and double
+
+**N.B. some collections, like ArrayLists are not thread-safe, therefore if we have an application that use such data structures with multiple threads it will be our duty to synchronize the reading/writing operations. (*<https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#synchronizedList(java.util.List>)*)**
+
+
+## The java.util.Concurrent 
+
+*https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/Lock.html* -> lock interface
+
+Using synchronize block has many drawbacks and it is full of potential lack of control; for example we can't continue a synchronized block outside one method (ofc), there is no way out to the release of the lock (if a thread can't access the lock it will wait indefinitely) and if there are multiple threads waiting for a lock, there is no such *first in first served*, there is randomness involved in how the jvm assign the awaited lock.
+
+To help developing multi-threaded applications more easily, java has introduced the `Concurrent` package. The Concurrent package provides a much more powerful and versatile implementation of the `lock` within the `Lock` interface. With java locks we need to explicitly "**lock()**" a lock end, more importantly, **unlock()** it (with synchronized block the lock is automatically released by the thread when exiting the block) and for this reason we might need to place more than one unlock call or anyway always wrap it up ina try-finally (with the unlock inside the finally block). When a thread call **lock** it will try to get the lock or wait until another thread release it with the **unlock()** method
 
 ---
 
