@@ -1223,7 +1223,30 @@ Again, a thread can be suspended in many situations; in a single statement there
 
 Using synchronize block has many drawbacks and it is full of potential lack of control; for example we can't continue a synchronized block outside one method (ofc), there is no way out to the release of the lock (if a thread can't access the lock it will wait indefinitely) and if there are multiple threads waiting for a lock, there is no such *first in first served*, there is randomness involved in how the jvm assign the awaited lock.
 
-To help developing multi-threaded applications more easily, java has introduced the `Concurrent` package. The Concurrent package provides a much more powerful and versatile implementation of the `lock` within the `Lock` interface. With java locks we need to explicitly "**lock()**" a lock end, more importantly, **unlock()** it (with synchronized block the lock is automatically released by the thread when exiting the block) and for this reason we might need to place more than one unlock call or anyway always wrap it up ina try-finally (with the unlock inside the finally block). When a thread call **lock** it will try to get the lock or wait until another thread release it with the **unlock()** method
+To help developing multi-threaded applications more easily, java has introduced the `Concurrent` package. The Concurrent package provides a much more powerful and versatile implementation of the `lock` within the `Lock` interface. With java locks we need to explicitly "**lock()**" a lock end, more importantly, **unlock()** it (with synchronized block the lock is automatically released by the thread when exiting the block) and for this reason we might need to place more than one unlock call or anyway always wrap it up ina try-finally (with the unlock inside the finally block). When a thread call **lock** it will try to get the lock or wait until another thread release it with the **unlock()** method.
+
+```java
+ Lock l = ...;
+ l.lock();
+ try {
+   // access the resource protected by this lock
+ } finally {
+   l.unlock();
+ }
+```
+
+### Executor service
+
+*https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html* 
+
+*https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Future.html*
+
+Executor service are the higher hand of thread management; they are used to implements `thread pools` and ships with a whole set of features that aim to handle thread execution, exist, waiting etc.. We can explicitly setup how threads are handled, from how many can be available at the time, when they need to shut down, how long they should wait in a queue etc.. We can also leverage `Future` objects, i.e. asynchronous computations that can return an results when the computation is completed. This is an advance ed topic that I won't study further right now.
+
+### ArrayBlockingQueue
+
+`ArrayBlockingQueue` are list that support FIFO (first in first out) principles for threads that operate with and wait for the lock. It has a **thread-safe** implementation therefore we son't need to directly take care of thread synchronizations in the put, add, remove methods.
+
 
 ---
 
