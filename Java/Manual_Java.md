@@ -1216,10 +1216,9 @@ Again, a thread can be suspended in many situations; in a single statement there
 
 **N.B. some collections, like ArrayLists are not thread-safe, therefore if we have an application that use such data structures with multiple threads it will be our duty to synchronize the reading/writing operations. (*<https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#synchronizedList(java.util.List>)*)**
 
+## The java.util.Concurrent
 
-## The java.util.Concurrent 
-
-*https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/Lock.html* -> lock interface
+*<https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/Lock.html>* -> lock interface
 
 Using synchronize block has many drawbacks and it is full of potential lack of control; for example we can't continue a synchronized block outside one method (ofc), there is no way out to the release of the lock (if a thread can't access the lock it will wait indefinitely) and if there are multiple threads waiting for a lock, there is no such *first in first served*, there is randomness involved in how the jvm assign the awaited lock.
 
@@ -1237,16 +1236,15 @@ To help developing multi-threaded applications more easily, java has introduced 
 
 ### Executor service
 
-*https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html* 
+*<https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html>*
 
-*https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Future.html*
+*<https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Future.html>*
 
 Executor service are the higher hand of thread management; they are used to implements `thread pools` and ships with a whole set of features that aim to handle thread execution, exist, waiting etc.. We can explicitly setup how threads are handled, from how many can be available at the time, when they need to shut down, how long they should wait in a queue etc.. We can also leverage `Future` objects, i.e. asynchronous computations that can return an results when the computation is completed. This is an advance ed topic that I won't study further right now.
 
 ### ArrayBlockingQueue
 
 `ArrayBlockingQueue` are list that support FIFO (first in first out) principles for threads that operate with and wait for the lock. It has a **thread-safe** implementation therefore we son't need to directly take care of thread synchronizations in the put, add, remove methods.
-
 
 ---
 
@@ -1888,8 +1886,131 @@ Transaction are only needed for UPDATE, INSERT and DELETE operations, since quer
 
 ---
 
-# Tools
+# Networking
 
-## DiffMerge
+*<https://www.techtarget.com/searchnetworking/definition/TCP-IP>* -> what is TCP/IP
 
-DiffMerge is a tool used to visually compare and merge files on any OS
+With **network** we indicates a system of computers (**hosts**) connected together (on the internet or locally on an intranet) so they can share resources and information; **Networking** is the way in which this system can share information. The java package devoted to establish connections ina  network is the `java.net` package. Writing networking code requires the use of threads and I/O streams.
+
+A common network configuration is the  `client/server` where one or more hosts are acting as servers and the others are clients that connect to these servers. At an high level this is also how internet operates: the browser is the client that send the request of a web address to a server (super-over-simplification).
+
+The means of communication in the network is the `transport protocol`, commonly used are `TCP` (transmission transport protocol) and `UDP` (user datagram protocol).
+
+In essence we can summarize that:
+
+* **TCP** determines how applications creates communication channels and manages how a message is broken down, transmitted and reassembled at destination. An **Handshake** is required between server and client; it is a two-way connection with a tight coupling. It is very reliable, but this reliability requires a certain amount of overhead
+* **UDP** instead focus on speed, no response is sent back from the server, no handshaking is required. The message are send in self-contained structure called **datagram**; there is no assurance that the datagram reaches destination since there is no reply from the server side. Streaming platform usually use UDP since speed is a key role in performance and it is acceptable to lose some packet here and there.
+
+The data coming from a network are distributed in dedicated channels called `ports`, usually one for each applications that is receiving data from the network.
+
+Each **host** has its own address that is called `IP` and stands fro Internet Protocol (IPv4 uses 32 bits and IPv6 uses 128 bits). Two applications running on the same host can communicate within each other on the so called `localhost`, i.e. the IP address that identifies the machine itself (127.0.0.1).
+
+The **java.net** package expose both a low and a high-level API for networking. Using the low-level API the connection between client and server is established  to specific end-point called `sockets`. When multiple clients connect to the same servers the share the same port but each one has its own socket. Luckily, java handles most of the abstractions needed to apply the TCP/IP protocol, what we need to provide is only the IP and thee port to create a socket connection. Under the hood, the TCP/IP requires specific steps between client and server (see. handshaking and data packets).
+
+## Client/Server
+
+To create a simple client/server application in java we make use of the **java.net** package. In particular, we instantiate a server with the `ServerSocker()` class passing as argument the port on which the server will accept connections.
+
+```java
+try (ServerSocket serverSocket = new ServerSocket(5000)) {
+    while (true) {
+        //Echoer is a custom class that implements Thread
+        // see below
+        Socket socket = serverSocket.accept();
+        Echoer echoer = new Echoer(socket); 
+        echoer.start();
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+We want a Server to be able to handle more than one connection at the time and possible using a different thread for each host; this will ensure a good connectivity and response time. To do this we can create a custom class that extend **Threads** and in the **run()** method simply initialize a `BufferedReader` and a `PrintWriter` to get stream in input and flush it in output back to the hosts.
+
+```java
+public void run() {
+    try {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+        while (true) {
+            String echoString = bufferedReader.readLine();
+            if (echoString.equals("exit")) {
+                break;
+            }            
+            printWriter.println(echoString);
+        }       
+    } catch (IOException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+Similarly, the client implementation will follow the same logic; it should be able to receive and send messages to the server. it initialization consist in the instantiation of a `Socket()` object thata receive two arguments: the IP and the port (that has to match the one specified on the server side).
+
+```java
+try (Socket socket = new Socket("localhost", 5000)) {
+    BufferedReader echoes = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    PrintWriter stringToEcho = new PrintWriter(socket.getOutputStream(), true);     
+    Scanner scanner = new Scanner(System.in);
+    String echoString;
+    String response;
+    
+    do {
+        System.out.println("Enter string to be echoed: ");
+        echoString = scanner.nextLine();
+        
+        stringToEcho.println(echoString);
+        if (!echoString.equals("exit")) {
+            response = echoes.readLine();
+            System.out.println(response);
+        }
+    } while (!echoString.equals("exit"));
+    
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+As we can see from both the client and the server implementation, both needs to run in an infinite while loop to keep the connection up until needed in this case until the client doesn't send the word "exit"). Ideally, only the clients need a shut down mechanism since the server usually runs 24/7 (if not for maintenance).
+
+## Java High-end network API
+
+*<https://www.w3.org/TR/uri-clarification/>* -> more on URI e URL
+
+*<https://www.rfc-editor.org/rfc/rfc9110.html>* -> Http semantics
+
+*<https://en.wikipedia.org/wiki/List_of_HTTP_header_fields>* _> http header fields
+
+Nowadays, in real world application we want to use an higher level of abstraction to build a network, we don't want to care about sockets and ports, the only things we will care about are `URL` Universal Resource Locator and `URI` Universal Resource Identifier. Let's break down some terminology:
+
+* URL needs an absolute path because it is an identifier that includes information on how to access the resources that identifies
+* URI specify a relative path and might not provide enough information to access the identifier; it can contains nine components:
+    1. scheme
+    2. scheme-specific part
+    3. authority
+    4. user-info
+    5. host
+    6. port
+    7. path
+    8. query
+    9. fragment
+
+***URI = scheme ":" ["//" authority] path ["?" query] ["#" fragment]***
+
+* a `schema` is the part of URI/URL before the colon : (e.g. http, file, ftp are all schema)
+
+In the end we use URI and URL interchangeably in common language, but the difference is formal. In the common use, for example when working on the networking of a website, we specify a **root URI** that serves as base to built up all the relative paths to the websites inner pages (in this scenario the base URI + on of the other URI adds up to the full URL of the location).
+
+Also for working with URL in java we have different level of abstraction: the lower level is represented by the `URL` base class while the higher hand is represented by the subclass `HttpURLConnection`.
+
+At the end.. it is important to know the fundation and the behavior of the **java.net** package, but when we come to production, we won't use this package due to its limitation and complexity. In fact, third-party libraries are available to performe the same task in a painless way.
+
+*<https://www.mocklab.io/blog/which-java-http-client-should-i-use-in-2020/>* -> list of 3rd party alternatives
+
+*<https://www.baeldung.com/java-9-http-client>* -> new java HttpClient API
