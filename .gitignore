@@ -16,6 +16,7 @@ out/
 lib/
 *.jar
 *.db
+petClinicCustomV01/
 
 ### MAVEN PROJECT ###
 HELP.md
