@@ -1556,7 +1556,6 @@ myPhone = new Desk();
 myPhone = new Mobile(); // ERROR the class Desk was declared to hold the variable "myPhone"!
 ```
 
-N.B. a good practice is to start interfaces names with the capital `I` (independently by the name that follows).
 N.B. Methods implemented in the Interface are inherently `abstract` even if not explicitly stated.
 N.B. Java libraries make extensive use of interfaces!
 

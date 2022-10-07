@@ -42,6 +42,68 @@ Dependency Injection is a software design technique in which the creation and bi
 
 Interface injection is to be preferred  because it allows spring to decide at runtime the implementation of the object to inject (based on annotations) and makes the code more testable.
 
+## Dependency Inversion
+
+*https://martinfowler.com/articles/dipInTheWild.html*
+
+The concept of dependency inversion is strictly related to dependency injection; with inversion (the **D** in the SOLID principle) we indicated how we should structure our code to avoid **strong coupling** between java objects, a bad practice especially in large application where one small change could cause an avalanche. With dependency injection we instead refer to how the code functionally works, in fact it is how spring assemble our application, by injecting dependency autonomously where required.
+
+The dependency inversion principle in java relies on an heavy usage of **interfaces** and **abstract** class as a mean of connection between two classes. Imagine the following example:
+
+We have one class called **LightBulb** with two methods: **turnOn** and **turnOf**; Then we have a class called **PowerSwitch** that we want to connect to any electrical device that implements the methods on/off. Th bad practice, that produce a strong coupling and doesn't follow the `D` principle, would be to add a field referencing the LightBulb inside the PowerSwitch and pass it to its constructor, and then add methods for turning the object on and off. Here it is clear the the PowerSwitch is an higher-level module and should be able to interact with any object that represent the feature on/off. In fact, the D principle states that:
+
+*High-level modules should not depend on low-level modules. Both should depend on abstractions.*
+
+What we should do instead is to follow th dependency inversion principle creating two interfaces, one called **Switch** with the methods **isOn** and **press** and one called **Switchable** with the methods **turnOn** and **turnOff**. Now, the switch interface is general enough to be attached to any type of switches (a remote control or a light switch) while the switchable interface can be applied to any object that can be turned on/off by a switch.
+
+Now the **PowerSwitch** that implements the Switch interface can have a statement in the constructor that is of the Switchable type (and not specifically a light bulb) and the LightBulb can implements the Switchable interface overriding the methods on and off for the specific object usage.
+
+```java
+// THE TWO INTERFACES
+public interface Switch {
+    boolean isOn();
+    void press();
+}
+
+public interface Switchable {
+    void turnOn();
+    void turnOff();
+}
+```
+
+```java
+// THE HIGHER-LEVEL CLASS that shouldn't depend on the lower one
+public class ElectricPowerSwitch implements Switch {
+    public Switchable client;
+    public boolean on;
+    public ElectricPowerSwitch(Switchable client) {
+        this.client = client;
+        this.on = false;
+        }
+    public boolean isOn() {return this.on;}
+   public void press(){
+       boolean checkOn = isOn();
+       if (checkOn) {
+           client.turnOff();
+           this.on = false;
+       } else {
+             client.turnOn();
+             this.on = true;
+       }
+   }
+}
+```
+
+```java
+// THE LOWER-LEVEL class
+public class LightBulb implements Switchable {
+    @Override
+    public void turnOn() {System.out.println("LightBulb: Bulb turned on...");}
+ 
+    @Override
+    public void turnOff() {System.out.println("LightBulb: Bulb turned off...");}
+}
+```
 
 # Spring 101
 
@@ -56,6 +118,18 @@ ClassName className = (ClassName) ctx.getBean("className");
 ```
 
 ## Beans LifeCycle
+
+<img src="Images\bean_lifecycle.png">
+
+There are a lot of operation on the spring side in order to initialize a bean and there are a series of interface that we can implement to be executed after most of the steps of both initialization and destruction. Some example are:
+
+* `InitializingBean.afterPropertiesSet()` : perform action after the beans properties are set
+* `DisposableBean.destroy()` : called during bean destruction in shutdown
+
+Similarly we have some annotations to hook into the bean lifecycle:
+
+* `@PostConstruct` : the method with this annotation will be called after the bean construction but before it is returned to the requesting object
+* `@PreDestroy` : the method with this annotation will be destroyed by the container
 
 
 # @Component and Stereotype annotations
@@ -145,6 +219,14 @@ Spring Initializr is a super useful tool to create Spring projects. It saves us 
 
 * when adding dependencies to the pom.xml we need maven to reload the project (from IntelliJ right-click on pom.xml -> maven -> reload project)
 
+## Multi-Module build
+
+*https://www.baeldung.com/maven-multi-module*
+
+*https://spring.io/guides/gs/multi-module/*
+
+
+AVOID FAT JAR!
 
 # Thymeleaf
 

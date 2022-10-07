@@ -267,7 +267,7 @@ N.B. if the `[another_tag]` image won't differ from the original we already push
 
 *<https://docs.docker.com/develop/develop-images/dockerfile_best-practices/>*
 
-The Dockerfile is the setup script that contains the instructions used by docker to build an image. Here a link to a sample Dockerfile to build nginx[link-to-sample-docker-file](sample_Dockerfile).
+The Dockerfile is the setup script that contains the instructions used by docker to build an image. Here a link to a sample Dockerfile to build nginx [link-to-sample-docker-file](Samples\sample_Dockerfile).
 
 The main part of the Dockerfile are:
 
@@ -293,7 +293,7 @@ N.B. remember the order!! once a command line in the dockerfile is changed, all 
 ### extending existing images
 
 Instead of building entire new images from scratch what we often might doing is to take an existing build and then add stuff of our particular interest, then recompile the image and push it to our docker hub repository. At the link a dummy example of how we can start from the nginx built and add a file to it
-[link-to-extending-exiting-images](add_file_to_image_Dockerfile). One of the benefit in using an existing file is that we don't need to specify a complete Dockerfile because the instruction we don't need to change will be taken directly from the source Dockerfile (such as the CDM).
+[link-to-extending-exiting-images](Samples\add_file_to_image_Dockerfile). One of the benefit in using an existing file is that we don't need to specify a complete Dockerfile because the instruction we don't need to change will be taken directly from the source Dockerfile (such as the CDM).
 
 ---
 
