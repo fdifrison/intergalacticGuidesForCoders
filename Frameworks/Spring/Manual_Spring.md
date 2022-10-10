@@ -225,8 +225,16 @@ Spring Initializr is a super useful tool to create Spring projects. It saves us 
 
 *https://spring.io/guides/gs/multi-module/*
 
+## Maven release plugin
 
-AVOID FAT JAR!
+*https://maven.apache.org/maven-release/maven-release-plugin/*
+
+This plugin is used to release a project with Maven, saving a lot of repetitive, manual work. Releasing a project is made in two steps: prepare and perform.
+
+Basically we automate the process of building, testing and deploying to github. The two command I used until now, one after the other are:
+
+* `mvn release:prepare` -> prepare for push
+* `mvn release:perform` -> push to repository
 
 # Thymeleaf
 
