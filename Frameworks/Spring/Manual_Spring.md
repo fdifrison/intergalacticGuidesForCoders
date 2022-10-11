@@ -44,7 +44,7 @@ Interface injection is to be preferred  because it allows spring to decide at ru
 
 ## Dependency Inversion
 
-*https://martinfowler.com/articles/dipInTheWild.html*
+*<https://martinfowler.com/articles/dipInTheWild.html>*
 
 The concept of dependency inversion is strictly related to dependency injection; with inversion (the **D** in the SOLID principle) we indicated how we should structure our code to avoid **strong coupling** between java objects, a bad practice especially in large application where one small change could cause an avalanche. With dependency injection we instead refer to how the code functionally works, in fact it is how spring assemble our application, by injecting dependency autonomously where required.
 
@@ -105,17 +105,22 @@ public class LightBulb implements Switchable {
 }
 ```
 
-# Spring 101
 
-#TODO some random terminology to sort along the way:
 
-* `Bean`: beans are the fundamental unit of the spring framework; to let spring see a class as a bean we need to use one annotation (e.g. `@Controller`). To refer to the class bean, e.g. when using `@Qualifier` or when retrieving a bean instance from the application context, we need to refer to it has **the class name in lower string**.
+
+# Beans
+
+Beans are the backbone of the spring architecture; managed by the Spring IoC (Inversion of Control) to be instantiated, assembled and managed; to let spring see a class as a bean we need to use one annotation (e.g. `@Controller`). To refer to the class bean, e.g. when using `@Qualifier` or when retrieving a bean instance from the application context, we need to refer to it has **the class name in lower string**.
 
 ```java
 /* to retrieve an instance of a bean from the ctx we need to cast it back to the
 bean itself */
 ClassName className = (ClassName) ctx.getBean("className");
 ```
+
+
+
+Beans are the backbone of the spring architecture; managed by the Spring IoC (Inversion of Control) to be instantiated, assembled and managed.
 
 ## Beans LifeCycle
 
@@ -131,10 +136,58 @@ Similarly we have some annotations to hook into the bean lifecycle:
 * `@PostConstruct` : the method with this annotation will be called after the bean construction but before it is returned to the requesting object
 * `@PreDestroy` : the method with this annotation will be destroyed by the container
 
+## Beans Scope
 
-# @Component and Stereotype annotations
+By default, beans are created as **Singleton**, meaning that only one instance of the beam is created and each object that needs the bean get a reference to it. Other possible scopes are:
 
-*https://docs.spring.io/spring-framework/docs/4.3.12.RELEASE/spring-framework-reference/html/beans.html#beans-stereotype-annotations*
+* **Prototype** : the opposite of singleton, a new instance is created each time the bean is requested, hence each object will get its own instance of the bean
+* **Request** : a single instance for http request
+* **Session** : a single instance for http session
+* **Application** : bean is scoped to the lifecycle of a **ServletContext**
+* **Websocket** : bean is scoped to the lifecycle of a **WebSocket**
+
+To change the scope of a bean we simply need to annotate it with : `@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)`
+
+# @Component, Component Scan and Stereotype annotations
+
+*<https://docs.spring.io/spring-framework/docs/4.3.12.RELEASE/spring-framework-reference/html/beans.html#beans-stereotype-annotations>*
+
+Prior to Spring Framework 3, XML document were used to specify spring configuration options; nowadays we use annotation. At start up, the application will perform a `Component Scan`, meaning that each class and method will be parsed to see if it is annotated or not.
+
+N.B. to perform component scan, Spring leverage the **java reflection util**, known to be a slow process, but this happen only at startup. *<https://www.oracle.com/technical-resources/articles/java/javareflection.html#:~:text=Reflection%20is%20a%20feature%20in,its%20members%20and%20display%20them>.*
+
+A Spring `Stereotype` is a class-level annotation that defines a Spring **Beans**; when the component scane detect a stereotype it add an instance of that class to the `Spring Context`.
+
+There are different stereotype that we can use and all descent from the `@Component` stereotype; in general they don't have much functional difference but more a context meaning.
+
+<img src=".\Images\stereotype.png">
+
+When using Spring Boot, its auto configuration will tell Spring to perform a scan of the package in the main class (the one annotated with `@SpringBootApplication`), therefore if a class is outside the main class package tree we need to explicitly declare that Spring has to scan also the this external package
+
+To add an external package we need to override the Spring default behavior of looking only in the main package tree; to do this we need to annotate the main class with:
+
+```java
+@ComponentScan(basPackages = {"re.path.to.main.package", "rel.path.to.external.added.package"})
+@SpringBootApplication
+```
+
+## Configuration
+
+*<https://spring.io/blog/2020/04/23/spring-tips-configuration>*
+
+There are different way to configure our spring app; the one that we will use most commonly for personal development make uses of the stereotype annotations to define beans. But, especially if we work with third party libraries, we may want to use the `Java-based container configuration` approach. Essentially we wil create a configuration class, annotated with the stereotype `@Configuration`, where we will have methods for instatiation, configuration ans initialization logic, annotated with `@Bean`.
+
+Some details:
+
+* `@Bean("name_of_bean")`: when setting a bean we can specify its name inside brackets, otherwise the name of the bean will be the name of the method upon it is placed
+
+```java
+@Bean
+MyService nameOfBean() {
+  return new MyService();
+}
+// in this case "nameOfBean" is the name of the beam; if not specified, it is the name of the class with first letter lowercase 
+```
 
 ## @Service and @Controller
 
@@ -149,7 +202,7 @@ Imagine to have more than one @Service that implement the same interface, but ea
 
 ## Spring @Profile
 
-*https://docs.spring.io/spring-framework/docs/4.3.12.RELEASE/spring-framework-reference/html/beans.html#beans-definition-profiles-java*
+*<https://docs.spring.io/spring-framework/docs/4.3.12.RELEASE/spring-framework-reference/html/beans.html#beans-definition-profiles-java>*
 
 Spring profiles are a way to have multiple runtime environment capabilities inside the same applications. As a matter of fact, spring allows us to annotate beans with a @Profile tag that will enable or disable the beans not annotated with the current chosen profile. (Active profiles is set in `resources.application.properties`) For example, if we want to switch from one db to another (maybe we have an H2 mem db for development and MySQL for production) we will simply tag with a different profile the two statements that enable one db or the other.
 
@@ -165,12 +218,9 @@ If not particular @Profile is active than the `default` @Profile is in place; th
 public SomeClass {}
 ```
 
-
 ## Common Exceptions
 
 * NoSuchBeanDefinitionException: we forgot to annotate the particular object; spring doesn't know that it is a bean (add annotation such as @Controller)
-
-
 
 # JPA Java Persistence API
 
@@ -206,7 +256,6 @@ In the context of spring mvc, the mvc model acquire a more complex structure:
 
 The client request is handled by a `dispatcher Servlet` in Tomcat  that  handle the routing to the **controller** that is coded to handle specific request (in the image above a database with a **spring data jpa** service). The controller receives data back form the service and populates the **model** which than is passed to a view technology (e.g. Thymeleaf) that generates a view and gets returned back to the client.
 
-
 # Spring Initializr
 
 *<https://start.spring.io/>*
@@ -221,13 +270,13 @@ Spring Initializr is a super useful tool to create Spring projects. It saves us 
 
 ## Multi-Module build
 
-*https://www.baeldung.com/maven-multi-module*
+*<https://www.baeldung.com/maven-multi-module>*
 
-*https://spring.io/guides/gs/multi-module/*
+*<https://spring.io/guides/gs/multi-module/>*
 
 ## Maven release plugin
 
-*https://maven.apache.org/maven-release/maven-release-plugin/*
+*<https://maven.apache.org/maven-release/maven-release-plugin/>*
 
 This plugin is used to release a project with Maven, saving a lot of repetitive, manual work. Releasing a project is made in two steps: prepare and perform.
 
@@ -241,7 +290,6 @@ Basically we automate the process of building, testing and deploying to github. 
 *<https://www.thymeleaf.org/>*
 
 Thymeleaf is a java template engine the is used to create dynamic html and it is an alternative to Java Server Pages JSP. It is one of the possible view technology that can handle the model output to our client request in an mvc model. It is also a **natural template engine**, meaning that it can be rendered naturally by the browser
-
 
 # The SOLID principle in OOP
 
