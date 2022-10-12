@@ -2,13 +2,19 @@
 
 *<https://docs.spring.io/spring-framework/docs/4.3.12.RELEASE/spring-framework-reference/html/index.html>* -> Manual
 
+---
+
 Spring is an `opinionated design` framework, meaning that, since it wraps and setup a lot of things under the hood for us, there is a more-than-suggested way to proceed when using the spring tools. In particular, spring boot comes with a set of default configurations options that the spring team as opinionated to be "the-way-to-go", and once you respect them, everything run smoother.
+
+---
 
 # The Spring Context
 
 *<https://www.baeldung.com/spring-application-context>*
 
 Spring contexts are also called Spring IoC containers, which are responsible for instantiating, configuring, and assembling beans by reading configuration metadata from XML, Java annotations, and/or Java code in the configuration files.
+
+---
 
 # Dependency Injection DI
 
@@ -105,8 +111,7 @@ public class LightBulb implements Switchable {
 }
 ```
 
-
-
+---
 
 # Beans
 
@@ -117,8 +122,6 @@ Beans are the backbone of the spring architecture; managed by the Spring IoC (In
 bean itself */
 ClassName className = (ClassName) ctx.getBean("className");
 ```
-
-
 
 Beans are the backbone of the spring architecture; managed by the Spring IoC (Inversion of Control) to be instantiated, assembled and managed.
 
@@ -222,13 +225,44 @@ public SomeClass {}
 
 * NoSuchBeanDefinitionException: we forgot to annotate the particular object; spring doesn't know that it is a bean (add annotation such as @Controller)
 
+---
+
+
+# External Properties
+
+*https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/#features.external-config*
+
+Our applications should be portable and able to be deployed on different environments; to do so, we need to take care of properties that are bounded to the environment external to our application, such as username, password, urls, API keys, paths etc.. Hard coding this kind of variable is always a bed practice also because it render our application rigid and harder to change.
+
+For these reasons we have `external properties` that can be set in different ways to be handled by spring:
+
+* Command line arguments (override everything)
+* SPRING_APPLICATION_JSON
+* JNDI (in disuse)
+* OS Environment variables
+* `Property files` (yml file -> way to go -> **application.properties** will be packaged in the Jar)
+
+Spring will inject these properties at runtime. We can use the Spring approach, i.e. create a custom property files and then import it in the configuration file adding the tag **@PropertySource(classpath:mysource.properties)"** or the **Spring Boot** approach where we use directly the native **application.properties** file and spring will automatically inject it in the code. without any further referencing.
+
+
+
+
+
+
+
+
+
+
+
+---
+
 # JPA Java Persistence API
 
 * Jpa requires an empty constructor in the POJOS (Plain Old Java Objects)
 
 # Spring Data JPA
 
-hadles data to
+handles data to
 
 * Hibernate : handles all the SQL statements generations
 
