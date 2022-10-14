@@ -2,6 +2,8 @@
 
 *<https://docs.spring.io/spring-framework/docs/4.3.12.RELEASE/spring-framework-reference/html/index.html>* -> Manual
 
+*<https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/>* -> Spring Boot
+
 ---
 
 Spring is an `opinionated design` framework, meaning that, since it wraps and setup a lot of things under the hood for us, there is a more-than-suggested way to proceed when using the spring tools. In particular, spring boot comes with a set of default configurations options that the spring team as opinionated to be "the-way-to-go", and once you respect them, everything run smoother.
@@ -227,10 +229,9 @@ public SomeClass {}
 
 ---
 
-
 # External Properties
 
-*https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/#features.external-config*
+*<https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/#features.external-config>*
 
 Our applications should be portable and able to be deployed on different environments; to do so, we need to take care of properties that are bounded to the environment external to our application, such as username, password, urls, API keys, paths etc.. Hard coding this kind of variable is always a bed practice also because it render our application rigid and harder to change.
 
@@ -244,37 +245,15 @@ For these reasons we have `external properties` that can be set in different way
 
 Spring will inject these properties at runtime. We can use the Spring approach, i.e. create a custom property files and then import it in the configuration file adding the tag **@PropertySource(classpath:mysource.properties)"** or the **Spring Boot** approach where we use directly the native **application.properties** file and spring will automatically inject it in the code. without any further referencing.
 
-
-
-
-
-
-
-
-
-
-
 ---
-
-# JPA Java Persistence API
-
-* Jpa requires an empty constructor in the POJOS (Plain Old Java Objects)
-
-# Spring Data JPA
-
-handles data to
-
-* Hibernate : handles all the SQL statements generations
-
-# H2
-
-It is an in-memory database (mem) with the possibility of browser GUI (needs to be enabled in application.properties to use the web console)
-
-looking at spring initialization, it tell us which tomcat port is opened and where to locate the h2 console (usually /h2-console); then we need to be careful to specify the correct session of the db (which is written in the spring log in the line H2ConsoleAutoConfiguration)
 
 # Spring MVC
 
-*<https://www.baeldung.com/spring-boot-dispatcherservlet-web-xml>*
+In the context of we-development, the spring framework introduce **Spring MVC**
+
+## What is MVC
+
+*<https://www.baeldung.com/spring-boot-dispatcherservlet-web-xml>* -> servelt in spring boot context
 
 `MVC` is a common design pattern for GUI and Web applications where the acronyms stands for:
 
@@ -289,6 +268,40 @@ In the context of spring mvc, the mvc model acquire a more complex structure:
 <img src=".\Images\spring_mvc.png">
 
 The client request is handled by a `dispatcher Servlet` in Tomcat  that  handle the routing to the **controller** that is coded to handle specific request (in the image above a database with a **spring data jpa** service). The controller receives data back form the service and populates the **model** which than is passed to a view technology (e.g. Thymeleaf) that generates a view and gets returned back to the client.
+
+---
+
+# Spring Data JPA
+
+## JPA entity relationship
+
+* `one-to-one` : one entity related to only one other entity; **eager fetching type**
+* `one-to-many` : one entity is related to many entities (typically List, Set, Map); **lazy fetching type**
+* `many-to-one` : the inverse of one-to-may; **eager fetching type**
+* `many-to-many` : many entities to many entities; a **join table** is used to define the relationship; **lazy fetching type**
+
+Mapping between entities can be either `Unidirectional`, meaning that the mapping is done one-way (one side of the relationship won't know about the other), or `Bidirectional` where both sides of the map know about each other (preferred since you can navigate both direction). Only one side of the mapping will be defined as `Owning Side`, meaning that will hold the **foreign keys** in the database; in one-to-one relationship, the side that hold the foreign key is the owner, and in one-to-many and many-to-one is typically the "many" side. The ownership is defined by the annotation `@mappedBy`.
+
+### JPA Cascade types
+
+Cascade operations are such that if performed on a parent entity, they will be reverberated also to the child entities. JPA Cascade type are:
+
+* PERSIST : saving 
+* MERGE : merging
+* REFRESH 
+* REMOVE : remove children when parent is deleted
+
+
+
+---
+
+# H2
+
+It is an in-memory database (mem) with the possibility of browser GUI (needs to be enabled in application.properties to use the web console)
+
+looking at spring initialization, it tell us which tomcat port is opened and where to locate the h2 console (usually /h2-console); then we need to be careful to specify the correct session of the db (which is written in the spring log in the line H2ConsoleAutoConfiguration)
+
+---
 
 # Spring Initializr
 
@@ -348,3 +361,46 @@ SOLID is a set of programming principles developed by Robert MArtin (Uncle Bob);
   * Abstraction should NOT depend upon details; details should depend upon abstraction
 
 Following SOLID principle will lead in general to better coding and better testing, but remember to be Pragmatic!
+
+---
+
+# HTTP Primer
+
+Developed by Tim Berners-Lee at CERN in 1989, HTTP it is the standard protocol for web browser operations (IETF and W3C created the standards). The protocol has been updated in the years (2014 last HTTP/1.1 update); just watching how the header has changed from back in the days we can see that a lot of specification have been added, such as the host, the user agent, the encodings and cookies. In 2015 HTTP/2.0 was introduced to introduce performance in the transport of information but its having a slow adoption (50% in 2020),  but for developer concerns, the semantics remain pretty much the same with the version 1.1.
+
+## HTTP Request Methods
+
+Request methods, also refereed as **verbs**, are used to indicate the desired action to be performed; following the most important ones:
+
+* `GET` : is the request for any kind of resources (html file, js, image) and it is also what the browser perform to visit a website
+* `HEAD`: similar to GET but request only **meta** information without the body
+* `POST`: is a **create** request; send data to the server
+* `PUT`: it is a **create** or **update** request
+* `DELETE`: is a request to delete a resource; n.b. html doesn't support delete
+* `TRACE`: echo the received request; can be used to see if the request was altered by intermediate servers
+* `OPTIONS`: return the HTTP methods supported by the server for the specific URL
+
+We can further group them in:
+
+* `Safe Methods` as the ones that only fetch information and do not cause changes on the server: GET, HEAD, OPTIONS and TRACE
+* `Idempotent` as the ones that once the action is performed, the repetition of that action should not have any further outcome: PUT and DELETE + the Safe methods
+
+<img src=".\images\HTTP_requests.png">
+
+---
+
+# Spring Boot Developer Tools
+
+*<https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/#using.devtools>*
+
+Dev tools are a series of facilitators applicative that help us during the development of our spring web app. By default they are disabled when running a jar and are not included in the repackage archives.
+
+Some of the useful utilities are:
+
+* **Automatic restart**: a restart of the application is triggered when the spring context detect a class change; by using 2 class loaders the process of restart is very fast
+* **Template caching disabled**: templates are no longer cached therefore the application doesn't need to restart in order to see changes
+* **Live Reload**: automatically trigger a browser refresh when resources changes
+
+*<https://mkyong.com/spring-boot/intellij-idea-spring-boot-template-reload-is-not-working/>*
+
+*<https://youtrack.jetbrains.com/issue/IDEA-274903/In-IntelliJ-20212-compilerautomakeallowwhenapprunning-disappear-Unable-to-enable-live-reload-under-Spring-boot>*
