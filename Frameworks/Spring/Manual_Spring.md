@@ -273,16 +273,18 @@ The client request is handled by a `dispatcher Servlet` in Tomcat  that  handle 
 
 # Spring Data JPA
 
+To make spring recognize a class as a persistent db object we need to annotate it with `@Entity`, moreover, we can give the table a name specifying the annotation `@Table(name = "table_name")`.
+
 ## JPA entity relationship
 
 * `one-to-one` : one entity related to only one other entity; **eager fetching type**
-* `one-to-many` : one entity is related to many entities (typically List, Set, Map); **lazy fetching type**
-* `many-to-one` : the inverse of one-to-may; **eager fetching type**
+* `one-to-many` : one entity is related to many entities (typically List, Set, Map); **lazy fetching type**; a join column is used to define the relationship
+* `many-to-one` : the inverse of one-to-may; **eager fetching type**; a join column is used to define the relationship
 * `many-to-many` : many entities to many entities; a **join table** is used to define the relationship; **lazy fetching type**
 
 Mapping between entities can be either `Unidirectional`, meaning that the mapping is done one-way (one side of the relationship won't know about the other), or `Bidirectional` where both sides of the map know about each other (preferred since you can navigate both direction). Only one side of the mapping will be defined as `Owning Side`, meaning that will hold the **foreign keys** in the database; in one-to-one relationship, the side that hold the foreign key is the owner, and in one-to-many and many-to-one is typically the "many" side. The ownership is defined by the annotation `@mappedBy`.
 
-### JPA Cascade types
+**JPA Cascade types**
 
 Cascade operations are such that if performed on a parent entity, they will be reverberated also to the child entities. JPA Cascade type are:
 
@@ -290,16 +292,52 @@ Cascade operations are such that if performed on a parent entity, they will be r
 * MERGE : merging
 * REFRESH 
 * REMOVE : remove children when parent is deleted
+* ALL : all of the above
 
+**Embeddable Types**
 
+These are types used to define a common set of properties between two or more objects (e.g. an order object have a billing and a shipping address, both fields evidently with common properties; this is a good use case for embedded types)
+
+## Loading data at creation
+
+Spring JDBC has its own data initializer capabilities via Spring Boot; it will by default try to load `schema.sql` and `data.sql` from root of class path; we can also use platform specific data source file, but we need to enable in the application.properties the string `spring.datasource.platform` and specify the schema and data files like `schema-${platform}.sql` and `data-${platform}.sql`. If we use Spring Boot data initializer we should set Hibernate DLL to **none** or **validate** to avoid conflicts.
+
+## Hibernate
+
+Definitions:
+
+* DDL = Data Definition Language, the type of SQL language we are going to use for defining table, indices, foreign keys etc.. anything that deals with the data structure
+* DML = Data Manipulation Language, the SQL statement for CRUD operations
+
+We can set the hibernate behavior in the application.properties as:
+
+`spring.jpa.hibernate.ddl-auto=`:
+
+* none
+* validate: hibernate will fail if something unexpected is present in the ddl (e.g. column missing) -> preferred option in production
+* update: hibernate will try to update the schema -> DANGEROUS, we don't want hibernate to have DDL capabilities, it is a security issue (it should only have DML capabilities)
+* create
+* create-drop: everything is dropped when the connection is shut down (default with h2)
+
+### Import data
+
+Data can be loaded from an `import.sql` file that as to be placed on root of class path (executed only if DLL behavior is set to CREATE or CREATE-DROP); it is different from what happen with Spring JDBC
 
 ---
 
-# H2
+# Spring Testing
 
-It is an in-memory database (mem) with the possibility of browser GUI (needs to be enabled in application.properties to use the web console)
+Definitions:
 
-looking at spring initialization, it tell us which tomcat port is opened and where to locate the h2 console (usually /h2-console); then we need to be careful to specify the correct session of the db (which is written in the spring log in the line H2ConsoleAutoConfiguration)
+* `Text Fixture` : is the set of objects and data that ensure a known test environment (we  need to know the expected outcome of the test and it must be repeatable).
+* `Unit testing`: code written to test unity, i.e. single fast-executable portion of code; should have no external dependency (no db, no spring context) and should cover around 70, 80% of the code (not more or become counterproductive).
+* `Integration test`: these are tests that have a larger scope, i.e. test the behavior between objects and part of the system; they can rely on external dependency
+* `Functional test`: (also called end-to-end test) tests that are performed on the running application using external framework like selenium
+* `TDD`: Test Driven Development, write the test first, which will fail, than code to fix the test
+* `BDD`: Behavior Drive Development, build on top of TDD, where test should be built to check that a unit satisfy a desired behavior (more business oriented)
+* `Mock`: fake implementation of a class used for testing
+* `Spy`: partial mock to override only some methods of a class that is tested
+
 
 ---
 
@@ -337,6 +375,14 @@ Basically we automate the process of building, testing and deploying to github. 
 *<https://www.thymeleaf.org/>*
 
 Thymeleaf is a java template engine the is used to create dynamic html and it is an alternative to Java Server Pages JSP. It is one of the possible view technology that can handle the model output to our client request in an mvc model. It is also a **natural template engine**, meaning that it can be rendered naturally by the browser
+
+# H2
+
+It is an in-memory database (mem) with the possibility of browser GUI (needs to be enabled in application.properties to use the web console)
+
+looking at spring initialization, it tell us which tomcat port is opened and where to locate the h2 console (usually /h2-console); then we need to be careful to specify the correct session of the db (which is written in the spring log in the line H2ConsoleAutoConfiguration)
+
+---
 
 # The SOLID principle in OOP
 
