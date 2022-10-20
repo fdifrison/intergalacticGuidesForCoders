@@ -338,6 +338,16 @@ Definitions:
 * `Mock`: fake implementation of a class used for testing
 * `Spy`: partial mock to override only some methods of a class that is tested
 
+Importing in maven **spring-boot-starting-test** we will bring in a set of tools for testing:
+
+* JUnit
+* Spring Test and Spring Boot Test
+* AsserJ
+* Hamcrest
+* Mockito
+* JSONasser
+* JSONPath
+
 
 ---
 
