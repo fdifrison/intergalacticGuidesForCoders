@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: admin
+    name: postgres
+  #   If we don't have an embedded db like h2 we have to explicitly tell spring to initialize the db
+  sql:
+    init:
+      mode: always
+
+

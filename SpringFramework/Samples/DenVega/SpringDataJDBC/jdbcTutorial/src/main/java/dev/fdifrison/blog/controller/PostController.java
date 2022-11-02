@@ -5,6 +5,8 @@ import dev.fdifrison.blog.model.Post;
 import dev.fdifrison.blog.model.dto.PostDetails;
 import dev.fdifrison.blog.repository.AuthorRepository;
 import dev.fdifrison.blog.repository.PostRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PostController.class);
 
     private final PostRepository postRepository;
     private final AuthorRepository authorRepository;
@@ -41,6 +45,7 @@ public class PostController {
         Post post = postRepository.findById(id).orElse(null);
         assert post != null;
         Author author = authorRepository.findById(Objects.requireNonNull(post.getAuthor().getId())).orElse(null);
+        LOG.info("Post Details called for: " + post.getId());
         return  new PostDetails(post, author);
     }
 

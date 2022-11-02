@@ -1,0 +1,23 @@
+#spring:
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2
+#  datasource:
+#    generate-unique-name: false
+#    name: blog
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: true
+
+
+spring:
+  profiles:
+    active: dev
+
+

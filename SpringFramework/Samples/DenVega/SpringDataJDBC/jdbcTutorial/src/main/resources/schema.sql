@@ -1,7 +1,7 @@
 -- author
-create table Author
+create table IF NOT EXISTS Author
 (
-    id         int auto_increment primary key,
+    id         serial primary key,
     first_name varchar(100) not null,
     last_name  varchar(100) not null,
     email      varchar(255) not null,
@@ -10,9 +10,9 @@ create table Author
 
 
 -- post
-create table Post
+create table IF NOT EXISTS Post
 (
-    id           int auto_increment primary key,
+    id           serial primary key,
     version      int, -- specific to spring data jdbc
     title        varchar(255) not null,
     content      text         not null,
@@ -23,13 +23,12 @@ create table Post
 );
 
 -- comment
-
-create table Comment
+create table IF NOT EXISTS Comment
 (
     post         int          not null, -- we need a column with the name of the aggregate root (Post)
     name         varchar(100) not null,
     content      text         not null,
     published_on timestamp    not null,
     updated_on   timestamp,
-    foreign key (post) references Post(id)
+    foreign key (post) references Post (id)
 );

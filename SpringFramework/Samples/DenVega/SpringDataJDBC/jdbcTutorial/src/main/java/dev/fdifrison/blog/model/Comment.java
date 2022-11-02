@@ -1,5 +1,7 @@
 package dev.fdifrison.blog.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
 
 import java.time.LocalDateTime;
@@ -20,6 +22,15 @@ public class Comment {
         this.name = name;
         this.content = content;
         this.publishedOn = LocalDateTime.now();
+    }
+
+    @PersistenceCreator
+    @JsonCreator
+    public Comment(String name, String content, LocalDateTime publishedOn, LocalDateTime updatedOn) {
+        this.name = name;
+        this.content = content;
+        this.publishedOn = publishedOn;
+        this.updatedOn = updatedOn;
     }
 
     public String getName() {

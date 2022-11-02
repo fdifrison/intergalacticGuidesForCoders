@@ -1,6 +1,9 @@
 package dev.fdifrison.blog.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 
 import java.time.LocalDateTime;
@@ -9,7 +12,7 @@ import java.util.Set;
 
 public class Post {
 
-    @Id
+    @Id @JsonIgnore
     private Integer id;
     private String title;
     private String content;
@@ -24,6 +27,17 @@ public class Post {
         this.content = content;
         this.publishedOn = LocalDateTime.now();
         this.author = author;
+    }
+
+    @PersistenceCreator
+    @JsonCreator
+    public Post(String title, String content, LocalDateTime publishedOn, LocalDateTime updatedOn, AggregateReference<Author, Integer> author, Set<Comment> comments) {
+        this.title = title;
+        this.content = content;
+        this.publishedOn = publishedOn;
+        this.updatedOn = updatedOn;
+        this.author = author;
+        comments.forEach(this::addComment);
     }
 
     public Integer getId() {

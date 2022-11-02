@@ -226,6 +226,7 @@ const realCopy = Object.assign({}, objectToBeCopied);
 Object assign creates a `shallow copy` of the object, meaning that only the first level of recursion is copied and therefore, the inner data structure share still the same reference to the original object (e.g. the values of an array inside an object). 
 
 To achieve a `deepcopy` in js is not trivial (as is not in python, we use the copy.deepcopy module) and it needs third party library.
+
 ---
 
 # Values and Variable
