@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    name: todos
+    generate-unique-name: false
+  h2:
+    console:
+      enabled: true
+      path: /h2
