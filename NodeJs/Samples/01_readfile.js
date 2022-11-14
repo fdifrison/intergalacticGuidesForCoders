@@ -8,7 +8,7 @@ const fs = require("fs");
 
 // // Asynchronous using callbacks
 // fs.readFile("./dummy_async.txt", "utf-8", (err, data) => console.log(data)); // first argument is usually always the potential errors
-// console.log("This will be execute before the callback!");
+// console.log("This will be executed before the callback!");
 
 // async callbacks can be nested
 fs.appendFile(

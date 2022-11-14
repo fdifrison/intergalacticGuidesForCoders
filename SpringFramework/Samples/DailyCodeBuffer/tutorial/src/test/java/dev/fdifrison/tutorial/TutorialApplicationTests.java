@@ -1,10 +1,10 @@
-package dev.fdifrison.springaop;
+package dev.fdifrison.tutorial;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringAopApplicationTests {
+class TutorialApplicationTests {
 
     @Test
     void contextLoads() {

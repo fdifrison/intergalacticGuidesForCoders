@@ -6,6 +6,14 @@
 
 ---
 
+Spring is a java framework built to create enterprise ready applications; it is composed of different modules that are
+meant to take care of different aspect of the applications' lifecycle, from databases, to security. However, to
+integrate all these capabilities, we have to take care of a lot of configurations step. To solve this problem, spring
+boot was introduced; it is essentially an extension layer built upon the spring framework that introduces a lot of
+benefits in terms of managing dependencies (templates for jdbc, jpa, testing etc...), autoconfiguration, deployment (the
+server is embedded in our application, we don't need to create a war file and deploy it to a server), and more in
+general for the creation of microservices.
+
 Spring is an `opinionated design` framework, meaning that, since it wraps and setup a lot of things under the hood for
 us, there is a more-than-suggested way to proceed when using the spring tools. In particular, spring boot comes with a
 set of default configurations options that the spring team as opinionated to be "the-way-to-go", and once you respect
@@ -30,20 +38,29 @@ files.
 *<https://martinfowler.com/bliki/InversionOfControl.html>* -> IoC
 
 ```sh
-"When you go and get things out of the refrigerator for yourself, you can cause problems. You might leave the door open, you might get something Mommy or Daddy doesn't want you to have. You might even be looking for something we don't even have or which has expired. What you should be doing is stating a need, "I need something to drink with lunch," and then we will make sure you have something when you sit down to eat."
+"When you go and get things out of the refrigerator for yourself, you can cause problems. You might leave the door open,
+ you might get something Mommy or Daddy doesn't want you to have. You might even be looking for something we don't even 
+ have or which has expired. What you should be doing is stating a need, "I need something to drink with lunch," and then
+ we will make sure you have something when you sit down to eat."
 ```
 
 Dependency injection is a specific form of Inversion of Control IoC; it allows the spring framework to compose the
 application by controlling which implementation is injected. DI or IoC can be described as follows:
 
 ```sh
-"One important characteristic of a framework is that the methods defined by the user to tailor the framework will often be called from within the framework itself, rather than from the user’s application code. The framework often plays the role of the main program in coordinating and sequencing application activity. This inversion of control gives frameworks the power to serve as extensible skeletons. The methods supplied by the user tailor the generic algorithms defined in the framework for a particular application."
+"One important characteristic of a framework is that the methods defined by the user to tailor the framework will often
+ be called from within the framework itself, rather than from the user’s application code. The framework often plays the
+ role of the main program in coordinating and sequencing application activity. This inversion of control gives
+ frameworks the power to serve as extensible skeletons. The methods supplied by the user tailor the generic algorithms 
+ defined in the framework for a particular application."
 ```
 
 It is the framework that decide the flow of operations needed by the application.
 
 ```sh
-"The major difference between an object-oriented framework and a class library is that the framework calls the application code. Normally the application code calls the class library. This inversion of control is sometimes named the Hollywood principle, “Do not call us, we call You”.
+"The major difference between an object-oriented framework and a class library is that the framework calls the 
+application code. Normally the application code calls the class library. This inversion of control is sometimes named
+ the Hollywood principle, “Do not call us, we call You”.
 ```
 
 Dependency Injection is a software design technique in which the creation and binding of dependencies are done outside
@@ -74,17 +91,16 @@ dependency autonomously where required.
 The dependency inversion principle in java relies on a heavy usage of **interfaces** and **abstract** class as a mean
 of connection between two classes. Imagine the following example:
 
-We have one class called **LightBulb** with two methods: **turnOn** and **turnOf**; Then we have a class called **
-PowerSwitch** that we want to connect to any electrical device that implements the methods on/off. The bad practice,
-that
-produce a strong coupling and doesn't follow the `D` principle, would be to add a field referencing the LightBulb inside
-the PowerSwitch and pass it to its constructor, and then add methods for turning the object on and off. Here it is clear
-the PowerSwitch is a higher-level module and should be able to interact with any object that represent the feature
-on/off. In fact, the D principle states that:
+We have one class called **LightBulb** with two methods: **turnOn** and **turnOf**; Then we have a class called
+**PowerSwitch** that we want to connect to any electrical device that implements the methods on/off. The bad practice,
+that produce a strong coupling and doesn't follow the `D` principle, would be to add a field referencing the LightBulb
+inside the PowerSwitch and pass it to its constructor, and then add methods for turning the object on and off. Here it
+is clear the PowerSwitch is a higher-level module and should be able to interact with any object that represent the
+feature on/off. In fact, the D principle states that:
 
 *High-level modules should not depend on low-level modules. Both should depend on abstractions.*
 
-What we should do instead is to follow th dependency inversion principle creating two interfaces, one called **Switch**
+What we should do instead is to follow the dependency inversion principle creating two interfaces, one called **Switch**
 with the methods **isOn** and **press** and one called **Switchable** with the methods **turnOn** and **turnOff**. Now,
 the switch interface is general enough to be attached to any type of switches (a remote control or a light switch) while
 the switchable interface can be applied to any object that can be turned on/off by a switch.
@@ -399,6 +415,26 @@ coded to handle specific request (in the image above a database with a **spring 
 receives data back form the service and populates the **model** which than is passed to a view technology (e.g.
 Thymeleaf) that generates a view and gets returned to the client.
 
+## Project structure
+
+The typical project structure for a spring-boot application that concerns an MVC model end a database (jpa) is the
+following:
+
+* the **Entity** or the **Model** is the package that contains the java translation of a sql table; if using jpa we need
+  to mark it with **@Entity**, define a primary key (annotating with **@Id**) and set a generation strategy. The Entity
+  will need a  **Controller** to handle the rest operations (concerning web, a **@RestController**), a **Repository**
+  which in case of jpa is simply and interface that extends **JpaRepository**, an interface that easily implements all
+  the crud methods we may need (if something is not included we can add it to the interface body); a **Service** which
+  will handle the business logic and wil be divided in an interface and its implementation.
+* The **Repository** will be an interface that extends the JpaRepository (or the CrudRepository in case of jdbc
+  implementation) and simply add the crud functionality to access our entity
+* The **Service**, composed of an interface and its (possibly multiple) implementation, is the layer that handles the
+  business logic. The implementation of the service will be injected with an instance of the repository in order to be
+  able to leverage its crud capabilities.
+* The **Controller** is just a manager layer, it doesn't contain any business logic but is the center of communication
+  between the view the models and the services. It is injected with an instance of the service and contains the REST
+  API of our applications
+
 ---
 
 # Spring Data JPA
@@ -538,6 +574,14 @@ after the other are:
 
 * `mvn release:prepare` -> prepare for push
 * `mvn release:perform` -> push to repository
+
+## Launch Spring Boot from Maven
+
+We can directly launch our application from terminal using maven with the following command from the application folder:
+
+```shell
+mvn spring-boot:run
+```
 
 # Thymeleaf
 

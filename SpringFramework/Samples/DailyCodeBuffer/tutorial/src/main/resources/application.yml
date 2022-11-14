@@ -1,0 +1,13 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    generate-unique-name: false
+    name: app-db
+  h2:
+    console:
+      path: /h2
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
