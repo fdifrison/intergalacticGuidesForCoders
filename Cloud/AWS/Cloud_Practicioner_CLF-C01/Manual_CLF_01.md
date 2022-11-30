@@ -61,12 +61,12 @@ The `Six` **Advantages** of Cloud computing are:
 We have 3 ways to access AWS services:
 
 * AWS Management Console, protected by password and MFA
-* AWS CLI protected by access key (open source )
+* AWS CLI protected by access key (open source)
 * AWS SDK - to embed services in our code, protected by access key
 
-Access keys are generated from the AWS Console, one for each user (don't share between users). One the pair access ID
+Access keys are generated from the AWS Console, one for each user (don't share between users). Once the pair access ID
 and Key has been generated we can log in into the CLI with the command `aws configure`.
-Once the user has logged in it can perform from cli almost all the actions that are possible from the Console.
+Once the user has logged in it can perform from CLI almost all the actions that are possible from the Console.
 
 An alternative to the CLI is the `Cloud Shell` a service that is not available in all the regions but that essentially
 mimic the cli in the browser.
@@ -86,7 +86,7 @@ The infrastructure of AWS is divided in :
   more. `How to choose a region?` the factor to consider are:
     * **Compliance**: data might have legal requirement to resides in a particular region
     * **Proximity**: closer to the customer means less latency
-    * **Available** services: not al services are available everywhere (Only the one tagged as **Global** as route 53)
+    * **Available** services: not al services are available everywhere (Only the one tagged as **Global**, e.g. route 53)
     * **Pricing**: might vary from region to region
 * **Availability Zones**: at least 2, max 6. usually 3, (e.g. eu-west-3a, eu-west-3b, eu-west-3c) are a group of one or
   more autonomous datacenter; they are isolated from disaster, hence if one fail the others should be available. They
@@ -102,23 +102,23 @@ The infrastructure of AWS is divided in :
 
 ## AWS Organizations
 
-<img src="./Images/Organizations.PNG" alt="Not Found">
-
 Organizations is a global service that allows to manage multiple AWS accounts through the main account that is called
 master account. There are cost benefits due to the aggregate billings, aggregate usage (the more the resources used the
 more is the discount) and reserve instances are shared between account to optimize usage. There is an API available to
-manage the Organization an automate the account creation. We cna also restrict the account privileges using a
+manage the Organization an automate the account creation. We can also restrict the account privileges using a
 **Service Control Policy SCP**. SCP must be explicit enabled, and it is used mainly to restrict access to certain
-services or by disabling them. We can either use a blacklist or whitelist approach depending on if we want to explicit
-the services that cannot or can be used.
+services or by disabling them. We can either use a **blacklist** or **whitelist** approach depending on if we want to 
+explicit the services that cannot or can be used.
 
 We can have Multiple accounts strategies (e.g. one account per business unit) for better regulatory restriction SCP,
 resource isolation VPC and isolated logging. We can use tagging for identify billings pertinence
 
+<img src="./Images/Organizations.PNG" alt="Not Found">
+
 ### Consolidate Billing
 
 Consolidating the billing over the organization provide us with only one bill and the benefit of combined usage (the
-more resources we use the less we spend)
+more resources we use the less we spend).
 
 ### AWS Control Tower
 
@@ -260,7 +260,7 @@ It is a tool to review your architecture against the 6 pillars and adopt archite
 
 ### AWS Right Sizing
 
-right sizing is the process of matching at best type and size of EC2 instances depending on your workload performance
+Right sizing is the process of matching at best type and size of EC2 instances depending on your workload performance
 and capacity requirements with the lowest cost possible. Scaling up is easy so start small!
 
 ## The AWS Ecosystem
@@ -277,7 +277,7 @@ A lot of free resources:
 and paid tier for AWS support:
 
 * developer
-* business
+* business (best cost/benefit ration)
 * enterprise
 
 ### AWS Marketplace
@@ -290,7 +290,7 @@ Online, classroom, on-demand
 
 ### AWS Professional Services & Partners
 
-A team of experts for enterprise members; the APN -AWS Partner Network
+A team of experts for enterprise members; the **APN - AWS Partner Network**
 
 ## AWS IQ
 
@@ -300,9 +300,9 @@ The fastest way to find, engage and pay 3rd party experts on AWS on-demand
 
 # Security and Compliance
 
-The key of security and compliance on AWS ids the ` AWS Shared Responsibility Model`.
-
 <img src="./Images/SummarySecurity.PNG" alt="Not Found">
+
+The key of security and compliance on AWS is the ` AWS Shared Responsibility Model`.
 
 * AWS is responsible for security `OF` the cloud
 * WE are responsible for security `IN` the cloud
@@ -323,7 +323,7 @@ network making it inaccessible to normal users. To protect from DDO we have:
 ## Penetration Testing
 
 We can test some of the AWS services (the most common) to penetration testing without asking for permission, but we
-cannot simulate attacks such as DDOS or Request Flooding
+cannot simulate attacks such as DDOS or Request Flooding.
 
 ## Encryption - AWS KMS (Key Management Service)
 
@@ -384,15 +384,15 @@ It is the service used to notify AWS resources used for abusive or illegal purpo
 
 Some actions are only devoted to root user (not even to admin user) and these are:
 
-* change account setting
-* tas invoice
-* close the aws account
-* restore IAM permission
-* change AWS support plan
+* Change account setting
+* Tax invoice
+* Close the aws account
+* Restore IAM permission
+* Change AWS support plan
 * Register a seller in the marketplace
-* configure S3 to enable MFA
-* edit or delete S3 bucket policy
-* sign up to GovCloud
+* Configure S3 to enable MFA
+* Edit or delete S3 bucket policy
+* Sign up to GovCloud
 
 ---
 
@@ -433,9 +433,9 @@ As Said, the policy is a JSON document composed by:
 
 To control the security of our organization we can set Password policy like:
 
-* minimum password length
-* required specific characters
-* allow/deny for password changes or set an expiration date or prevent password re-use
+* Minimum password length
+* Required specific characters
+* Allow/deny for password changes or set an expiration date or prevent password re-use
 
 Use of **MFA** Multi-Factor Authentication is strongly recommended at least for Root User. The possible MFA devices are:
 
@@ -462,7 +462,7 @@ IAM is shipped with security tools both at root and user level:
 
 ### AWS STS (Security Token Service)
 
-STS is the service to create temporary, limited privilege credentials to access AWS resources. examples are IAM roles
+STS is the service to create temporary, limited privilege credentials to access AWS resources. Examples are IAM roles
 for account access or for EC2 instances access.
 
 ### Cognito
@@ -497,7 +497,7 @@ service we have many capabilities such as:
 
 <img src="./Images/SummaryEC2.PNG" alt="Not Found">
 
-When setting up an EC2 Vm we can:
+When setting up an EC2 VM we can:
 
 * choose between linux, windows and macOS
 * select the CPU
@@ -534,7 +534,7 @@ blocked. Security rules will be composed of a:
 
 SG are not bounded to a single EC2 instance but are locked to a **region/VPC** combination. An instance can
 have multiple SG that still lives outside it (if something get blocked the instance won't even see it). An SG can also
-reference other SG, for example to allow connection from multiple EC2 instances that owns their SG
+reference other SG, for example to allow connection from multiple EC2 instances that owns their SG.
 
 It is good practice to create a security group devoted to ssh access. From the folder where we have saved our .pem file:
 
@@ -564,7 +564,7 @@ Depending on the usage we have different type of purchasing options for the EC2 
 * Saving Plans: 1 or 3 yrs for a specific amount of usage (up to 72% discount)
 * Spot Instances: for short workload, cheap but unreliable (up to 90% discount)
 * Dedicated Host: an entire physical server is reserved, we have access to its lower level (most expensive)
-* Dedicated Instance: no other customer shar our hardware
+* Dedicated Instance: no other customer share our hardware
 * Capacity Reservation: reserve a capacity for any duration (no discount)
 
 ### Shared Responsibility
@@ -596,8 +596,8 @@ attached to it, and an EBS can also live if not attached to any VM.
 
 There are two places is possible to store EBS snapshots:
 
-* Snapshot Archive: which is an archive tier that is cheaper but slower to restoring (24-72 hours)
-* Recycle Bin: we can specify a retention policy (1 day to 1 yr) to recover accidental deletions
+* **Snapshot Archive**: which is an archive tier that is cheaper but slower to restoring (24-72 hours)
+* **Recycle Bin**: we can specify a retention policy (1 day to 1 yr) to recover accidental deletions
 
 ### AMI - Amazon Machine Image
 
@@ -610,7 +610,7 @@ EC2 instance as base image.
 
 #### Image Builder
 
-Image builder is a free tool to automate the creation of Vm and container images. It creates an EC2 builder instance
+Image builder is a free tool to automate the creation of VM and container images. It creates an EC2 builder instance
 that performs a series of predefined task (e.g. software installation, configuration etc.) then it creates an AMI from
 it, then it test it, and finally it distributes it.
 
@@ -618,7 +618,7 @@ it, then it test it, and finally it distributes it.
 
 ### EC2 Instance Store
 
-EBS volume, being network drive, have limited performance due to latency; if e need a high-performance hd (better I/=
+EBS volume, being network drive, have limited performance due to latency; if e need a high-performance hd (better I/O
 performance) we have the Instance Store which has the drawback of being ephemeral, meaning that the storage is lost once
 the EC2 instance is stopped (not good for long-term storage)
 
@@ -671,7 +671,7 @@ Definitions:
 A Load Balancer is a server that work as a filter to the traffic directed to our application. It redirects the requests
 to multiple EC2 instances downstream in order to distribute the loads. The application has always one single point of
 access (DNS) but the traffic is redirected to several replicas of our backend). ELB in a managed load balancer, meaning
-that it is handled by AWS in terms of maintenance, availability and upgrade. we can configure our own load balancer (
+that it is handled by AWS in terms of maintenance, availability and upgrade. We can configure our own load balancer (
 cheaper) but it requires a lot more effort. We can have 2 type of load balancer on AWS:
 
 * **Application Load Balancer - ABL** for http/https only - Layer 7
@@ -680,8 +680,8 @@ cheaper) but it requires a lot more effort. We can have 2 type of load balancer 
 ### ASG - Auto Scaling Group
 
 The load on our application is not usually constant in time, not even in the same day, therefore we need a way to adjust
-the scalability of our application. The role of an ASG is exact to scale out (add EC2 VM) or scale in (remove EC2 VM) to
-match and increase/decrease of load on our application; it also ensures to have a minimum/maximum number of EC2
+the scalability of our application. The role of an ASG is exactly to scale out (add EC2 VM) or scale in (remove EC2 VM) 
+to match and increase/decrease of load on our application; it also ensures to have a minimum/maximum number of EC2
 instances, to register new instances to the load balancer and to replace unhealthy instances. In this way we are
 optimizing the costs since we are using only the resources we need.
 
@@ -708,7 +708,7 @@ applications, the most common are:
 * Backup and storage
 * Disaster Recovery
 * Archive
-* Hybrid CLoud Storage (expanding corporate storage)
+* Hybrid Cloud Storage (expanding corporate storage)
 * Application hosting
 * Media hosting
 * Data lakes & big data analytics
@@ -716,8 +716,8 @@ applications, the most common are:
 * Static Websites Hosting (the bucket policy must allow public reads)
 
 The S3 directories are called `Buckets` which are objects that must have a globally unique name across all AWS. Buckets
-are defined at region level. Files are stored and retrieve from buckets by their **key** which is composed by a **
-prefix** (the path to the file) **plus the object name**. Keys might be very long name that looks like directories path,
+are defined at region level. Files are stored and retrieve from buckets by their **key** which is composed by a **prefix**
+(the path to the file) **plus the object name**. Keys might be very long name that looks like directories path,
 but they are not. The max. object size is 5TB and if a file is bigger than 5GB it must be uploaded in parts. An object
 can hold metadata, tags or version ID (if versioning is enabled)
 
@@ -725,7 +725,7 @@ can hold metadata, tags or version ID (if versioning is enabled)
 
 S3 security can be set at different levels:
 
-* User-Based: IAM policy specify which API calls should be allowed for a specific IAM users
+* User-Based: IAM policy specifying which API calls should be allowed for a specific IAM users
 * Resource-Based:
     * **Bucket Policies**: json-based rules that are bucket-specific that are set from S3 console (can allow
       cross-account
@@ -753,8 +753,8 @@ will have a version of null while disabling versioning will keep the versioned o
 
 We have two different replication mechanism:
 
-* CRR: Cross-Region Replication (use case: lower latency and replication across accounts)
-* SRR: Same Region Replication (use case: live replication between production and test environment)
+* **CRR: Cross-Region Replication** (use case: lower latency and replication across accounts)
+* **SRR: Same Region Replication** (use case: live replication between production and test environment)
 
 Replication will be asynchronous between buckets that needs to have versioning enabled and can be owned by different AWS
 account. Under management settings of the S3 bucket we can create a replication rule, enabling replication to a bucket
@@ -819,13 +819,13 @@ In particular, we have:
     * **Snowcone** (2 Cpu, 4Gn ram, usb c port and optional batteries)
     * **Snowball** Edge (52 cpu, 208 gb ram, 42 tb) or (40 cpu, 80 gb ram 80tb)
 
-All the devices can run Ec2 Instances and Lambda functions using AWS IoT Greengrass.
+All the devices can run EC2 Instances and Lambda functions using AWS IoT Greengrass.
 
 AWS OpsHub is a GUI that can be installed on our laptop to manage the snow devices
 
 ### AWS Storage Gateway
 
-The Storage gateway is a mean to create hybrid clod solution; it allows to bridge corporate storage with AWS cloud, for
+The Storage gateway is a mean to create hybrid cloud solution; it allows to bridge corporate storage with AWS cloud, for
 example for disaster recovery, backup etc.
 
 ### Shared Responsibility
@@ -864,12 +864,12 @@ CANNOT access the db with ssh to inspect it.
 
 We have two types of deployment for our db:
 
-* Read Replicas: to scale the read workload of our db we can create up to 5 replicas of our main db only for reading;
+* **Read Replicas**: to scale the read workload of our db we can create up to 5 replicas of our main db only for reading;
   data will be written only to the main db
-* Multi-AZ: we have a failover strategy, i.e. a replica of our db on another AZ that will be called only in case of
+* **Multi-AZ**: we have a failover strategy, i.e. a replica of our db on another AZ that will be called only in case of
   problems with the main db
-* Multi-Region: we can have replicas of our db also in other regions only for reading data, data will be written only to
-  the main db. This can be done for disaster recovery but also for having better local performance if our application
+* **Multi-Region**: we can have replicas of our db also in other regions only for reading data, data will be written only 
+  to the main db. This can be done for disaster recovery but also for having better local performance if our application
   works on multiple regions. It is more expensive because we need to take into account replication (and therefore
   transfer) of data between multiple regions
 
@@ -888,7 +888,7 @@ data associated for fast read/write operations
 ### DynamoDB
 
 Dynamo is a fully managed, highly available (replication across 3 AZ) NoSQL db. It is a `serverless` db, meaning that
-the user don't see and don't manage the servers in the backend. It cna scale massively with millions of request per
+the user don't see and don't manage the servers in the backend. It can scale massively with millions of request per
 seconds and trillions of rows, up to 100TB of storage. It has a single-digit millisecond latency and consistent
 performance. It is integrated with IAM security. It has low cost and auto-scaling capabilities.
 
@@ -940,7 +940,7 @@ fully managed, replication up to 3 AZ.
 
 Neptune is a fully managed **graph db** (an example of graph dataset is a social network connections). It is optimized
 for highly connected dataset, can store billions of relations with very low latency queries, high replication (up to 15
-replicas). Its use case is for knowledge graph(wikipedia) fraud detection, recommendation engine, social network
+replicas). Its use case is for knowledge graph (wikipedia) fraud detection, recommendation engine, social network.
 
 ### Amazon QLDB - Quantum Ledger DataBase
 
@@ -1004,7 +1004,7 @@ Among the most used AWS serverless service we have:
 ### Lambda Function
 
 Lambda Function are Virtual functions that are meant to be limited in time (short execution) and run on-demand with
-automatic scaling capabilities. We pay per request and compute time (and the free tier is quite generous), it is
+automatic scaling capabilities. We **pay per request and compute time** (and the free tier is quite generous), it is
 integrated with the whole AWS ecosystem and are design to be event-driven, i.e. the function is invoked only when
 needed. They can be easily monitored with AWS CloudWatch and can scale up to 10GB of RAM (improving also CPU and network
 at the same time). Lambda supports many programming language and thanks to **Lambda Container Image** we can run
@@ -1028,7 +1028,7 @@ etc.
 
 ### AWS Batch
 
-Batch are processes tha have a start and an end (opposed to streaming processes). AWS Batch is a service to schedule
+Batch are processes that have a start and an end (opposed to streaming processes). AWS Batch is a service to schedule
 batch jobs and dynamically scale EC2 instances providing the right amount of cpu and memory required; we only need to
 schedule the batch job, AWS do the rest. batch Jobs are essentially Docker Images that run on EC2.
 
@@ -1063,7 +1063,7 @@ orchestration since AWS will do this for us. Cloudformation support almost all t
 ### CDK - Cloud Development Kit
 
 The CDK is the way to do Infrastructure as a code without using directly cloudformation but with our own programming
-language of preference. the code is then compiled into a CloudFormation template. Very useful for lambda functions and
+language of preference. The code is then compiled into a CloudFormation template. Very useful for lambda functions and
 docker containers in ECS.
 
 <img src="./Images/CDK.PNG" alt="Not Found">
@@ -1074,8 +1074,7 @@ docker containers in ECS.
 
 A typical architecture for a web app is called `Web App 3-tier` in which we have an ELB in front of some EC2 instances
 connected to an RDS db and potentially to and ElastiCache. Being a common infrastructure AWS thought of a way to
-automate
-its creation for the developer, alleviating the burden of setting up all the resources, the load balancer, the
+automate its creation for the developer, alleviating the burden of setting up all the resources, the load balancer, the
 autoscaling group and so on. Developer only want to run their code and possibly to have the same behavior independently
 of the environment of deployment.
 
@@ -1099,21 +1098,21 @@ configured with the CodeDeploy Agent before performing the upgrade.
 
 ### CodeCommit
 
-It is the AWS code Version Control Repository
+It is the AWS code Version Control Repository (GitHub)
 
-### Code Build
+### CodeBuild (read github)
 
 It compiles code, run test and produce packages ready to be deployed, for example on CodeDeploy. It is fully managed
 ans `serverless`.
 
-### CodePipeline
+### CodePipeline (read jenkins)
 
 CodePipeline is an orchestrator that allows to create pipelines that connect for example CodeCommit, CodeBuild and
 CodeDeploy. It is a **CI/CD** tool (Continuous Integration & Continuous Delivery).
 
 <img src="./Images/PipeLine.PNG" alt="Not Found">
 
-### CodeArtifact
+### CodeArtifact (read nexus)
 
 It is an artifact manager software for development that stores software packages dependencies (artifact)
 
@@ -1122,7 +1121,7 @@ It is an artifact manager software for development that stores software packages
 It is a Unified User Interface to interact with all te service above in one place and easily manage software development
 activities.
 
-### Cloud9
+### Cloud9 (read IDE)
 
 It is the AWS IDE for coding directly on cloud. It allows also real-time pair programming
 
@@ -1134,7 +1133,7 @@ and Windows servers.
 
 ### SSM - Session Manager
 
-It allows to start secure shell on Ec2 Instances without the need of ssh access and no port 22.
+It allows to start secure shell on EC2 Instances without the need of ssh access and no port 22.
 
 ### AWS OpsWorks (Chef and Puppet)
 
@@ -1331,7 +1330,7 @@ that happen on the account. We can apply it to a single region or to all region 
 
 X-Ray is the service that allows debugging on distributed services, which would be hard to perform since many actors are
 at play. Once enabled, we will get a full picture of each services in the application, their performance and if they are
-failing. We cna inspect dependencies in microservices, review request behavior, find errors and exceptions, if we are
+failing. We can inspect dependencies in microservices, review request behavior, find errors and exceptions, if we are
 meeting our SLA (Service Level Agreement). In short, we are doing distributed tracing of our application on the cloud.
 
 ## CodeGuru
@@ -1496,7 +1495,7 @@ Used to convert media files stored in S3 in a format required by the consumer (p
 
 Make use of Graph QL to store and sync data across mobile phones and web apps in real-time
 
-## AWS Amplify
+## AWS Amplify (read full-stack dev)
 
 A set of tools and services that helps us to develop and deploy full stack web and mobile applications
 
