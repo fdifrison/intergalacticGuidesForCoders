@@ -1011,7 +1011,63 @@ and the machine the burden to compute it over an over when requested.
 
 ## ES6 Enhanced Objects literals
 
-Imagine we have an object that has, as a property, another object, assigned from outside its body; now if we 
+Imagine we have an object_1 that has, as a property, another object_2, assigned from outside its body; now if we want to
+externalize that object_2 but still have a reference of it has a property inside object_1, we can simply call it in
+object_1 body without the need of referencing it as a new property (with semicolons)
+
+```js
+const obj_2 = {
+//    some properties
+}
+
+const obj_1 = {
+    name: object_name;
+    obj_2
+}
+```
+
+### Assign methods
+
+We can also assign methods to object literals with the following syntax:
+
+```js
+const obj_1 = {
+    func(arg) {
+        console.log(arg)
+    }
+}
+// or prior to ES6
+const obj_1 = {
+    func: function (arg) {
+        console.log(arg)
+    }
+}
+```
+
+## Optional Chaining ? - test if the value on the left exist
+
+Imagine if we need to access a nested object that may or may not exist; In the best scenario we will incur in an
+undefined, but if the nesting is two level below than we would raise a TypeError. The standard way would be to use if
+statement, but it can quickly become too verbose therefore with ES2020 it was introduced the optional chaining with the
+symbol `?` which will give the conditionality on the property access, i.e. if a property doesn't exist it will directly
+return undefined without accessing the nested property that would raise a TypeError.
+
+```js
+obj_1.prop1.prop2?.prop3
+// prop3 will be read only if prop2 exist
+```
+
+Often, optional changing is used together with coalescing operator to give a fallback alternative to the possibly
+undefined selection:
+
+```js
+console.log(obj.method_1?.(arg) ?? "Method undefined")
+// if method_1 is undefined then "Method undefined" will be printed
+```
+
+## Looping on objects 
+
+As for python dictionaries, we can decide to loop on keys, values or both, of an object
 
 ---
 
