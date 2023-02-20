@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class Token {
 
-    private String access_token;
+    private String accessToken;
     private int expiresIn;
     private String tokenType;
 
