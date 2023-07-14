@@ -1,6 +1,0 @@
-This is a dummy file to be open asynchronously
-
-Added text in async mode
-Added text in async mode
-Added text in async mode
-Added text in async mode
