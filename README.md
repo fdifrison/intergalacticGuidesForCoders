@@ -1,6 +1,6 @@
 # intergalacticGuidesForCoders
 
-Collection of manuals, relevant projects and reusable code.
+Collection of manuals, samples and reusable code.
 
 ## Directories Structure
 
